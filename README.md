@@ -25,11 +25,12 @@ A plataforma centraliza informações sobre disciplinas concluídas, em andament
 
 **Nome:** Samara Paloma  
 **Matrícula:**
-```##Atores
+
+##Atores
 **Usuário Aluno:** Realiza o autocadastro no sistema informando seu curso, período atual e o histórico de disciplinas já cursadas. Possui acesso à montagem de grade, acompanhamento de progresso e ao fórum de discussão.
 
 **Usuário Coordenador do Curso (Administrador):** Responsável por manter atualizada a disciplinas do curso a cada período letivo, horários e pré-requisitos.
-```
+
 
 ## Funcionalidades
 
@@ -50,7 +51,7 @@ Atualmente, muitos estudantes universitários encontram dificuldades para planej
 
 
 ## Estrutura do Repositório
-|---|---|
+| --- | --- |
 | `src/` | Código fonte (.cpp) com as implementações das funcionalidades e cabeçalhos (.h) |
 | `bin/` | Binários e executáveis |
 | `test/` | Testes funcionais e regressivos |
