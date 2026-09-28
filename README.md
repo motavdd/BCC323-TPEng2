@@ -24,7 +24,7 @@ A plataforma centraliza informações sobre disciplinas concluídas, em andament
 **Matrícula:**
 
 **Nome:** Samara Paloma  
-**Matrícula:**
+**Matrícula:** 22.2.4091
 
 ##Atores
 **Usuário Aluno:** Realiza o autocadastro no sistema informando seu curso, período atual e o histórico de disciplinas já cursadas. Possui acesso à montagem de grade, acompanhamento de progresso e ao fórum de discussão.
