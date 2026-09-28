@@ -2,28 +2,27 @@
 
 > Plataforma para estruturar, visualizar e acompanhar o progresso acadêmico ao longo dos semestres.
 
-[🔗 Repositório no GitHub](#) · [📋 Quadro Kanban](#)
+[🔗 Repositório no GitHub](https://github.com/motavdd/BCC323-TPEng2) · [📋 Quadro Kanban](https://github.com/users/motavdd/projects/7)
 
 ---
 
-## 📖 Sobre o Projeto
+## Sobre o Projeto
 
 O **Sistema de Planejamento e Organização Acadêmica** é uma solução voltada ao ambiente universitário que ajuda estudantes a planejarem sua trajetória no curso.
-
 A plataforma centraliza as informações sobre disciplinas **concluídas**, **em andamento** e **pendentes**, facilita a montagem da grade horária e promove a troca de experiências entre os próprios alunos.
 
-## 🎯 Problema
+## Problema
 
 Muitos estudantes têm dificuldade em planejar sua rotina acadêmica por não saberem ao certo o esforço exigido por determinado conjunto de disciplinas. O sistema reduz esse problema combinando **controle visual do progresso** com **colaboração entre alunos**.
 
-## 👥 Atores
+## Atores do projeto
 
 | Ator | Responsabilidades |
 | --- | --- |
 | **Aluno** | Realiza o autocadastro (curso, período atual e histórico de disciplinas cursadas); monta a grade, acompanha o progresso e participa do fórum de discussão. |
 | **Coordenador do Curso** (Administrador) | Mantém atualizadas as disciplinas do curso a cada período letivo, incluindo horários e pré-requisitos. |
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 | Funcionalidade | Descrição |
 | --- | --- |
@@ -38,21 +37,10 @@ Muitos estudantes têm dificuldade em planejar sua rotina acadêmica por não sa
 
 | Diretório | Conteúdo |
 | --- | --- |
-| `src/` | Código-fonte (`.cpp`) com as implementações das funcionalidades e cabeçalhos (`.h`) |
+| `src/` | Código-fonte com as implementações das funcionalidades e cabeçalhos |
 | `bin/` | Binários e executáveis |
 | `test/` | Testes funcionais e de regressão |
 | `doc/` | Documentação técnica |
-
-## 🚀 Como Executar
-
-> _Preencher: pré-requisitos, comandos de compilação e execução._
-
-```bash
-# exemplo
-git clone <url-do-repositorio>
-cd <nome-do-repositorio>
-# comandos de build e execução
-```
 
 ## 👨‍💻 Equipe
 
@@ -68,5 +56,5 @@ cd <nome-do-repositorio>
 
 ## 🔗 Links Úteis
 
-- **GitHub:** _adicionar link_
-- **Quadro Kanban:** _adicionar link_
+- **GitHub:** https://github.com/motavdd/BCC323-TPEng2
+- **Quadro Kanban:** https://github.com/users/motavdd/projects/7
