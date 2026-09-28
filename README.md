@@ -13,7 +13,7 @@ A plataforma centraliza as informações sobre disciplinas **concluídas**, **em
 
 ## Problema
 
-Muitos estudantes têm dificuldade em planejar sua rotina acadêmica por não saberem ao certo o esforço exigido por determinado conjunto de disciplinas. O sistema reduz esse problema combinando **controle visual do progresso** com **colaboração entre alunos**.
+Atualmente, muitos estudantes universitários encontram dificuldades para planejar sua rotina acadêmica devido à incerteza sobre a carga de esforço necessária em determinado conjunto de disciplinas. O sistema reduz esse problema combinando **controle visual do progresso** com **colaboração entre alunos**. 
 
 ## Atores do projeto
 
