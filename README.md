@@ -49,8 +49,8 @@ Atualmente, muitos estudantes universitários encontram dificuldades para planej
 | César Augusto Tiago Totô | 24.1.4038 |
 | Ciro Junio | _a preencher_ |
 | Jhonata | _a preencher_ |
-| Juliana Borges | _a preencher_ |
-| Luisa Notaro | _a preencher_ |
+| Juliana Borges | 22.1.4161 |
+| Luisa Notaro | 21.2.4156 |
 | Matheus Mota | 22.2.4101 |
 | Samara Paloma | 22.2.4091 |
 
