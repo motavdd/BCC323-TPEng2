@@ -116,8 +116,3 @@ Prefixos: `feature/`, `fix/`, `docs/`, `test/`, `refactor/`, `chore/`. Formato: 
 
 O frontend estático é publicado no Firebase Hosting; **Docker não roda permanentemente em produção**. Deploys dependem de GitHub Environments, Workload Identity Federation e aprovação para produção. Consulte [Implantação](docs/IMPLANTACAO.md).
 
-## 7. O que não está implementado neste pacote
-
-A interface React fornecida é um **protótipo técnico de cadastro/login**, não o produto acadêmico completo. Regras para coordenação, fórum, grade, matrizes curriculares e compartilhamento permanecem bloqueadas ou pendentes de modelagem. Não assuma que o backend está resolvido.
-
-**Suporte:** abra uma Issue com o problema, passos para reproduzir e logs sem dados sensíveis.
