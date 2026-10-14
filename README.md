@@ -1,7 +1,5 @@
 # BCC323-TPEng2 — Guia de Desenvolvimento (`Develop`)
 
-> **Documento proposto** para substituir o README da branch `Develop` após revisão da equipe. Nenhuma alteração foi feita no GitHub.
-
 **Sistema de Planejamento e Organização Acadêmica** — frontend React + TypeScript + Vite; Firebase Authentication, Cloud Firestore e Hosting; Docker para testes. Backend próprio ainda não definido.
 
 - [Repositório](https://github.com/motavdd/BCC323-TPEng2)
@@ -30,7 +28,6 @@ git switch Develop
 git pull origin Develop
 ```
 
-> Os arquivos deste pacote são uma **proposta**. A equipe deve incorporá-los por PR, conciliando com os arquivos existentes. **Antes da primeira execução**, na pasta `frontend`, rode `npm install` para gerar `package-lock.json`, revise as versões e versione o lockfile. Depois disso, os Dockerfiles e o CI usam `npm ci`. Também é possível gerar o lockfile usando apenas Docker: `bash scripts/bootstrap-lock.sh`.
 
 ```bash
 cd frontend
