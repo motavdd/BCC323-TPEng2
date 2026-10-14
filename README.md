@@ -106,8 +106,6 @@ Prefixos: `feature/`, `fix/`, `docs/`, `test/`, `refactor/`, `chore/`. Formato: 
 - `.github/workflows/deploy-firestore.yml`: publicação **manual** de regras revisadas.
 - `docs/`: arquitetura, implantação, segurança e decisões pendentes.
 
-Os diretórios atuais `src/`, `test/`, `bin/` e `docs/` contêm apenas `.gitkeep` no repositório consultado. A proposta cria `frontend/` sem apagar esses diretórios; a equipe pode remover placeholders obsoletos em uma Issue de reorganização.
-
 ## 6. Ambientes e deploy
 
 | Contexto | Infraestrutura | Dados |
