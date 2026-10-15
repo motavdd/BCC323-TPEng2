@@ -1,126 +1,76 @@
-# BCC323-TPEng2 — Guia de Desenvolvimento (`Develop`)
+# 🎓 Sistema de Planejamento e Organização Acadêmica
 
-Protótipo de planejamento acadêmico com React, TypeScript, Vite e Firebase. O gerenciador de pacotes é **Bun 1.3.14**; o lockfile do frontend é `frontend/bun.lock`.
+> Plataforma para estruturar, visualizar e acompanhar o progresso acadêmico ao longo dos semestres.
 
-- [Repositório](https://github.com/motavdd/BCC323-TPEng2)
-- [Quadro Kanban](https://github.com/users/motavdd/projects/7)
-- [Issues](https://github.com/motavdd/BCC323-TPEng2/issues)
+[🔗 Repositório no GitHub](https://github.com/motavdd/BCC323-TPEng2) · [📋 Quadro Kanban](https://github.com/users/motavdd/projects/7)
 
-## Branches e responsabilidades
+---
 
-| Branch | Finalidade | Origem dos PRs |
-|---|---|---|
-| `Develop` | Integração do desenvolvimento | Branches de trabalho |
-| `Staging` | Homologação | `Develop` |
-| `Master` | Versão estável | `Staging` |
+## Sobre o Projeto
 
-Os nomes das branches diferenciam maiúsculas e minúsculas. O fluxo de promoção é `Develop → Staging → Master`. A origem de cada PR de promoção é conferida na revisão; os Rulesets não garantem essa sequência automaticamente.
+O **Sistema de Planejamento e Organização Acadêmica** é uma solução voltada ao ambiente universitário que ajuda estudantes a planejarem sua trajetória no curso.
+A plataforma centraliza as informações sobre disciplinas **concluídas**, **em andamento** e **pendentes**, facilita a montagem da grade horária e promove a troca de experiências entre os próprios alunos.
 
-Este README é o guia de desenvolvimento. Nas promoções, o PR deve preservar o README específico da branch de destino.
+## Problema
 
-## Preparar o repositório
+Muitos estudantes têm dificuldade em planejar sua rotina acadêmica por não saberem ao certo o esforço exigido por determinado conjunto de disciplinas. O sistema reduz esse problema combinando **controle visual do progresso** com **colaboração entre alunos**.
 
-```sh
-git clone https://github.com/motavdd/BCC323-TPEng2.git
-cd BCC323-TPEng2
-git switch Develop
-git pull --ff-only origin Develop
-```
+## Atores
 
-## Executar com Docker
+| Ator | Responsabilidades |
+| --- | --- |
+| **Aluno** | Realiza o autocadastro (curso, período atual e histórico de disciplinas cursadas); monta a grade, acompanha o progresso e participa do fórum de discussão. |
+| **Coordenador do Curso** (Administrador) | Mantém atualizadas as disciplinas do curso a cada período letivo, incluindo horários e pré-requisitos. |
 
-Requer Docker Desktop ou Docker Engine com Compose V2:
+## Funcionalidades
 
-```sh
-docker compose -f compose.dev.yml up --build
-```
+| Funcionalidade | Descrição |
+| --- | --- |
+| **Cadastro e Perfis** | O aluno informa seus dados acadêmicos e marca as disciplinas já concluídas. |
+| **Painel de Progresso** | Barra de progresso do curso e categorização visual das matérias em três estados: *Concluídas*, *Em Andamento* e *Disponíveis*. |
+| **Simulador de Grade** | Seleção das disciplinas que o aluno pretende cursar no período. |
+| **Agenda Semanal Personalizada** | Geração automática de uma grade de horários (segunda a sexta) com base nas turmas escolhidas. |
+| **Publicação da Grade** | O aluno publica sua proposta de grade horária para o semestre. |
+| **Feedback** | Outros estudantes do mesmo curso comentam a publicação, opinando se a combinação de matérias é pesada ou equilibrada. |
 
-Abra http://localhost:5173. Auth e Firestore usam o projeto de demonstração `demo-bcc323`, sem credenciais de produção.
+## Estrutura do Repositório
 
-## Executar o frontend localmente
+| Diretório | Conteúdo |
+| --- | --- |
+| `src/` | Código-fonte com as implementações das funcionalidades e cabeçalhos |
+| `bin/` | Binários e executáveis |
+| `test/` | Testes funcionais e de regressão |
+| `doc/` | Documentação técnica |
 
-Instale Bun 1.3.14 e Node 22.12+ (runtime das ferramentas). Na raiz, inicie os emuladores:
+> 📍 Este README está na branch **`staging`**, usada para homologação. **Não se desenvolve aqui.**
 
-```sh
-docker compose -f compose.dev.yml up --build firebase
-```
+Todo o trabalho da equipe é organizado por **Issues** e pelo **Quadro Kanban**.
 
-Em outro terminal:
+### Regras da `staging`
 
-```sh
-cd frontend
-cp .env.example .env.local
-bun install --frozen-lockfile
-bun run dev
-```
+- A branch é **protegida**: não há push direto nem criação de branches a partir dela.
+- Ela só recebe código vindo da **`develop`**, por Pull Request.
+- Serve para validar o que foi desenvolvido antes de seguir para a `master`.
 
-Copie o arquivo de exemplo apenas se `.env.local` ainda não existir. No PowerShell, use `Copy-Item .env.example .env.local`.
+### Fluxo
 
-Os emuladores usam dados fictícios. O ambiente de desenvolvimento não configura persistência desses dados entre recriações dos containers.
+1. Uma versão estável da `develop` é promovida para a `staging` via Pull Request.
+2. A equipe testa e valida as funcionalidades na `staging`.
+3. Se for encontrado um problema, **abra uma Issue** descrevendo-o e mova o card no Kanban. A correção é feita em uma branch criada **a partir da `develop`**, nunca da `staging`, e volta pelo mesmo caminho.
+4. Com tudo validado, a `staging` é promovida para a `master` via Pull Request.
 
-## Validar
+### Como desenvolver
 
-Na raiz, execute `bash scripts/test-all.sh` ou, no PowerShell, `./scripts/test-all.ps1`. A bateria inclui lint, TypeScript, testes unitários, build, regras Firestore e cadastro/logout no Chromium com emuladores.
+Para contribuir com código, use a branch **`develop`**: consulte o README dela para o passo a passo (criação de branch, Pull Request e convenções).
 
-Para qualidade local, em `frontend/`: `bun run lint`, `bun run typecheck`, `bun run test:unit` e `bun run build`. Use `bun run build` para executar o build do projeto.
+## 👨‍💻 Equipe
 
-## Fluxo de contribuição
-
-1. Selecione uma Issue e confira o responsável, os critérios de aceite e o status no Kanban.
-2. Atualize `Develop` e crie uma branch de trabalho:
-
-   ```sh
-   git switch Develop
-   git pull --ff-only origin Develop
-   git switch -c feature/16-formulario-cadastro
-   ```
-
-3. Implemente a alteração e atualize a documentação e os testes correspondentes.
-4. Execute a bateria de testes com os emuladores, utilizando dados fictícios.
-5. Faça o commit e envie a branch de trabalho ao GitHub.
-6. Abra um PR para `Develop`, vincule a Issue e solicite a revisão de um colega.
-7. Aguarde os checks e as aprovações exigidas antes do merge. Atualize o Kanban após a integração.
-
-As branches de trabalho utilizam o formato `<tipo>/<numero-da-issue>-<resumo>`, com prefixos `feature/`, `fix/`, `docs/`, `test/`, `refactor/` ou `chore/`.
-
-## Critérios de aprovação do PR
-
-- [ ] A alteração atende aos critérios da Issue vinculada.
-- [ ] Os checks `quality`, `integration` e `e2e` passaram.
-- [ ] Os testes verificam os comportamentos afetados.
-- [ ] A documentação corresponde à implementação.
-- [ ] O diff não contém senhas, tokens, chaves de conta de serviço ou dados pessoais de usuários.
-- [ ] O PR possui a aprovação exigida pelo Ruleset da branch.
-
-## Estrutura do repositório
-
-| Caminho | Responsabilidade |
-|---|---|
-| `frontend/src/` | Interface React, integração Firebase e lógica de horários |
-| `frontend/tests/integration/` | Testes das regras Firestore |
-| `frontend/e2e/` | Testes de navegador com Playwright |
-| `firebase/` | Regras de acesso e configuração de índices |
-| `docker/firebase/` | Imagem dos emuladores |
-| `compose.dev.yml` | Ambiente de desenvolvimento |
-| `compose.test.yml` | Ambiente isolado de testes |
-| `.github/workflows/` | Integração contínua e publicação |
-| `scripts/` | Scripts de instalação e testes |
-| `docs/` | Documentação técnica |
-
-## Ambientes e publicação
-
-| Ambiente | Projeto Firebase | Finalidade |
-|---|---|---|
-| Local e CI | `demo-bcc323` | Testes com emuladores e dados fictícios |
-| Homologação | `spoa-eng2-staging` | Validação com Firebase real |
-| Produção | `spoa-eng2-prod` | Ambiente de produção |
-
-A publicação no Firebase Hosting é definida pelos workflows de `Staging` e `Master` e depende dos GitHub Environments e da autenticação com o Google Cloud. O deploy de Hosting executa o CI antes da publicação. A aprovação de produção é configurada no Environment `production`. As regras Firestore possuem workflow manual separado.
-
-As configurações locais `.env.*.local` não são versionadas. No GitHub Actions, as configurações Web do Firebase são fornecidas pelas variáveis de cada Environment.
-
-## Documentação
-
-- [Desenvolvimento, dependências e Bun](docs/BUN.md)
-- [Implantação e GitHub Actions](docs/IMPLANTACAO.md)
-- [Decisões técnicas](docs/DECISOES.md)
+| Nome | Matrícula |
+| --- | --- |
+| César Augusto Tiago Totô | 24.1.4038 |
+| Ciro Junio | _a preencher_ |
+| Jhonata | _a preencher_ |
+| Juliana Borges | _a preencher_ |
+| Luisa Notaro | _a preencher_ |
+| Matheus Mota | 22.2.4101 |
+| Samara Paloma | 22.2.4091 |
