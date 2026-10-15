@@ -1,0 +1,36 @@
+name: bcc323-dev
+services:
+  firebase:
+    build:
+      context: .
+      dockerfile: docker/firebase/Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:9099:9099"
+    healthcheck:
+      test: ["CMD", "bun", "-e", "Promise.all([fetch('http://127.0.0.1:8080'),fetch('http://127.0.0.1:9099')]).then(()=>process.exit(0)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+      start_period: 15s
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    depends_on:
+      firebase:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5173:5173"
+    environment:
+      VITE_USE_EMULATORS: "true"
+      VITE_FIREBASE_EMULATOR_HOST: localhost
+      VITE_FIREBASE_PROJECT_ID: demo-bcc323
+      VITE_FIREBASE_API_KEY: demo-key
+      VITE_FIREBASE_AUTH_DOMAIN: demo-bcc323.firebaseapp.com
+      VITE_FIREBASE_APP_ID: "1:123456789:web:demo"
+    command: ["bun", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/index.html:/app/index.html:ro

@@ -1,63 +1,48 @@
-# Sistema de Planejamento e Organização Acadêmica
+# BCC323-TPEng2
 
-## Descrição do Projeto
-O Sistema é uma solução web que funciona no ambiente universitário, tem o objetivo de auxiliar os estudantes na estruturação, visualização e acompanhamento do seu progresso acadêmico ao longo dos semestres.
+Protótipo de planejamento acadêmico com React, TypeScript, Vite e Firebase. O gerenciador de pacotes é **Bun 1.3.14**; o lockfile do frontend é `frontend/bun.lock`.
 
-A plataforma centraliza informações sobre disciplinas concluídas, em andamento e pendentes, otimizando o processo de montagem da grade horária e promovendo a troca de experiências entre os próprios alunos.
+## Executar com Docker
 
-**Nome:** César Augusto Tiago Totô  
-**Matrícula:** 24.1.4038  
+Requer Docker com Compose V2:
 
-**Nome:** Ciro Junio  
-**Matrícula:**
+```sh
+docker compose -f compose.dev.yml up --build
+```
 
-**Nome:** Jhonata 
-**Matrícula:**
+Abra http://localhost:5173. Auth e Firestore usam o projeto de demonstração `demo-bcc323`, sem credenciais de produção.
 
-**Nome:** Juliana Borges  
-**Matrícula:**
+## Executar o frontend localmente
 
-**Nome:** Luisa Notaro 
-**Matrícula:**
+Instale Bun 1.3.14 e Node 22.12+ (runtime das ferramentas). Na raiz, inicie os emuladores:
 
-**Nome:** Matheus Mota  
-**Matrícula:** 22.2.4101
+```sh
+docker compose -f compose.dev.yml up --build firebase
+```
 
-**Nome:** Samara Paloma  
-**Matrícula:** 22.2.4091
+Em outro terminal:
 
-##Atores
-**Usuário Aluno:** Realiza o autocadastro no sistema informando seu curso, período atual e o histórico de disciplinas já cursadas. Possui acesso à montagem de grade, acompanhamento de progresso e ao fórum de discussão.
+```sh
+cd frontend
+cp .env.example .env.local
+bun install --frozen-lockfile
+bun run dev
+```
 
-**Usuário Coordenador do Curso (Administrador):** Responsável por manter atualizada a disciplinas do curso a cada período letivo, horários e pré-requisitos.
+No PowerShell, use `Copy-Item .env.example .env.local` para copiar o arquivo.
 
+## Validar
 
-## Funcionalidades
+Na raiz, execute `bash scripts/test-all.sh` ou, no PowerShell, `./scripts/test-all.ps1`. A bateria inclui lint, TypeScript, testes unitários, build, regras Firestore e cadastro/logout no Chromium com emuladores.
 
-**Cadastro e Perfis:** O aluno insere seus dados acadêmicos e marca quais disciplinas já foram concluídas.
+Para qualidade local, em `frontend/`: `bun run lint`, `bun run typecheck`, `bun run test:unit` e `bun run build`. Use `bun run build` para executar o build do projeto.
 
-**Painel de Progresso:** Exibicao de uma barra de progresso do curso e categorização visual das matérias em três estados: Concluídas, Em Andamento e Disponíveis.
+## Documentação
 
-**Simulador de Grade:** O aluno pode selecionar as disciplinas que pretende cursar no período.
+- [Desenvolvimento, dependências e Bun](docs/BUN.md)
+- [Implantação e GitHub Actions](docs/IMPLANTACAO.md)
+- [Segurança e avaliação do override gRPC](docs/SEGURANCA.md)
+- [Plano técnico e contexto anterior](docs/PLANO_TECNICO.md)
+- [Relatório desta migração](docs/RELATORIO_MIGRACAO_BUN.md)
 
-**Agenda Semanal Personalizada:** O sistema gera automaticamente uma visão em grade de horários (segunda a sexta) da rotina do aluno com base nas turmas escolhidas.
-
-**Publicação da Grade:** O aluno pode criar uma publicação compartilhando sua proposta de grade horária para o semestre.
-
-**Feedback:** Outros estudantes do mesmo curso podem comentar na publicação, dando opiniões sobre a carga horária (se a combinação de matérias é muito pesada ou equilibrada).
-
-## Problema a ser Resolvido
-Atualmente, muitos estudantes universitários encontram dificuldades para planejar sua rotina acadêmica devido à incerteza sobre a carga de esforço necessária em determinado conjunto de disciplinas. O sistema visa mitigar esse gargalo ao unir ferramentas de controle visual com colaboração entre outros alunos.
-
-
-## Estrutura do Repositório
-| --- | --- |
-| `src/` | Código fonte (.cpp) com as implementações das funcionalidades e cabeçalhos (.h) |
-| `bin/` | Binários e executáveis |
-| `test/` | Testes funcionais e regressivos |
-| `doc/` | Documentação técnica |
-
-
-**Link do Git Hub:**
-**Link do Quadro Kanban:**
-
+Os workflows locais preservam CI e deploy de Hosting/regras. Publicar esta cópia ou configurar GitHub/Firebase requer uma ação posterior do mantenedor. Este pacote foi preparado sem commits, push ou alterações remotas.
