@@ -33,7 +33,7 @@ bun run preview
 
 Use `bun run build`, pois `bun build` chama o bundler próprio do Bun. Os testes existentes continuam no Vitest e no Playwright.
 
-Na raiz, a bateria completa com emuladores e Chromium permanece disponível:
+Na raiz, execute a bateria completa com emuladores e Chromium:
 
 ```sh
 bash scripts/test-all.sh
@@ -57,12 +57,12 @@ Para atualizar o próprio Bun, mantenha `.bun-version`, `packageManager`, `engin
 
 No PowerShell, a bateria completa pode ser executada com `./scripts/test-all.ps1` na raiz. Ambos os scripts encerram os containers de teste e removem seus volumes ao terminar.
 
-Para verificar dependências instaladas e vulnerabilidades, execute `bun pm ls --all` e `bun audit` em `frontend/`. Uma troca de gerenciador não elimina vulnerabilidades; consulte a avaliação do override gRPC em `docs/SEGURANCA.md`.
+Para verificar dependências instaladas e vulnerabilidades, execute `bun pm ls --all` e `bun audit` em `frontend/`. A configuração do override gRPC está descrita em [Segurança](SEGURANCA.md).
 
 O preview permite explicitamente o host interno `web` para os testes via Compose. Os comandos de saúde dos serviços usam Bun. Node permanece nas imagens e no setup dos deploys para respeitar os executáveis das ferramentas; não é usado para instalar pacotes.
 
 ## Firebase e deploy
 
-As imagens mantêm Node e Java 21 para a CLI e os emuladores Firebase. A CLI Firebase 15.0.0 é instalada com Bun; Hosting, Auth, Firestore e a autenticação WIF seguem a configuração existente. As variáveis `VITE_*` continuam sendo definidas antes do build de produção.
+As imagens utilizam Node e Java 21 para a CLI e os emuladores Firebase. A CLI Firebase 15.0.0 é instalada com Bun. As variáveis `VITE_*` são definidas antes do build de produção. A configuração dos ambientes e da autenticação WIF está descrita em [Implantação](IMPLANTACAO.md).
 
 Referências: [instalação congelada](https://bun.sh/docs/pm/cli/install), [scripts](https://bun.sh/docs/runtime), [Dependabot](https://docs.github.com/en/code-security/reference/supply-chain-security/supported-ecosystems-and-repositories).

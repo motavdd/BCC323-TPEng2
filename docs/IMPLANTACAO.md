@@ -9,20 +9,25 @@
 - Google Cloud: permissão para criar contas de serviço, Workload Identity Pool/Provider e conceder IAM.
 - Docker Compose V2 localmente; para executar fora do Docker, Bun 1.3.14 e Node 22.12+.
 
-**Importante:** esta documentação descreve ações que um mantenedor executará manualmente. Nenhuma delas foi executada no GitHub ou Firebase.
+## Ambientes do projeto
+
+| Ambiente | Projeto Firebase | Branch |
+|---|---|---|
+| Homologação | `spoa-eng2-staging` | `Staging` |
+| Produção | `spoa-eng2-prod` | `Master` |
+
+Os aplicativos Web, Authentication e Firestore estão configurados nos dois projetos. O cadastro e a gravação de perfis foram validados. As seções seguintes descrevem a configuração necessária à publicação automática.
 
 ## 1. Preparar os arquivos no repositório
 
-1. Crie uma Issue de infraestrutura (#4 é um ponto de partida) e uma branch `feature/4-ci-docker` a partir de `Develop`.
-2. Copie os arquivos deste pacote para a raiz do clone, **sem sobrescrever alterações recentes sem revisar**. O README deste pacote destina-se somente à `Develop`.
-3. Em `frontend/`, rode `bun install --frozen-lockfile` para instalar as versões já fixadas. Consulte `docs/BUN.md` para desenvolvimento e atualização de dependências.
-4. Versione `frontend/bun.lock` e todos os arquivos de configuração necessários.
-5. Esta cópia já remove `.github/workflows/blank.yml` (C/C++ `make`, branches minúsculas). Ao aplicar o pacote sobre um clone existente, remova também esse arquivo: copiar arquivos novos não propaga exclusões.
-6. Rode todos os testes Docker, abra PR para `Develop` e aguarde a revisão.
-7. Promova os arquivos de CI/CD para `Staging` e `Master` via PR, respeitando as proteções existentes. O workflow reutilizável deve existir na mesma revisão de código que chama o deploy.
-8. **Preserve os três READMEs:** um merge normal de `Develop` para `Staging` ou `Master` também carrega o `README.md` da origem. Na revisão de cada PR de promoção, confira o diff e restaure o README específico da branch de destino antes do merge. O GitHub não mantém READMEs diferentes automaticamente durante merges. Como alternativa futura mais sustentável, use um README compartilhado e documentação por público em `docs/`.
+1. Vincule a alteração à Issue correspondente e trabalhe em uma branch a partir de `Develop`.
+2. Em `frontend/`, execute `bun install --frozen-lockfile`. Os procedimentos de dependências estão em [Bun](BUN.md).
+3. Versione `frontend/bun.lock` e os arquivos de configuração, sem incluir arquivos `.env.*.local`.
+4. Execute os testes Docker e abra PR para `Develop`.
+5. Configure os GitHub Environments e a autenticação WIF antes de promover para `Staging` e `Master`, pois os pushes nessas branches disparam o deploy. O workflow reutilizável precisa existir na revisão que chama a publicação.
+6. Preserve o README específico da branch de destino na revisão de cada PR de promoção. Merges também incorporam alterações no `README.md` da origem.
 
-**Bootstrap:** as rulesets existentes exigem um check chamado `success`, que não corresponde aos novos jobs. Um administrador deverá ajustar essa exigência **na janela de migração**, evitando deixar o repositório travado. Não remova proteção sem planejar a substituição.
+**Checks obrigatórios:** regras que ainda exigem `success` precisam ser atualizadas para os checks `quality`, `integration` e `e2e`, após a execução do CI e a confirmação dos nomes exibidos no GitHub.
 
 ## 2. Testes no Docker
 
@@ -55,10 +60,10 @@ O container Firebase expõe portas somente no `compose.dev.yml`, limitadas a `12
 
 ## 3. Configurar Workload Identity Federation (WIF)
 
-Repetir para **cada projeto** Firebase, substituindo as variáveis. Os exemplos abaixo usam Bash e o Google Cloud CLI autenticado com permissões administrativas. São **comandos de referência**, não foram executados.
+Execute a configuração para cada projeto Firebase. Os comandos utilizam Bash e o Google Cloud CLI autenticado com permissões administrativas. Defina `PROJECT_ID` como `spoa-eng2-staging` para homologação e `spoa-eng2-prod` para produção.
 
 ```bash
-export PROJECT_ID='SUBSTITUIR_ID_FIREBASE'
+export PROJECT_ID='spoa-eng2-staging'
 export REPO='motavdd/BCC323-TPEng2'
 export PROJECT_NUMBER="$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')"
 export SA_NAME='github-hosting-deployer'
@@ -94,9 +99,9 @@ echo "projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github/p
 echo "$SA_EMAIL"
 ```
 
-Os pools/providers podem já existir: verifique antes de criá-los novamente. Recomenda-se **separar as contas de serviço** de homologação e produção, concedendo somente os papéis necessários. A restrição do provider deve ser endurecida por branch/ambiente e, quando possível, por contexto de workflow. O exemplo aceita apenas `Staging` e `Master` do repositório exato.
+Verifique a existência dos pools e providers antes da criação. Cada projeto utiliza sua própria conta de serviço, com os papéis necessários ao deploy. A condição apresentada aceita apenas as branches `Staging` e `Master` do repositório `motavdd/BCC323-TPEng2`.
 
-Para o workflow manual de regras Firestore, a conta de serviço necessita adicionalmente de permissões de publicação de regras (por exemplo `roles/firebaserules.admin`). **Preferência:** criar uma conta de serviço separada para regras, com acesso condicionado à aprovação do Environment, e atualizar `deploy-firestore.yml` para usá-la. Não ampliar desnecessariamente as permissões do deploy de Hosting.
+O workflow manual de regras Firestore utiliza a conta definida em `GCP_DEPLOY_SERVICE_ACCOUNT` e exige também permissão de publicação de regras, como `roles/firebaserules.admin`. Os papéis de Hosting apresentados acima não concedem essa permissão.
 
 ## 4. Criar GitHub Environments
 
@@ -127,7 +132,7 @@ Em **Settings → Rules → Rulesets**, após executar o primeiro CI e confirmar
 | `Staging` | Sim | 1 | `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
 | `Master` | Sim | 1–2 | `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
 
-**Estado registrado na análise anterior de 14/10/2026, não reconfirmado nesta migração:** rulesets ativas para Master e Staging; Staging exige **0 aprovações**; Master exige 1; ambas exigem contexto `success` e têm bypass explícito. Não foi listada ruleset para Develop. Revisar bypass e, se possível, restringi-lo a emergência auditável. Os checks precisam ser selecionados com os nomes exatos exibidos pelo GitHub após um workflow bem-sucedido. O CI é executado para PRs das três branches; o CD roda outra rodada de CI no push para Staging/Master antes do deploy.
+Os checks são selecionados pelos nomes exibidos no GitHub após um workflow bem-sucedido. O CI executa em PRs para as três branches; o CD executa outra rodada de CI no push para `Staging` ou `Master`. A lista de bypass define quem pode ignorar as proteções; o modo **For pull requests only** exige PR, mas ainda permite ignorar exigências ao fazer merge.
 
 **Importante:** Rulesets não impõem automaticamente que o PR para `Master` tenha origem em `Staging`, nem que o PR para `Staging` tenha origem em `Develop`. Isso deve ser verificado na revisão ou por política adicional (workflow/branch rules específicos) antes de considerar o fluxo estritamente garantido.
 
@@ -144,7 +149,7 @@ O workflow usa autenticação OIDC/WIF (`google-github-actions/auth@v3`) e a CLI
 
 **Antes de publicar a aplicação pela primeira vez**, revise `firebase/firestore.rules` e rode os testes de integração. No GitHub Actions, execute **Manual / Firestore Rules** selecionando a branch **`Staging` e target `staging`**, e depois a branch **`Master` e target `production`** (após aprovação e validação). O workflow não executa se branch e target não corresponderem. O workflow busca a versão de regras na branch `Staging` ou `Master` correspondente.
 
-**Atenção:** publicar regras via CLI substitui as regras atuais do projeto Firebase. Faça backup da configuração existente e confirme a compatibilidade com dados já armazenados. O pacote não publica índices automaticamente: `firebase/firestore.indexes.json` é apenas um placeholder inicial; índices devem ser revisados e publicados em uma mudança controlada.
+Publicar regras via CLI substitui as regras atuais do projeto Firebase. Preserve a configuração existente e confirme a compatibilidade com os dados armazenados. O workflow não publica índices: `firebase/firestore.indexes.json` contém a configuração inicial, sem índices compostos cadastrados.
 
 ## 8. Rollback e resposta a incidentes
 

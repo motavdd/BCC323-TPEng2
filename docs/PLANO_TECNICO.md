@@ -1,127 +1,86 @@
-# Plano técnico final — BCC323-TPEng2
+# Arquitetura e plano técnico — BCC323-TPEng2
 
-**Data da análise original:** 14/10/2026. **Origem registrada no material recebido:** consulta somente leitura às branches `Develop`, `Staging` e `Master` de https://github.com/motavdd/BCC323-TPEng2. As observações remotas abaixo são históricas e não foram reconfirmadas nesta migração. O estado desta cópia e as validações atuais estão em `RELATORIO_MIGRACAO_BUN.md`; o workflow C/C++ foi removido localmente.
+## 1. Estrutura do sistema
 
-## 1. Situação confirmada do repositório
+O sistema de planejamento acadêmico utiliza React, TypeScript e Vite no frontend. O navegador acessa Firebase Authentication e Cloud Firestore diretamente pelo SDK cliente. As regras do Firestore controlam o acesso aos documentos. O fluxo implementado não utiliza API própria.
 
-- Branches existentes: `Develop`, `Staging`, `Master` (letras maiúsculas).
-- Cada branch possui README com finalidade diferente. `Develop` já descreve GitFlow, mas comandos anteriores usam nomes minúsculos e o guia de execução contém placeholders. **Atenção:** merges de `Develop` para `Staging`/`Master` podem sobrescrever o README específico da branch de destino; conferir e restaurar o arquivo em cada PR de promoção.
-- Diretórios `src/`, `test/`, `bin/` e `docs/` existem, mas estão vazios (apenas `.gitkeep`).
-- Workflow `.github/workflows/blank.yml` existente é **C/C++ CI**, executa `make` e usa nomes de branch **minúsculos** (`master`, `staging`, `develop`). Não atende ao stack React/Firebase nem aos nomes reais das branches.
-- Ruleset ativo `master-protection`: 1 aprovação, sem exclusão/force-push, status obrigatório com contexto `success`, bypass explícito de usuário.
-- Ruleset ativo `staging-protection`: **0 aprovações**, sem exclusão/force-push, status obrigatório `success`, bypass explícito de usuário.
-- **Não foi encontrado ruleset para `Develop`** na listagem consultada.
-- A leitura do endpoint clássico de branch protection retornou 403 por permissão da integração; a auditoria acima se limita às rulesets acessíveis.
-- Os READMEs atuais descrevem as funcionalidades e 21 Issues de cadastro, histórico, progresso, grade e fórum.
-
-**Consequência:** os arquivos deste pacote são um *scaffold proposto*, não uma alteração já aplicada ou um build comprovadamente verde.
+O repositório é [BCC323-TPEng2](https://github.com/motavdd/BCC323-TPEng2). As branches principais são `Develop`, `Staging` e `Master`.
 
 ## 2. Arquitetura
 
 ```text
-Navegador (React + TS + Vite)
-    ├── Firebase Authentication: login e identidade
-    ├── Cloud Firestore: perfis, histórico, catálogos e planos
-    └── Firebase Hosting: SPA estática
+Navegador (React + TypeScript + Vite)
+    ├── Firebase Authentication: cadastro, login e sessão
+    └── Cloud Firestore: perfis e regras de acesso
 
-Desenvolvimento / CI (Docker Compose)
-    ├── frontend: lint + tsc + Vitest + build
-    ├── firebase: Auth Emulator + Firestore Emulator
-    ├── web: build Vite servido na rede interna
-    └── playwright: Chromium para testes E2E
+Desenvolvimento e testes (Docker Compose)
+    ├── frontend: lint, tipos, testes unitários e build
+    ├── firebase: emuladores de Authentication e Firestore
+    ├── web: aplicação servida na rede interna
+    └── playwright: teste de cadastro e saída no Chromium
 
 GitHub Actions
-    PR → CI / Docker → revisão → merge
-    Staging → CI reutilizável → aprovação/ambiente staging → Hosting homologação
-    Master → CI reutilizável → aprovação/ambiente production → Hosting produção
+    ├── PR → quality, integration e e2e
+    ├── Staging → CI → Environment staging → Firebase Hosting
+    └── Master → CI → Environment production → Firebase Hosting
 ```
 
-**Backend:** não definido. Inicialmente, operações do aluno podem usar SDK cliente Firebase + regras Firestore. A administração do catálogo pelo coordenador, privilégios, importações e integrações exigirão uma decisão sobre backend confiável (Cloud Functions/Cloud Run ou API própria), ou claims customizadas emitidas por um ambiente privilegiado. Não conceder papel de coordenador pelo frontend.
+Os fluxos de publicação dependem dos GitHub Environments, das permissões IAM e da configuração de Workload Identity Federation. A aprovação de produção depende da proteção configurada no Environment `production`.
 
-## 3. Estrutura proposta
+## 3. Organização do repositório
 
-```text
-BCC323-TPEng2/
-├── .github/
-│   ├── workflows/{ci.yml,deploy.yml,deploy-firestore.yml}
-│   ├── dependabot.yml
-│   └── pull_request_template.md
-├── docker/firebase/Dockerfile
-├── firebase/{firestore.rules,firestore.indexes.json}
-├── frontend/
-│   ├── src/{components,lib,utils,test}
-│   ├── tests/integration/
-│   ├── e2e/
-│   ├── Dockerfile.test
-│   ├── Dockerfile.e2e
-│   ├── package.json
-│   ├── bun.lock          # Versionar; instalação congelada no Docker/CI
-│   ├── vite.config.ts
-│   ├── vitest.integration.config.ts
-│   └── playwright.config.ts
-├── compose.dev.yml
-├── compose.test.yml
-├── firebase.json
-├── docs/{PLANO_TECNICO,IMPLANTACAO,SEGURANCA,DECISOES}.md
-└── README.md             # Versão proposta para Develop
-```
+| Caminho | Conteúdo |
+|---|---|
+| `frontend/src/` | Interface, inicialização do Firebase e validação de horários |
+| `frontend/tests/integration/` | Testes das regras Firestore |
+| `frontend/e2e/` | Testes de navegador |
+| `frontend/bun.lock` | Versões resolvidas das dependências |
+| `firebase/` | Regras e configuração de índices |
+| `docker/firebase/` | Imagem dos emuladores |
+| `compose.dev.yml` | Ambiente de desenvolvimento |
+| `compose.test.yml` | Ambiente isolado de testes |
+| `.github/workflows/` | CI, publicação de Hosting e publicação manual de regras |
+| `scripts/` | Instalação e execução da bateria de testes |
+| `docs/` | Documentação técnica |
+| `implementacao.md` | Funcionalidades, execução e validação |
 
-**Nota de migração:** manter os diretórios vazios do repositório durante a introdução do frontend; não mover código inexistente. Em fase posterior, `frontend/src` poderá ser dividido em `features/auth`, `features/academic`, `features/schedule`, `features/forum`, `components`, `services`, `routes` e `types`.
+## 4. Testes
 
-## 4. Estratégia de testes
+| Verificação | Escopo |
+|---|---|
+| ESLint | Análise estática |
+| TypeScript | Verificação de tipos |
+| Vitest e Testing Library | Conflitos de horário e componente de boas-vindas |
+| Integração | Autorização de acesso a perfis e catálogo |
+| Playwright | Cadastro e saída com emuladores |
+| Build | Geração da aplicação com Vite |
 
-| Categoria | Ferramenta | Gatilho | Resultado |
+A bateria completa utiliza Docker e o projeto fictício `demo-bcc323`. O navegador dos testes acessa `web:4173` e os emuladores em `firebase:8080` e `firebase:9099`. No desenvolvimento pelo navegador do computador, os serviços são acessados por `localhost`.
+
+As verificações locais foram aprovadas em 14/10/2026. O CI do PR #24 também foi concluído com sucesso. Os resultados dos testes não equivalem à validação da publicação nos ambientes remotos.
+
+## 5. Integração e publicação
+
+- `ci.yml`: PRs para `Develop`, `Staging` e `Master`, pushes em `Develop`, execução manual e chamada por outros workflows.
+- `deploy.yml`: pushes em `Staging` e `Master`; executa o CI antes do deploy de Hosting.
+- `deploy-firestore.yml`: execução manual com correspondência obrigatória entre branch e ambiente; publica apenas regras.
+- O deploy utiliza OIDC/WIF e variáveis dos GitHub Environments.
+- A promoção segue `Develop → Staging → Master`, com revisão de PR e preservação do README da branch de destino.
+
+## 6. Etapas de desenvolvimento
+
+| Fase | Escopo | Issues | Entregável |
 |---|---|---|---|
-| Lint | ESLint | PR e push Develop | Falha por problemas de estilo/qualidade |
-| Tipagem | TypeScript `tsc` | PR e push Develop | Falha por incompatibilidade de tipos |
-| Unitário/UI | Vitest + RTL | PR e push Develop | Regras de horários e componentes |
-| Integração | Firebase Emulator + Rules Unit Testing | PR e promoção | Isolamento entre usuários e acesso ao catálogo |
-| E2E | Playwright/Chromium | PR e promoção | Cadastro/logout no Auth Emulator |
-| Build | Vite | PR e promoção | SPA gerada sem erros |
-
-Todos os testes rodam em Docker. Os testes de navegador acessam `web:4173` e os emuladores `firebase:8080/9099` **de dentro da rede Docker**. No desenvolvimento local, o navegador no host acessa `localhost:5173`, e o frontend aponta para emuladores em `localhost`. Isso evita o erro clássico de resolver o hostname `firebase` no navegador do computador.
-
-**Escopo dos exemplos:** o protótipo inclui testes reais de horários, renderização, regras Firestore e fluxo de cadastro. Os casos completos de pré-requisitos, matrícula, grade, fórum e privacidade devem ser implementados quando os módulos existirem.
-
-## 5. CI/CD e regras de merge
-
-- `ci.yml`: executa em PR para qualquer branch principal, push em `Develop` e pode ser chamado como workflow reutilizável.
-- `deploy.yml`: executa em push para `Staging` ou `Master`, chama `ci.yml` novamente e só publica Hosting se **todos** os jobs passarem.
-- `deploy-firestore.yml`: execução manual, com aprovação de ambiente e checkout da branch correspondente. Publica apenas **regras**, não índices.
-- `production` deve exigir revisores no GitHub Environment. Não permitir autodeploy de PRs nem deploys em forks.
-- Não usar `FIREBASE_TOKEN` legado; usar Workload Identity Federation com contas de serviço separadas por ambiente.
-- Não usar `paths` no CI requerido: checks obrigatórios não devem ficar em estado pendente por filtro de arquivos.
-
-## 6. Planejamento de execução vinculado às Issues
-
-| Fase | Escopo | Issues relevantes | Entregável |
-|---|---|---|---|
-| 0 | Organização, Docker, CI, Firebase, README Develop | #4, #11, #12, #13, #15 | CI verde e PR de infraestrutura |
-| 1 | Autenticação e cadastro | #1, #16–#21 | Fluxo aluno autenticado com perfil |
+| 0 | Docker, CI e configuração Firebase | #4, #11, #12, #13, #15 | Infraestrutura de desenvolvimento e testes |
+| 1 | Autenticação e cadastro | #1, #16–#21 | Sessão autenticada com perfil |
 | 2 | Histórico, cursos e pré-requisitos | #2, #5 | Matriz e validação de disciplinas |
-| 3 | Painel de progresso | #3 | Progresso acadêmico calculado |
-| 4 | Simulador e agenda | #6, #7 | Grade sem choques de horários |
-| 5 | Fórum, comentários e privacidade | #8–#10 | Colaboração com regras de acesso |
-| 6 | Homologação, regressão, documentação e release | Todas | Versão aprovada em Master |
+| 3 | Painel de progresso | #3 | Cálculo de progresso acadêmico |
+| 4 | Simulador e agenda | #6, #7 | Grade com validação de horários |
+| 5 | Fórum e comentários | #8–#10 | Colaboração com controle de acesso |
+| 6 | Homologação e entrega | Todas | Versão validada em `Master` |
 
-A distribuição por pessoa e datas de sprints deve ser alinhada com o cronograma acadêmico; não foi inferida a data final de entrega.
+## 7. Escopo implementado
 
-## 7. Checklist de aceite da infraestrutura
+A interface oferece cadastro, login e saída. Os perfis são armazenados no Firestore. A verificação de conflitos de horário possui testes, mas ainda não está integrada a uma tela de montagem de grade.
 
-- [ ] `frontend/bun.lock` está versionado e `bun install --frozen-lockfile` passa.
-- [ ] `docker compose -f compose.test.yml build` conclui sem erro.
-- [ ] Lint, typecheck, unitários e build passam.
-- [ ] Integração com regras Firestore passa sem projeto real.
-- [ ] E2E no Chromium passa com Auth Emulator.
-- [ ] GitHub Actions executa em PR para `Develop`.
-- [ ] Rulesets exigem os nomes **reais** dos checks verdes.
-- [ ] `Staging` e `Master` só recebem PRs revisados.
-- [ ] Hosting de staging e produção usam **projetos Firebase distintos**.
-- [ ] Workload Identity Federation testada em cada ambiente.
-- [ ] Deploy de regras revisadas foi executado antes do uso real do Firestore.
-- [ ] `Master` exige aprovação de Environment `production`.
-- [ ] Documentação de rollback e logs está acessível.
-
-## 8. Limitações desta entrega
-
-O plano original foi validado apenas estaticamente. A migração para Bun é descrita em `docs/BUN.md`. A execução completa de integração e E2E depende de acesso ao Docker e aos emuladores; conclua o checklist acima antes de publicar.
+Histórico, matriz curricular, pré-requisitos, painel de progresso, grade persistida, fórum e administração do catálogo ainda não possuem interface. A descrição detalhada está em [Implementação](../implementacao.md).

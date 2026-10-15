@@ -1,20 +1,35 @@
-# Decisões pendentes e hipóteses explícitas
+# Decisões técnicas
 
-| Tema | Escolha provisória | Pendente para a equipe |
+| Área | Configuração do projeto |
+|---|---|
+| Frontend | React 19, TypeScript e Vite 7 |
+| Dependências | Bun 1.3.14 e lockfile `frontend/bun.lock` |
+| Runtime das ferramentas | Node.js 22.12 ou superior |
+| Comunicação com o banco | SDK cliente Firebase, sem API própria no fluxo atual |
+| Autenticação | Firebase Authentication com e-mail e senha |
+| Banco | Cloud Firestore com autorização por Security Rules |
+| Hospedagem | Workflows para Firebase Hosting estático |
+| Testes | Docker Compose, Vitest, Testing Library e Playwright |
+| Integração contínua | GitHub Actions: `quality`, `integration` e `e2e` |
+| Autenticação de implantação | Workflows com OIDC e Workload Identity Federation |
+| Branches | `Develop`, `Staging` e `Master` |
+
+## Ambientes
+
+| Ambiente | Projeto Firebase | Uso |
 |---|---|---|
-| Framework | React 19 + TypeScript + Vite 7 | Dependências fixadas em `frontend/bun.lock` |
-| Gerenciador de pacotes | Bun 1.3.14 | Usar a mesma versão localmente, no Docker e no CI |
-| Backend | Sem API própria no MVP | Definir como coordenadores terão permissões privilegiadas |
-| Autenticação | Firebase Authentication (email/senha no protótipo) | Provedores, recuperação de senha, política de contas |
-| Banco | Firestore | Coleções finais, índices, política de retenção e LGPD |
-| Hosting | Firebase Hosting estático | Criar projetos `staging` e `production`, registrar apps Web |
-| Testes | Docker + Vitest + RTL + Playwright | Metas de cobertura, casos reais por módulo |
-| CI/CD | GitHub Actions + WIF | Habilitar WIF, IAM, GitHub Environments, checks reais |
-| Regras Firestore | Perfis do próprio aluno; catálogo só leitura; demais acessos negados | Políticas de coordenação, fórum e privacidade |
-| Branches | `Develop`, `Staging`, `Master` | Revisar rulesets no remoto; C/C++ CI legado removido desta cópia |
-| Custos | Começar com menor plano que atenda às necessidades | Verificar limites atuais, WIF e requisitos de cobrança no GCP |
-| Domínio | Domínios padrão Firebase | Registrar domínios autorizados no Firebase Auth |
+| Local e testes | `demo-bcc323` | Authentication e Firestore emulados |
+| Homologação | `spoa-eng2-staging` | Validação com serviços Firebase reais |
+| Produção | `spoa-eng2-prod` | Serviços Firebase do ambiente de produção |
 
-**Não é necessário resolver o backend para implementar CI, testes de regras e frontend.** Entretanto, não lançar funcionalidade administrativa com privilégios gerenciados apenas pelo cliente.
+Os projetos de homologação e produção possuem aplicativos Web separados. As configurações locais ficam em arquivos `.env.*.local`, excluídos do versionamento. Os workflows recebem as configurações pelas variáveis dos GitHub Environments.
 
-**O lockfile do projeto é `frontend/bun.lock`.** Versione-o junto com `package.json`. Docker e Actions usam `bun install --frozen-lockfile`; para alterar dependências, use `bun add`, `bun remove` ou `bun install` e revise o diff. Node 22 continua como runtime das ferramentas; Bun gerencia a instalação e executa os scripts.
+## Autorização
+
+O usuário autenticado acessa apenas o próprio perfil e o próprio histórico de disciplinas concluídas. O catálogo permite leitura para usuários autenticados e bloqueia escrita pelo cliente. Os demais caminhos permanecem bloqueados.
+
+O sistema não implementa permissões administrativas para coordenadores. A definição de perfis privilegiados, das regras do fórum e da modelagem completa dos módulos acadêmicos permanece fora do escopo implementado.
+
+## Dependências
+
+`package.json` e `bun.lock` são versionados juntos. Docker, CI e implantação utilizam `bun install --frozen-lockfile`. A versão do Bun é definida em `.bun-version`, no manifesto do frontend e nas imagens Docker.

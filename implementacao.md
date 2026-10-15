@@ -152,20 +152,20 @@ Para executar a bateria completa em Docker, na raiz:
 
 O script completo cria os serviços de teste e, ao finalizar, remove os containers e volumes desse ambiente.
 
-**Situação da validação (14/10/2026):** o responsável confirmou a instalação, a execução local e os testes manuais. A bateria automatizada foi executada com `./scripts/test-all.ps1` em Docker e todas as verificações passaram: ESLint, TypeScript, cinco testes unitários/de componente, build, quatro testes de integração das regras Firestore e um teste de cadastro e saída no Chromium. O build emitiu um aviso de bundle acima de 500 kB, sem impedir a conclusão. Essa execução local não comprova a aprovação dos workflows no GitHub nem a configuração da implantação remota.
+**Validação em 14/10/2026:** instalação, execução local, cadastro e armazenamento de perfis foram validados. A bateria automatizada foi executada com `./scripts/test-all.ps1` em Docker e todas as verificações passaram: ESLint, TypeScript, cinco testes unitários/de componente, build, quatro testes de integração das regras Firestore e um teste de cadastro e saída no Chromium. O build emitiu um aviso de bundle acima de 500 kB, sem impedir a conclusão. O CI do PR #24 no GitHub também foi concluído com sucesso.
 
 ## 8. Integração contínua e implantação
 
 O repositório inclui workflows para verificações de qualidade, integração e testes de navegador, além de publicação no Firebase Hosting e publicação manual de regras do Firestore.
 
-A utilização desses workflows em homologação e produção depende da configuração dos projetos Firebase, das permissões de autenticação entre GitHub e Google Cloud e dos ambientes do GitHub. A execução local confirmada não comprova que a implantação remota esteja configurada ou concluída.
+Os projetos Firebase `spoa-eng2-staging` e `spoa-eng2-prod` possuem aplicativos Web, Authentication e Firestore configurados, com cadastro e gravação de perfis validados. A publicação automática depende das permissões entre GitHub e Google Cloud e dos GitHub Environments. A validação da conexão aos projetos Firebase não equivale à publicação no Hosting.
 
 Os procedimentos de implantação estão descritos em [docs/IMPLANTACAO.md](docs/IMPLANTACAO.md).
 
-## 9. Limitações e próximos passos
+## 9. Limitações da implementação
 
 O protótipo ainda não oferece interface para histórico de disciplinas, consulta de matriz curricular, pré-requisitos, painel de progresso, montagem e persistência da grade, fórum ou administração do catálogo.
 
 Também não há telas de edição de perfil ou recuperação de senha. O cadastro da conta e a gravação do perfil são operações separadas: se a gravação falhar após a criação da conta, o código atual não desfaz automaticamente o cadastro nem implementa recuperação desse perfil.
 
-Com a bateria automatizada executada e registrada, os próximos passos são definir a modelagem dos módulos acadêmicos e implementar suas interfaces e regras de negócio. A publicação deve seguir o procedimento de implantação e suas validações por ambiente.
+Os módulos acadêmicos dependem da modelagem dos dados, das interfaces e das regras de negócio correspondentes. Os procedimentos de publicação e validação por ambiente estão no guia de implantação.

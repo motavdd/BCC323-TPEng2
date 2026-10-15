@@ -42,7 +42,8 @@ Para qualidade local, em `frontend/`: `bun run lint`, `bun run typecheck`, `bun 
 - [Desenvolvimento, dependências e Bun](docs/BUN.md)
 - [Implantação e GitHub Actions](docs/IMPLANTACAO.md)
 - [Segurança e avaliação do override gRPC](docs/SEGURANCA.md)
-- [Plano técnico e contexto anterior](docs/PLANO_TECNICO.md)
-- [Relatório desta migração](docs/RELATORIO_MIGRACAO_BUN.md)
+- [Arquitetura e plano técnico](docs/PLANO_TECNICO.md)
+- [Decisões técnicas](docs/DECISOES.md)
+- [Implementação](implementacao.md)
 
-Os workflows locais preservam CI e deploy de Hosting/regras. Publicar esta cópia ou configurar GitHub/Firebase requer uma ação posterior do mantenedor. Este pacote foi preparado sem commits, push ou alterações remotas.
+Os workflows executam testes no GitHub Actions e definem a publicação no Firebase Hosting. A implantação depende dos GitHub Environments e da autenticação com o Google Cloud, descritos no guia de implantação.
