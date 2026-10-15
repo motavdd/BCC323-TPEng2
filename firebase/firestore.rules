@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function validProfile() {
+      return request.resource.data.keys().hasOnly(['displayName', 'course', 'period', 'createdAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 100
+        && request.resource.data.course is string
+        && request.resource.data.course.size() > 0
+        && request.resource.data.course.size() <= 100
+        && request.resource.data.period is int
+        && request.resource.data.period >= 1
+        && request.resource.data.period <= 20;
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId)
+        && validProfile()
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner(userId)
+        && validProfile()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName', 'course', 'period']);
+      allow delete: if false;
+
+      match /completedCourses/{courseId} {
+        allow get, list: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+          && request.resource.data.keys().hasOnly(['completedAt'])
+          && request.resource.data.completedAt is timestamp;
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // Catálogo inicialmente somente leitura; cadastro/alteração requer
+    // API privilegiada ou regras com claims de coordenador ainda a definir.
+    match /courses/{courseId} {
+      allow get, list: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Fórum e grade: fechados até a modelagem de visibilidade/permissões.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
