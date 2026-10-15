@@ -124,4 +124,3 @@ As configurações locais `.env.*.local` não são versionadas. No GitHub Action
 - [Desenvolvimento, dependências e Bun](docs/BUN.md)
 - [Implantação e GitHub Actions](docs/IMPLANTACAO.md)
 - [Decisões técnicas](docs/DECISOES.md)
-- [Implementação](implementacao.md)
