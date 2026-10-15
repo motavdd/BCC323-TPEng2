@@ -41,7 +41,7 @@ jobs:
       FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
     steps:
       - name: Checkout trusted branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.target == 'production' && 'Master' || 'Staging' }}
       - name: Authenticate using Workload Identity Federation
@@ -52,7 +52,7 @@ jobs:
           project_id: ${{ vars.FIREBASE_PROJECT_ID }}
           create_credentials_file: true
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: Setup Bun
