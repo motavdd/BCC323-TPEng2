@@ -1,0 +1,70 @@
+name: bcc323-test
+services:
+  firebase:
+    build:
+      context: .
+      dockerfile: docker/firebase/Dockerfile
+    healthcheck:
+      test:
+        - CMD
+        - bun
+        - -e
+        - "Promise.all([fetch('http://127.0.0.1:8080'),fetch('http://127.0.0.1:9099')]).then(()=>process.exit(0)).catch(()=>process.exit(1))"
+      interval: 5s
+      timeout: 4s
+      retries: 30
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    depends_on:
+      firebase:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      FIRESTORE_EMULATOR_HOST: firebase:8080
+      FIRESTORE_RULES_PATH: /firebase/firestore.rules
+      FIREBASE_PROJECT_ID: demo-bcc323
+    volumes:
+      - ./firebase/firestore.rules:/firebase/firestore.rules:ro
+    command: ["bun", "run", "test:integration"]
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    depends_on:
+      firebase:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      VITE_USE_EMULATORS: "true"
+      VITE_FIREBASE_EMULATOR_HOST: firebase
+      VITE_FIREBASE_PROJECT_ID: demo-bcc323
+      VITE_FIREBASE_API_KEY: demo-key
+      VITE_FIREBASE_AUTH_DOMAIN: demo-bcc323.firebaseapp.com
+      VITE_FIREBASE_APP_ID: "1:123456789:web:demo"
+    command: ["sh", "-c", "bun run build && bun run preview --host 0.0.0.0 --port 4173"]
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://127.0.0.1:4173').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+      start_period: 10s
+
+  playwright:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.e2e
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      CI: "true"
+      E2E_BASE_URL: http://web:4173
+    volumes:
+      - ./frontend/playwright-report:/app/playwright-report
+      - ./frontend/test-results:/app/test-results
+    command: ["bun", "run", "test:e2e"]
