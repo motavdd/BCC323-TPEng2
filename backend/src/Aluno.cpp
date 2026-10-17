@@ -3,6 +3,7 @@
 #include "../include/DisciplinaImpl.hpp"
 #include <algorithm>
 
+//CONSTRUTORES
 AlunoImpl::AlunoImpl() : UsuarioImpl() {
     this->curso = nullptr;
     this->periodoAtual = 1;
@@ -12,16 +13,19 @@ AlunoImpl::AlunoImpl(int id, std::string nome, std::string email, std::string se
                      Curso* curso, int periodoAtual)
     : UsuarioImpl(id, nome, email, senha), curso(curso), periodoAtual(periodoAtual) {}
 
+//DESTRUTOR
 AlunoImpl::~AlunoImpl() {
     //limpa os vetores, sem destruir as disciplinas
     concluidas.clear();
     emAndamento.clear();
 }
 
+//Busca se uma disviplina pertence ao vetor de disciĺinas
 bool AlunoImpl::contem(const std::vector<Disciplina*>& v, Disciplina* d) {
     return std::find(v.begin(), v.end(), d) != v.end();
 }
 
+//Verifica se uma disciplina possui pre requisitos
 bool AlunoImpl::preRequisitosCumpridos(Disciplina* d) const {
     for (auto pre : d->getPreRequisitos()) {
         if (!contem(concluidas, pre)) {
@@ -31,22 +35,23 @@ bool AlunoImpl::preRequisitosCumpridos(Disciplina* d) const {
     return true;
 }
 
+//Set e get de curso
 void AlunoImpl::setCurso(Curso* curso) { 
     this->curso = curso; 
 }
-
 Curso* AlunoImpl::getCurso() const { 
     return this->curso; 
 }
 
+//set e get de periodo atual
 void AlunoImpl::setPeriodoAtual(int periodo) { 
     this->periodoAtual = periodo; 
 }
-
 int AlunoImpl::getPeriodoAtual() const { 
     return this->periodoAtual; 
 }
 
+//Marcar disciplina como concluída
 void AlunoImpl::marcarConcluida(Disciplina* d) {
     if (d == nullptr) {
         return;
@@ -57,6 +62,7 @@ void AlunoImpl::marcarConcluida(Disciplina* d) {
     }
 }
 
+//desmaca uma disciplina 
 void AlunoImpl::desmarcarConcluida(Disciplina* d) {
     auto it = std::find(concluidas.begin(), concluidas.end(), d);
     if (it != concluidas.end()) {
@@ -64,6 +70,7 @@ void AlunoImpl::desmarcarConcluida(Disciplina* d) {
     }
 }
 
+//Marca uma disciplina como em andamento
 void AlunoImpl::marcarEmAndamento(Disciplina* d) {
     if (d == nullptr || contem(concluidas, d)) {
         return;
@@ -73,6 +80,7 @@ void AlunoImpl::marcarEmAndamento(Disciplina* d) {
     }
 }
 
+//desmarca uma disciplina em andamento
 void AlunoImpl::desmarcarEmAndamento(Disciplina* d) {
     auto it = std::find(emAndamento.begin(), emAndamento.end(), d);
     if (it != emAndamento.end()) {
@@ -80,14 +88,16 @@ void AlunoImpl::desmarcarEmAndamento(Disciplina* d) {
     }
 }
 
+//retorna um vetor de disciplinas concluídas
 std::vector<Disciplina*> AlunoImpl::getConcluidas() const { 
     return this->concluidas; 
 }
-
+//retorna as disciplinas em andamento
 std::vector<Disciplina*> AlunoImpl::getEmAndamento() const { 
     return this->emAndamento; 
 }
 
+//retorna as disciplinas disposníveis baseado nos estados da disciplina
 std::vector<Disciplina*> AlunoImpl::getDisponiveis() const {
     std::vector<Disciplina*> resultado;
     if (curso == nullptr) {
@@ -101,6 +111,7 @@ std::vector<Disciplina*> AlunoImpl::getDisponiveis() const {
     return resultado;
 }
 
+//atribui estados as disciplinas
 EstadoDisciplina AlunoImpl::getEstado(Disciplina* d) const {
     if (contem(concluidas, d)) {
         return EstadoDisciplina::Concluida;
@@ -114,6 +125,7 @@ EstadoDisciplina AlunoImpl::getEstado(Disciplina* d) const {
     return EstadoDisciplina::Bloqueada;
 }
 
+//retorna o progresso do aluno
 double AlunoImpl::getProgresso() const {
     if (curso == nullptr || curso->getCargaTotal() == 0) {
         return 0.0;
@@ -128,13 +140,15 @@ double AlunoImpl::getProgresso() const {
     return 100.0 * feita / curso->getCargaTotal();
 }
 
+//Constrtutor de copia
 AlunoImpl::AlunoImpl(const AlunoImpl& a) : Usuario(), UsuarioImpl(a), Aluno() {
     this->curso = a.curso;
     this->periodoAtual = a.periodoAtual;
-    this->concluidas = a.concluidas; //copia os ponteiros
+    this->concluidas = a.concluidas; 
     this->emAndamento = a.emAndamento;
 }
 
+//Operrador igual
 AlunoImpl& AlunoImpl::operator=(const AlunoImpl& a) {
     if (&a != this) {
         UsuarioImpl::operator=(a);
