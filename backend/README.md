@@ -40,6 +40,14 @@ acessar dados; essa integração ainda não está implementada.
 
 ## Testes
 
+No Linux, prepare com `bash scripts/setup-local.sh` e inicie com
+`bash scripts/dev-local.sh backend`. O executável fica em
+`backend/build/linux/bin/bcc323-api`. Para os testes HTTP:
+
+```bash
+python3 backend/test/smoke.py backend/build/linux/bin/bcc323-api
+```
+
 A bateria existente do CI compila e executa CTest em Docker. Na raiz:
 
 ```sh

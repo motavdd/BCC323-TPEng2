@@ -16,9 +16,11 @@ git pull --ff-only origin Develop
 
 Instale os pré-requisitos e execute o setup descritos em
 [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md#preparar-no-windows-x64).
-O setup fornece Node, Ninja, Java, dependências e emuladores. Para Linux/macOS,
-use a [alternativa Docker](AMBIENTE.md#alternativa-com-docker); os scripts nativos
-foram preparados para Windows x64.
+No Windows, o setup fornece Node, Ninja e Java portáteis. No Linux, instale os
+[pré-requisitos nativos](DESENVOLVIMENTO_LOCAL.md#preparar-no-linux) e use os
+[comandos equivalentes em Bash](DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
+Ambos instalam dependências e preparam os emuladores. Para macOS, use a
+[alternativa Docker](AMBIENTE.md#alternativa-com-docker).
 
 ```powershell
 ./scripts/setup-local.ps1

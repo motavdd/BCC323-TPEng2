@@ -41,6 +41,10 @@ A raiz não tem `package.json`; comandos Bun diretos são executados em `fronten
 
 ## Antes de enviar
 
+No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh SERVICO`
+e `bash scripts/check-local.sh`. Pré-requisitos e equivalências:
+[Linux e Windows](docs/DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
+
 Execute `./scripts/check-local.ps1` e valide o comportamento da tarefa.
 A integração nativa, com os três serviços ativos, usa
 `./scripts/check-local.ps1 -Integration` e limpa dados do Firestore emulado.

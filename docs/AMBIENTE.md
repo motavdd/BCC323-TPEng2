@@ -1,6 +1,8 @@
 # Ambiente — React + C++ + Firebase
 
 O fluxo principal usa os três serviços diretamente no Windows x64. Siga [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md) para preparar, iniciar e validar.
+Linux também possui scripts Bash para execução nativa, conforme a
+[tabela por sistema](DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
 Bun instala dependências e executa os scripts do frontend, conforme [BUN.md](BUN.md).
 
 ## Formas de execução

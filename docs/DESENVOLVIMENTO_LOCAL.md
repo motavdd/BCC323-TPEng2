@@ -36,7 +36,58 @@ Para redes com inspeção HTTPS, o script gera um arquivo de autoridades públic
 já confiáveis no Windows em `.tools/ca-windows.pem`. Bun e Node usam esse arquivo
 somente nos processos iniciados pelos scripts. A verificação TLS permanece ativa.
 
+## Preparar no Linux
+
+Use Bash com Git, Bun na versão de `.bun-version`, Node 22.12+, Java 21+,
+CMake 3.24+, Ninja e G++ instalados no PATH. Python 3 é opcional para os testes
+HTTP do backend. O setup Linux não usa `sudo` nem instala ferramentas globais.
+
+No Ubuntu/Debian, as ferramentas de compilação podem ser instaladas com
+`sudo apt-get install git build-essential cmake ninja-build python3`.
+Instale também Bun, Node e Java nas versões indicadas acima; confira com
+`bun --version`, `node --version` e `java -version`.
+
+Na raiz:
+
+```bash
+bash scripts/setup-local.sh
+```
+
+O script verifica os pré-requisitos, instala os pacotes pelos lockfiles,
+compila o backend em `backend/build/linux/` e baixa o emulador Firestore.
+O cache de compilação Windows permanece em `backend/build/native/`.
+Use instalações de dependências próprias de cada sistema: ao trocar o sistema
+de uma cópia compartilhada, execute o setup novamente. Prefira cópias separadas
+para Windows e Linux/WSL para não compartilhar pacotes binários de `node_modules`.
+
+## Comandos por sistema
+
+Execute a partir da raiz. Use um terminal para cada serviço:
+
+| Objetivo | Windows (PowerShell) | Linux (Bash) |
+|---|---|---|
+| Preparar | `./scripts/setup-local.ps1` | `bash scripts/setup-local.sh` |
+| Firebase | `./scripts/dev-local.ps1 firebase` | `bash scripts/dev-local.sh firebase` |
+| Backend | `./scripts/dev-local.ps1 backend` | `bash scripts/dev-local.sh backend` |
+| Frontend | `./scripts/dev-local.ps1 frontend` | `bash scripts/dev-local.sh frontend` |
+| Verificação rápida | `./scripts/check-local.ps1` | `bash scripts/check-local.sh` |
+| Integração com serviços ativos | `./scripts/check-local.ps1 -Integration` | `bash scripts/check-local.sh --integration` |
+| Bateria Docker | `./scripts/test-all.ps1` | `bash scripts/test-all.sh` |
+
+Os endereços e dados emulados são os mesmos nos dois sistemas. No Linux,
+Playwright também precisa das bibliotecas de sistema do Chromium. Se reportar
+dependências ausentes, com o setup concluído, execute em `frontend/`:
+
+```bash
+node node_modules/@playwright/test/cli.js install-deps chromium
+```
+
+Esse instalador pode solicitar privilégios administrativos para instalar pacotes
+do sistema. Depois, execute novamente a integração pelo script.
+
 ## Iniciar os três serviços
+
+Os exemplos abaixo usam Windows. No Linux, use os equivalentes da tabela acima.
 
 Se o ambiente Docker anterior estiver em execução, pare-o primeiro para liberar
 as mesmas portas. Isso é necessário somente na troca de ambiente:
