@@ -1,14 +1,46 @@
 # Arquitetura e plano técnico — BCC323-TPEng2
 
-## 1. Estrutura do sistema
+Este documento concentra a arquitetura, as tecnologias e a sequência de desenvolvimento.
+As funcionalidades entregues e os resultados de validação estão em
+[Implementação atual](../implementacao.md). O roteiro de trabalho está no
+[guia da equipe](CONTRIBUICAO.md).
 
-O sistema de planejamento acadêmico utiliza React, TypeScript, Vite e Tailwind CSS no frontend. O navegador acessa Firebase Authentication e Cloud Firestore diretamente pelo SDK cliente. As regras do Firestore controlam o acesso aos documentos. A preparação inclui um serviço C++17 com Crow e CMake, acessível pelo proxy `/api` do Vite. A API oferece somente verificação de funcionamento; o fluxo de cadastro e perfis ainda não a utiliza.
+## 1. Tecnologias e responsabilidades
 
-Os comandos e limites desta preparação estão em [AMBIENTE.md](AMBIENTE.md).
-O fluxo principal da equipe é [nativo no Windows](DESENVOLVIMENTO_LOCAL.md),
-com Firebase emulado localmente; o Docker padroniza a bateria integrada no CI.
 
-O repositório é [BCC323-TPEng2](https://github.com/motavdd/BCC323-TPEng2). As branches principais são `Develop`, `Staging` e `Master`.
+| Tecnologia | Aplicação no projeto |
+|---|---|
+| React 19 | Construção da interface e controle do estado dos componentes |
+| TypeScript | Tipagem do código e verificação estática |
+| Vite 7 | Servidor de desenvolvimento e geração da aplicação para publicação |
+| Tailwind CSS 4 | Base de estilos integrada ao Vite; as telas atuais ainda usam estilos inline |
+| Bun 1.3.14 | Instalação de dependências e execução dos scripts |
+| Node.js | Runtime das ferramentas; 22.23.3 portátil no fluxo nativo e Node 22 no CI |
+| C++17 e Crow 1.3.0 | Serviço HTTP inicial para futuras funcionalidades acadêmicas |
+| CMake, Ninja e GCC | Compilação do backend nativo no Windows |
+| Java 21 | Execução do emulador Firestore |
+| Firebase Authentication | Cadastro e autenticação por e-mail e senha |
+| Cloud Firestore | Armazenamento dos perfis dos usuários |
+| Firebase Emulator Suite | Execução local de Authentication e Firestore |
+| Docker Compose | Bateria integrada no CI e alternativa de execução local |
+| ESLint, Vitest e Testing Library | Análise estática e testes unitários e de componentes |
+| Playwright | Testes de fluxo no navegador |
+| GitHub Actions | Workflows de integração contínua e implantação |
+
+As dependências do frontend estão em `frontend/bun.lock`; o Firebase CLI 15.0.0
+local é definido por `tools/package.json` e `tools/bun.lock`. Os manifestos e os
+lockfiles correspondentes são versionados juntos. Bun instala ambos; não há
+manifesto de pacotes na raiz.
+
+O frontend acessa Authentication e Firestore pelo SDK cliente. A autorização dos
+documentos é feita pelas Security Rules; o C++ ainda não participa desse fluxo.
+A API possui somente a rota pública de saúde. Rotas privadas exigirão validação
+de tokens no servidor; não há permissões administrativas para coordenadores.
+
+O backend separa inicialização (`main.cpp`), configuração (`config.*`) e rotas
+(`routes.*`). O contrato HTTP e a configuração estão no
+[guia do backend](../backend/README.md). Os detalhes de instalação e atualização
+de dependências ficam em [Bun](BUN.md).
 
 ## 2. Arquitetura
 
@@ -37,14 +69,25 @@ GitHub Actions
     └── Master → CI → Environment production → Firebase Hosting
 ```
 
-Os fluxos de publicação dependem dos GitHub Environments, das permissões IAM e da configuração de Workload Identity Federation. A aprovação de produção depende da proteção configurada no Environment `production`.
+O desenvolvimento principal é nativo no Windows; Docker padroniza a bateria
+integrada do CI e é uma alternativa local. Endereços, persistência e diferenças
+entre os modos estão em [Ambiente](AMBIENTE.md).
+
+O proxy Vite não acompanha o build estático. Os workflows publicam o frontend no
+Firebase Hosting; a hospedagem do C++ e o encaminhamento remoto de `/api` estão
+pendentes. A implantação usa OIDC/WIF e GitHub Environments, com configurações
+separadas para homologação e produção. Projetos, variáveis, revisão de produção
+e proteção de branches estão descritos em [Implantação](IMPLANTACAO.md).
 
 ## 3. Organização do repositório
+
 
 | Caminho | Conteúdo |
 |---|---|
 | `frontend/src/` | Interface, inicialização do Firebase e validação de horários |
 | `backend/` | API C++/Crow, CMake, Dockerfile e testes HTTP |
+| `backend/src/config.*` | Configuração de endereço e porta do processo |
+| `backend/src/routes.*` | Registro das rotas, saúde e erros HTTP em JSON |
 | `frontend/tests/integration/` | Testes das regras Firestore |
 | `frontend/e2e/` | Testes de navegador |
 | `frontend/bun.lock` | Versões resolvidas das dependências |
@@ -58,41 +101,10 @@ Os fluxos de publicação dependem dos GitHub Environments, das permissões IAM 
 | `tools/` | Firebase CLI local e lockfile das ferramentas |
 | `firebase.local.json` | Emuladores nativos e painel, vinculados a loopback |
 | `docs/` | Documentação técnica |
-| `implementacao.md` | Funcionalidades, execução e validação |
+| `implementacao.md` | Funcionalidades, limitações e histórico de validação |
 
-## 4. Testes
+## 4. Etapas de desenvolvimento
 
-| Verificação | Escopo |
-|---|---|
-| ESLint | Análise estática |
-| CMake e CTest | Compilação C++ e contrato HTTP do serviço |
-| TypeScript | Verificação de tipos |
-| Vitest e Testing Library | Conflitos de horário e componente de boas-vindas |
-| Integração | Autorização de acesso a perfis e catálogo |
-| Playwright | Cadastro e saída com emuladores; encaminhamento frontend → C++ |
-| Build | Geração da aplicação com Vite |
-
-A verificação rápida nativa usa `check-local.ps1`; com `-Integration` inclui regras
-Firestore e navegador, com os três serviços ativos. A bateria do CI utiliza Docker
-e o projeto fictício `demo-bcc323`. No Docker, o navegador dos testes acessa `web:4173`
-e os emuladores em `firebase:8080` e `firebase:9099`. O ambiente nativo usa loopback,
-conforme [Ambiente](AMBIENTE.md).
-
-As verificações da base anterior e o CI do PR #24 foram registrados como aprovados
-em 14/10/2026, antes de C++ e Tailwind. A validação local de 15/10/2026 está em
-[Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md#validação-desta-preparação).
-O workflow atualizado ainda precisa executar no GitHub após o envio do PR.
-Os resultados locais não comprovam publicação nos ambientes remotos.
-
-## 5. Integração e publicação
-
-- `ci.yml`: PRs para `Develop`, `Staging` e `Master`, pushes em `Develop`, execução manual e chamada por outros workflows.
-- `deploy.yml`: pushes em `Staging` e `Master`; executa o CI antes do deploy de Hosting.
-- `deploy-firestore.yml`: execução manual com correspondência obrigatória entre branch e ambiente; publica apenas regras.
-- O deploy utiliza OIDC/WIF e variáveis dos GitHub Environments.
-- A promoção segue `Develop → Staging → Master`, com revisão de PR e preservação do README da branch de destino.
-
-## 6. Etapas de desenvolvimento
 
 | Fase | Escopo | Issues | Entregável |
 |---|---|---|---|
@@ -104,8 +116,14 @@ Os resultados locais não comprovam publicação nos ambientes remotos.
 | 5 | Fórum e comentários | #8–#10 | Colaboração com controle de acesso |
 | 6 | Homologação e entrega | Todas | Versão validada em `Master` |
 
-## 7. Escopo implementado
+As fases representam o planejamento, não a conclusão das Issues. Consulte a
+[implementação atual](../implementacao.md) e o
+[quadro da equipe](https://github.com/users/motavdd/projects/7) antes de iniciar uma tarefa.
 
-A interface oferece cadastro, login e saída. Os perfis são armazenados no Firestore. A verificação de conflitos de horário possui testes, mas ainda não está integrada a uma tela de montagem de grade.
+## 5. Guias de execução e validação
 
-Histórico, matriz curricular, pré-requisitos, painel de progresso, grade persistida, fórum e administração do catálogo ainda não possuem interface. A descrição detalhada está em [Implementação](../implementacao.md).
+- [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md): setup, serviços e verificações nativas.
+- [Contribuição](CONTRIBUICAO.md#4-validar-a-alteração): testes por tipo de mudança.
+- [Backend](../backend/README.md#testes): testes do processo HTTP.
+- [Implantação](IMPLANTACAO.md): CI, bateria Docker e publicação.
+- [Implementação atual](../implementacao.md): cobertura e histórico das validações.

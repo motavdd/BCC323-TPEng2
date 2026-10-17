@@ -18,10 +18,11 @@ Use somente as verificações aplicáveis à alteração:
 - Verificação rápida no Windows: `./scripts/check-local.ps1`.
 - Integração nativa com os três serviços ativos: `./scripts/check-local.ps1 -Integration`.
 - Alternativa completa em Docker: `./scripts/test-all.ps1` ou `bash scripts/test-all.sh`.
+- Backend: a verificação rápida apenas compila C++; descreva também os testes HTTP executados, conforme `backend/README.md`.
 - Para documentação, confira links e instruções; descreva essa validação.
 
 Os testes de regras limpam o Firestore emulado do projeto de demonstração.
-Consulte [o guia local](../docs/DESENVOLVIMENTO_LOCAL.md) para iniciar os serviços.
+Consulte o [guia da equipe](https://github.com/motavdd/BCC323-TPEng2/blob/Develop/docs/CONTRIBUICAO.md) para o fluxo da tarefa e `docs/DESENVOLVIMENTO_LOCAL.md` para iniciar os serviços.
 
 O CI executa em Docker; não é necessário executar Docker localmente para abrir o PR.
 

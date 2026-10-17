@@ -26,7 +26,7 @@ FetchContent_Declare(crow
 )
 FetchContent_MakeAvailable(crow)
 
-add_executable(bcc323-api src/main.cpp)
+add_executable(bcc323-api src/main.cpp src/config.cpp src/routes.cpp)
 target_link_libraries(bcc323-api PRIVATE Crow::Crow)
 if(WIN32)
     target_link_libraries(bcc323-api PRIVATE ws2_32 mswsock)

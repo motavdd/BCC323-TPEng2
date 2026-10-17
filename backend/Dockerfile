@@ -19,6 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && useradd --system --uid 10001 --create-home app
 COPY --from=build /app/build/bcc323-api /usr/local/bin/bcc323-api
 USER app
-ENV PORT=8081
+ENV HOST=0.0.0.0 PORT=8081
 EXPOSE 8081
 CMD ["bcc323-api"]

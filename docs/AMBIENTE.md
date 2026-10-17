@@ -39,6 +39,9 @@ O navegador solicita `/api` na origem do frontend. O Vite encaminha para `API_PR
 O CI usa nomes internos de serviços, conforme `compose.test.yml`.
 
 O backend aceita `PORT` entre 1 e 65535; o padrão é 8081. O script local fixa 8081.
+`HOST` aceita um endereço IPv4 ou IPv6 e usa `127.0.0.1` por padrão; a imagem
+Docker define `0.0.0.0` para permitir acesso entre containers. A organização
+das rotas, os erros JSON e os testes estão no [guia do backend](../backend/README.md).
 Alterar essa porta exige ajustar o inicializador, o proxy e, no Docker, o mapeamento e o healthcheck.
 
 ## Alternativa com Docker

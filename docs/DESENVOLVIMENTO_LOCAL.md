@@ -1,8 +1,8 @@
 # Desenvolvimento local sem Docker
 
-O fluxo segue a separação observada no TerraPlanner: desenvolvimento direto no
-computador, verificações rápidas antes do envio e validação integrada no CI.
-Neste projeto, acrescentamos o serviço C++ e os emuladores Firebase locais.
+O desenvolvimento usa React, C++ e emuladores Firebase diretamente no computador,
+com verificações antes do envio e validação integrada no CI. Para escolher uma
+tarefa e localizar o código, siga o [guia da equipe](CONTRIBUICAO.md).
 
 ## Preparar no Windows x64
 
@@ -28,8 +28,9 @@ Execute novamente o setup após mudanças nos manifestos ou lockfiles. A primeir
 execução exige internet para baixar ferramentas, pacotes e bibliotecas.
 
 Crow e Asio são obtidos pelo CMake na primeira configuração. O build nativo fica
-em `backend/build/native`. Python não é necessário para desenvolver; os testes
-HTTP de CTest continuam executados pelo Docker no CI.
+em `backend/build/native`. Python não é necessário para iniciar o projeto.
+Os testes HTTP rodam no Docker do CI; para executá-los diretamente no computador,
+instale Python 3 e siga o [guia do backend](../backend/README.md#testes).
 
 Para redes com inspeção HTTPS, o script gera um arquivo de autoridades públicas
 já confiáveis no Windows em `.tools/ca-windows.pem`. Bun e Node usam esse arquivo
@@ -144,15 +145,8 @@ O Compose de desenvolvimento permanece disponível como alternativa. Docker não
 
 ## Validação desta preparação
 
-Em 15/10/2026, a preparação e a compilação foram executadas no Windows x64.
-`check-local.ps1 -Integration` passou: lint, tipos, cinco testes unitários/de
-componente, build, quatro testes das regras Firestore e dois testes Playwright.
-Frontend → C++ e o painel Firebase responderam localmente. A exportação dos dados
-dos emuladores foi confirmada. O build mantém o aviso existente de bundle JavaScript
-acima de 500 kB, sem falhar.
-
-O teste HTTP do backend em Docker também passou após a adaptação para Windows.
-A execução do workflow atualizado no GitHub e a configuração dos checks obrigatórios
-dependem do envio do PR e das permissões do mantenedor.
+As datas, os resultados e os limites de cada rodada de testes estão no
+[histórico de validação](../implementacao.md#4-cobertura-e-histórico-de-validação).
+Esses registros não substituem a execução dos testes nas novas alterações.
 
 Referência: [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite/install_and_configure).
