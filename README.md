@@ -1,126 +1,62 @@
-# BCC323-TPEng2 — Guia de Desenvolvimento (`Develop`)
+# BCC323-TPEng2 — Desenvolvimento (`Develop`)
 
-Protótipo de planejamento acadêmico com React, TypeScript, Vite e Firebase. O gerenciador de pacotes é **Bun 1.3.14**; o lockfile do frontend é `frontend/bun.lock`.
+Protótipo de planejamento acadêmico com React, TypeScript, Tailwind CSS,
+C++/Crow e Firebase. A base oferece cadastro, login, perfis e uma API de saúde;
+as funcionalidades acadêmicas estão em desenvolvimento.
 
-- [Repositório](https://github.com/motavdd/BCC323-TPEng2)
-- [Quadro Kanban](https://github.com/users/motavdd/projects/7)
+Comece pelo [guia de contribuição da equipe](docs/CONTRIBUICAO.md), com o roteiro
+da primeira execução até o PR. Consulte o [índice de documentação](docs/README.md)
+para encontrar os guias de cada área.
+
+- [Quadro da equipe](https://github.com/users/motavdd/projects/7)
 - [Issues](https://github.com/motavdd/BCC323-TPEng2/issues)
 
-## Branches e responsabilidades
+## Início rápido
 
-| Branch | Finalidade | Origem dos PRs |
-|---|---|---|
-| `Develop` | Integração do desenvolvimento | Branches de trabalho |
-| `Staging` | Homologação | `Develop` |
-| `Master` | Versão estável | `Staging` |
+No Windows x64, instale Git, Bun 1.3.14, CMake e GCC/MinGW UCRT64 conforme
+[Desenvolvimento local](docs/DESENVOLVIMENTO_LOCAL.md). O setup fornece Node,
+Ninja e Java portáteis. Na raiz da cópia do repositório:
 
-Os nomes das branches diferenciam maiúsculas e minúsculas. O fluxo de promoção é `Develop → Staging → Master`. A origem de cada PR de promoção é conferida na revisão; os Rulesets não garantem essa sequência automaticamente.
-
-Este README é o guia de desenvolvimento. Nas promoções, o PR deve preservar o README específico da branch de destino.
-
-## Preparar o repositório
-
-```sh
-git clone https://github.com/motavdd/BCC323-TPEng2.git
-cd BCC323-TPEng2
+```powershell
 git switch Develop
 git pull --ff-only origin Develop
+./scripts/setup-local.ps1
 ```
 
-## Executar com Docker
+Inicie um serviço por terminal, sempre na raiz:
 
-Requer Docker Desktop ou Docker Engine com Compose V2:
-
-```sh
-docker compose -f compose.dev.yml up --build
+```powershell
+# Terminal 1
+./scripts/dev-local.ps1 firebase
+# Terminal 2
+./scripts/dev-local.ps1 backend
+# Terminal 3
+./scripts/dev-local.ps1 frontend
 ```
 
-Abra http://localhost:5173. Auth e Firestore usam o projeto de demonstração `demo-bcc323`, sem credenciais de produção.
+Abra a [aplicação local](http://127.0.0.1:5173) e confira a
+[API pelo proxy](http://127.0.0.1:5173/api/health).
+Para Docker ou modo híbrido, siga [Ambiente](docs/AMBIENTE.md).
+A raiz não tem `package.json`; comandos Bun diretos são executados em `frontend/`.
 
-## Executar o frontend localmente
+## Linux
 
-Instale Bun 1.3.14 e Node 22.12+ (runtime das ferramentas). Na raiz, inicie os emuladores:
+No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh SERVICO`
+e `bash scripts/check-local.sh`. Pré-requisitos e equivalências:
+[Linux e Windows](docs/DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
 
-```sh
-docker compose -f compose.dev.yml up --build firebase
-```
+## Antes de enviar
 
-Em outro terminal:
+Execute `./scripts/check-local.ps1` e valide o comportamento da tarefa.
+A integração nativa, com os três serviços ativos, usa
+`./scripts/check-local.ps1 -Integration` e limpa dados do Firestore emulado.
+Alterações no C++ também exigem os [testes HTTP do backend](backend/README.md#testes).
 
-```sh
-cd frontend
-cp .env.example .env.local
-bun install --frozen-lockfile
-bun run dev
-```
+Trabalhe em uma branch da tarefa e abra PR para `Develop`. Aguarde os checks
+`backend`, `quality`, `integration` e `e2e` e a revisão antes do merge.
+O fluxo completo e os testes por área estão no [guia da equipe](docs/CONTRIBUICAO.md).
 
-Copie o arquivo de exemplo apenas se `.env.local` ainda não existir. No PowerShell, use `Copy-Item .env.example .env.local`.
-
-Os emuladores usam dados fictícios. O ambiente de desenvolvimento não configura persistência desses dados entre recriações dos containers.
-
-## Validar
-
-Na raiz, execute `bash scripts/test-all.sh` ou, no PowerShell, `./scripts/test-all.ps1`. A bateria inclui lint, TypeScript, testes unitários, build, regras Firestore e cadastro/logout no Chromium com emuladores.
-
-Para qualidade local, em `frontend/`: `bun run lint`, `bun run typecheck`, `bun run test:unit` e `bun run build`. Use `bun run build` para executar o build do projeto.
-
-## Fluxo de contribuição
-
-1. Selecione uma Issue e confira o responsável, os critérios de aceite e o status no Kanban.
-2. Atualize `Develop` e crie uma branch de trabalho:
-
-   ```sh
-   git switch Develop
-   git pull --ff-only origin Develop
-   git switch -c feature/16-formulario-cadastro
-   ```
-
-3. Implemente a alteração e atualize a documentação e os testes correspondentes.
-4. Execute a bateria de testes com os emuladores, utilizando dados fictícios.
-5. Faça o commit e envie a branch de trabalho ao GitHub.
-6. Abra um PR para `Develop`, vincule a Issue e solicite a revisão de um colega.
-7. Aguarde os checks e as aprovações exigidas antes do merge. Atualize o Kanban após a integração.
-
-As branches de trabalho utilizam o formato `<tipo>/<numero-da-issue>-<resumo>`, com prefixos `feature/`, `fix/`, `docs/`, `test/`, `refactor/` ou `chore/`.
-
-## Critérios de aprovação do PR
-
-- [ ] A alteração atende aos critérios da Issue vinculada.
-- [ ] Os checks `quality`, `integration` e `e2e` passaram.
-- [ ] Os testes verificam os comportamentos afetados.
-- [ ] A documentação corresponde à implementação.
-- [ ] O diff não contém senhas, tokens, chaves de conta de serviço ou dados pessoais de usuários.
-- [ ] O PR possui a aprovação exigida pelo Ruleset da branch.
-
-## Estrutura do repositório
-
-| Caminho | Responsabilidade |
-|---|---|
-| `frontend/src/` | Interface React, integração Firebase e lógica de horários |
-| `frontend/tests/integration/` | Testes das regras Firestore |
-| `frontend/e2e/` | Testes de navegador com Playwright |
-| `firebase/` | Regras de acesso e configuração de índices |
-| `docker/firebase/` | Imagem dos emuladores |
-| `compose.dev.yml` | Ambiente de desenvolvimento |
-| `compose.test.yml` | Ambiente isolado de testes |
-| `.github/workflows/` | Integração contínua e publicação |
-| `scripts/` | Scripts de instalação e testes |
-| `docs/` | Documentação técnica |
-
-## Ambientes e publicação
-
-| Ambiente | Projeto Firebase | Finalidade |
-|---|---|---|
-| Local e CI | `demo-bcc323` | Testes com emuladores e dados fictícios |
-| Homologação | `spoa-eng2-staging` | Validação com Firebase real |
-| Produção | `spoa-eng2-prod` | Ambiente de produção |
-
-A publicação no Firebase Hosting é definida pelos workflows de `Staging` e `Master` e depende dos GitHub Environments e da autenticação com o Google Cloud. O deploy de Hosting executa o CI antes da publicação. A aprovação de produção é configurada no Environment `production`. As regras Firestore possuem workflow manual separado.
-
-As configurações locais `.env.*.local` não são versionadas. No GitHub Actions, as configurações Web do Firebase são fornecidas pelas variáveis de cada Environment.
-
-## Documentação
-
-- [Desenvolvimento, dependências e Bun](docs/BUN.md)
-- [Implantação e GitHub Actions](docs/IMPLANTACAO.md)
-- [Decisões técnicas](docs/DECISOES.md)
+A promoção segue `Develop → Staging → Master`, respeitando maiúsculas e
+minúsculas. Nos PRs de promoção, preserve o README específico da branch de destino.
+As proteções e a publicação são descritas em [Implantação](docs/IMPLANTACAO.md).
+Os workflows atuais publicam somente o frontend; a hospedagem da API C++ está pendente.

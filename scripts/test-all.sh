@@ -3,6 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 trap 'docker compose -f compose.test.yml down -v --remove-orphans' EXIT
 docker compose -f compose.test.yml build
+docker compose -f compose.test.yml run --rm --no-deps backend-test
 for task in lint typecheck test:unit build; do
   docker compose -f compose.test.yml run --rm --no-deps frontend bun run "$task"
 done

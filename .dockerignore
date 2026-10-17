@@ -8,3 +8,6 @@
 !**/.env.example
 **/*debug.log
 **/gha-creds-*.json
+**/build
+.tools
+.firebase-data

@@ -1,5 +1,20 @@
 name: bcc323-test
 services:
+  backend-test:
+    build:
+      context: ./backend
+      target: test
+
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8081/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   firebase:
     build:
       context: .
@@ -36,9 +51,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.test
     depends_on:
+      backend:
+        condition: service_healthy
       firebase:
         condition: service_healthy
     environment:
+      API_PROXY_TARGET: http://backend:8081
       CI: "true"
       VITE_USE_EMULATORS: "true"
       VITE_FIREBASE_EMULATOR_HOST: firebase
