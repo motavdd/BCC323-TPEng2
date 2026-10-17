@@ -1,0 +1,221 @@
+\hypertarget{classUsuario}{}\doxysection{Usuario Class Reference}
+\label{classUsuario}\index{Usuario@{Usuario}}
+
+
+Essa classe representa a interface da classe Ususario.  
+
+
+
+
+{\ttfamily \#include $<$Usuario.\+hpp$>$}
+
+
+
+Inheritance diagram for Usuario\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=316pt]{classUsuario__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classUsuario_a4bb88f88163049cafd25e0840cb7034b}\label{classUsuario_a4bb88f88163049cafd25e0840cb7034b}} 
+virtual \mbox{\hyperlink{classUsuario_a4bb88f88163049cafd25e0840cb7034b}{$\sim$\+Usuario}} ()
+\begin{DoxyCompactList}\small\item\em Destrtutor. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classUsuario_a980638910d7043afdaa425702a2658c9}{set\+Id}} (int)=0
+\begin{DoxyCompactList}\small\item\em Configurar o id. \end{DoxyCompactList}\item 
+virtual int \mbox{\hyperlink{classUsuario_abb6cf7f35139844ffb409e3465c627c9}{get\+Id}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o id. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classUsuario_ada0a6204370acd9e1a9192624906159a}{set\+Nome}} (std\+::string)=0
+\begin{DoxyCompactList}\small\item\em Configura o nome. \end{DoxyCompactList}\item 
+virtual std\+::string \mbox{\hyperlink{classUsuario_ad135c2b8cf219125e38015be9f60f7f1}{get\+Nome}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o nome. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classUsuario_a06fa4772eb9cac94ab32b2f8fa2faeb7}{set\+Email}} (std\+::string)=0
+\begin{DoxyCompactList}\small\item\em Configura o email. \end{DoxyCompactList}\item 
+virtual std\+::string \mbox{\hyperlink{classUsuario_a939c111509e39700038e8b673a5e60f9}{get\+Email}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o email. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classUsuario_ad817a4c5fcb4c608ccdff141de791e73}{set\+Senha}} (std\+::string)=0
+\begin{DoxyCompactList}\small\item\em Configura a senha. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classUsuario_a86307fe41db7d2a848990987143bd0ff}{autenticar}} (std\+::string) const =0
+\begin{DoxyCompactList}\small\item\em verificar se a senha é a correta e autenticar. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Essa classe representa a interface da classe Ususario. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classUsuario_a86307fe41db7d2a848990987143bd0ff}\label{classUsuario_a86307fe41db7d2a848990987143bd0ff}} 
+\index{Usuario@{Usuario}!autenticar@{autenticar}}
+\index{autenticar@{autenticar}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{autenticar()}{autenticar()}}
+{\footnotesize\ttfamily virtual bool Usuario\+::autenticar (\begin{DoxyParamCaption}\item[{std\+::string}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+verificar se a senha é a correta e autenticar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em senha} & a senha a ser verificada. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool -\/ retorna true se a senha for igual. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_a7236ec9725974b44c1472cf30589be3d}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_a939c111509e39700038e8b673a5e60f9}\label{classUsuario_a939c111509e39700038e8b673a5e60f9}} 
+\index{Usuario@{Usuario}!getEmail@{getEmail}}
+\index{getEmail@{getEmail}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{getEmail()}{getEmail()}}
+{\footnotesize\ttfamily virtual std\+::string Usuario\+::get\+Email (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o email. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+string -\/ o email do usuário. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_acdd7650f115cea6df163ee25f1450ef1}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_abb6cf7f35139844ffb409e3465c627c9}\label{classUsuario_abb6cf7f35139844ffb409e3465c627c9}} 
+\index{Usuario@{Usuario}!getId@{getId}}
+\index{getId@{getId}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{getId()}{getId()}}
+{\footnotesize\ttfamily virtual int Usuario\+::get\+Id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o id. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+int -\/ o id do Usuário. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_a7c67dffb6b15da946e9efcff172fffd7}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_ad135c2b8cf219125e38015be9f60f7f1}\label{classUsuario_ad135c2b8cf219125e38015be9f60f7f1}} 
+\index{Usuario@{Usuario}!getNome@{getNome}}
+\index{getNome@{getNome}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{getNome()}{getNome()}}
+{\footnotesize\ttfamily virtual std\+::string Usuario\+::get\+Nome (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o nome. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+string -\/ nome do usuário. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_a8b7c98808e163433dce8c53b20c8f091}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_a06fa4772eb9cac94ab32b2f8fa2faeb7}\label{classUsuario_a06fa4772eb9cac94ab32b2f8fa2faeb7}} 
+\index{Usuario@{Usuario}!setEmail@{setEmail}}
+\index{setEmail@{setEmail}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{setEmail()}{setEmail()}}
+{\footnotesize\ttfamily virtual void Usuario\+::set\+Email (\begin{DoxyParamCaption}\item[{std\+::string}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configura o email. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em email} & o email do usuário. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_a8fdea8bcd2f027cf56a66bd6fcca4644}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_a980638910d7043afdaa425702a2658c9}\label{classUsuario_a980638910d7043afdaa425702a2658c9}} 
+\index{Usuario@{Usuario}!setId@{setId}}
+\index{setId@{setId}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{setId()}{setId()}}
+{\footnotesize\ttfamily virtual void Usuario\+::set\+Id (\begin{DoxyParamCaption}\item[{int}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configurar o id. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em id} & o id do usuário. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_ab18a5398737b6564f9e141c1e4815ede}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_ada0a6204370acd9e1a9192624906159a}\label{classUsuario_ada0a6204370acd9e1a9192624906159a}} 
+\index{Usuario@{Usuario}!setNome@{setNome}}
+\index{setNome@{setNome}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{setNome()}{setNome()}}
+{\footnotesize\ttfamily virtual void Usuario\+::set\+Nome (\begin{DoxyParamCaption}\item[{std\+::string}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configura o nome. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em nome} & o nome do Usuário. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_adb85cf984306fe865acc61a25ea87192}{Usuario\+Impl}}.
+
+\mbox{\Hypertarget{classUsuario_ad817a4c5fcb4c608ccdff141de791e73}\label{classUsuario_ad817a4c5fcb4c608ccdff141de791e73}} 
+\index{Usuario@{Usuario}!setSenha@{setSenha}}
+\index{setSenha@{setSenha}!Usuario@{Usuario}}
+\doxysubsubsection{\texorpdfstring{setSenha()}{setSenha()}}
+{\footnotesize\ttfamily virtual void Usuario\+::set\+Senha (\begin{DoxyParamCaption}\item[{std\+::string}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configura a senha. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em senha} & a senha. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{classUsuarioImpl_a153808cb1d9896198c7393e10edc8f95}{Usuario\+Impl}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/cesar/\+BCC323-\/\+TPEng2/backend/include/Usuario.\+hpp\end{DoxyCompactItemize}

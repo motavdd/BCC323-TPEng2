@@ -1,0 +1,43 @@
+\label{index_md__home_cesar_BCC323_TPEng2_README}%
+\Hypertarget{index_md__home_cesar_BCC323_TPEng2_README}%
+ Protótipo de planejamento acadêmico com React, Type\+Script, Tailwind CSS, C++/\+Crow e Firebase. A base oferece cadastro, login, perfis e uma API de saúde; as funcionalidades acadêmicas estão em desenvolvimento.
+
+Comece pelo guia de contribuição da equipe, com o roteiro da primeira execução até o PR. Consulte o índice de documentação para encontrar os guias de cada área.
+
+
+\begin{DoxyItemize}
+\item \href{https://github.com/users/motavdd/projects/7}{\texttt{ Quadro da equipe}}
+\item \href{https://github.com/motavdd/BCC323-TPEng2/issues}{\texttt{ Issues}}
+\end{DoxyItemize}\hypertarget{index_autotoc_md1}{}\doxysection{Início rápido}\label{index_autotoc_md1}
+No Windows x64, instale Git, Bun 1.\+3.\+14, CMake e GCC/\+Min\+GW UCRT64 conforme Desenvolvimento local. O setup fornece Node, Ninja e Java portáteis. Na raiz da cópia do repositório\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git switch Develop}
+\DoxyCodeLine{git pull -\/-\/ff-\/only origin Develop}
+\DoxyCodeLine{./scripts/setup-\/local.ps1}
+
+\end{DoxyCode}
+
+
+Inicie um serviço por terminal, sempre na raiz\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\# Terminal 1}
+\DoxyCodeLine{./scripts/dev-\/local.ps1 firebase}
+\DoxyCodeLine{\# Terminal 2}
+\DoxyCodeLine{./scripts/dev-\/local.ps1 backend}
+\DoxyCodeLine{\# Terminal 3}
+\DoxyCodeLine{./scripts/dev-\/local.ps1 frontend}
+
+\end{DoxyCode}
+
+
+Abra a \href{http://127.0.0.1:5173}{\texttt{ aplicação local}} e confira a \href{http://127.0.0.1:5173/api/health}{\texttt{ API pelo proxy}}. Para Docker ou modo híbrido, siga Ambiente. A raiz não tem {\ttfamily package.\+json}; comandos Bun diretos são executados em {\ttfamily frontend/}.\hypertarget{index_autotoc_md2}{}\doxysection{Linux}\label{index_autotoc_md2}
+No Linux, use {\ttfamily bash scripts/setup-\/local.\+sh}, {\ttfamily bash scripts/dev-\/local.\+sh SERVICO} e {\ttfamily bash scripts/check-\/local.\+sh}. Pré-\/requisitos e equivalências\+: \href{docs/DESENVOLVIMENTO_LOCAL.md\#comandos-por-sistema}{\texttt{ Linux e Windows}}.\hypertarget{index_autotoc_md3}{}\doxysection{Antes de enviar}\label{index_autotoc_md3}
+Execute {\ttfamily ./scripts/check-\/local.ps1} e valide o comportamento da tarefa. A integração nativa, com os três serviços ativos, usa {\ttfamily ./scripts/check-\/local.ps1 -\/Integration} e limpa dados do Firestore emulado. Alterações no C++ também exigem os \href{backend/README.md\#testes}{\texttt{ testes HTTP do backend}}.
+
+Trabalhe em uma branch da tarefa e abra PR para {\ttfamily Develop}. Aguarde os checks {\ttfamily backend}, {\ttfamily quality}, {\ttfamily integration} e {\ttfamily e2e} e a revisão antes do merge. O fluxo completo e os testes por área estão no guia da equipe.
+
+A promoção segue {\ttfamily Develop → Staging → Master}, respeitando maiúsculas e minúsculas. Nos PRs de promoção, preserve o README específico da branch de destino. As proteções e a publicação são descritas em Implantação. Os workflows atuais publicam somente o frontend; a hospedagem da API C++ está pendente. 
