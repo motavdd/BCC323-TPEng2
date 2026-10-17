@@ -27,6 +27,10 @@ FetchContent_Declare(crow
 FetchContent_MakeAvailable(crow)
 
 add_executable(bcc323-api src/main.cpp src/config.cpp src/routes.cpp)
+target_include_directories(bcc323-api PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set_target_properties(bcc323-api PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin/$<0:>"
+)
 target_link_libraries(bcc323-api PRIVATE Crow::Crow)
 if(WIN32)
     target_link_libraries(bcc323-api PRIVATE ws2_32 mswsock)

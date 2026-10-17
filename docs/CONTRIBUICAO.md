@@ -67,7 +67,7 @@ Abra o PR para `Develop`; as promoções para `Staging` e `Master` seguem um flu
 | Interface | `frontend/src/App.tsx`, `components/`, `styles.css` | Cadastro, login e saída; Tailwind disponível |
 | Firebase no navegador | `frontend/src/lib/firebase.ts` | Authentication e Firestore pelo SDK cliente |
 | Regras de negócio existentes | `frontend/src/utils/schedule.ts` | Comparação de horários, ainda sem tela de grade |
-| API C++ | `backend/src/main.cpp`, `config.*`, `routes.*` | Inicialização, configuração, saúde e erros HTTP |
+| API C++ | `backend/src/` e `backend/include/` | Implementações e cabeçalhos de inicialização, configuração e rotas |
 | Permissões do banco | `firebase/firestore.rules` | Validação e autorização dos documentos |
 | Ferramentas e testes | `scripts/`, `compose.test.yml`, `.github/workflows/ci.yml` | Execução local e CI |
 
@@ -93,6 +93,8 @@ Siga o [guia do backend](../backend/README.md). `main.cpp` inicia o processo;
 `config.*` concentra configuração; `routes.*` registra os endpoints.
 Crie módulos por funcionalidade conforme necessário e inclua os novos arquivos
 `.cpp` no alvo de `backend/CMakeLists.txt`. Mantenha o contrato de `/api/health`.
+Os cabeçalhos `.hpp` ficam em `backend/include/`; o executável nativo é gerado
+em `backend/build/native/bin/`, já ignorado pelo Git.
 
 Para cada endpoint novo, defina método, caminho, entrada, resposta, erros e quem
 pode acessá-lo. Inclua testes de comportamento. Se usar o tratamento atual de 405,

@@ -16,7 +16,7 @@ try {
             Build-LocalBackend
             $env:PORT = '8081'
             $env:HOST = '127.0.0.1'
-            Invoke-Checked "$taskBuild/bcc323-api.exe" @()
+            Invoke-Checked "$taskBuild/bin/bcc323-api.exe" @()
         }
         frontend {
             Set-LocalFrontendEnvironment

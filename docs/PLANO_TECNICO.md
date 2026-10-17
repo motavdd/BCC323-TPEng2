@@ -86,8 +86,10 @@ e proteção de branches estão descritos em [Implantação](IMPLANTACAO.md).
 |---|---|
 | `frontend/src/` | Interface, inicialização do Firebase e validação de horários |
 | `backend/` | API C++/Crow, CMake, Dockerfile e testes HTTP |
-| `backend/src/config.*` | Configuração de endereço e porta do processo |
-| `backend/src/routes.*` | Registro das rotas, saúde e erros HTTP em JSON |
+| `backend/include/` | Cabeçalhos próprios da API |
+| `backend/src/config.cpp` | Configuração de endereço e porta do processo |
+| `backend/src/routes.cpp` | Registro das rotas, saúde e erros HTTP em JSON |
+| `backend/build/native/bin/` | Executável nativo gerado, ignorado pelo Git |
 | `frontend/tests/integration/` | Testes das regras Firestore |
 | `frontend/e2e/` | Testes de navegador |
 | `frontend/bun.lock` | Versões resolvidas das dependências |

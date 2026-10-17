@@ -20,8 +20,10 @@ Configurações inválidas encerram o processo com código de erro.
 ## Organização
 
 - `src/main.cpp`: inicialização do processo.
-- `src/config.*`: leitura e validação de configuração.
-- `src/routes.*`: registro de rotas e respostas de erro.
+- `include/`: cabeçalhos próprios (`config.hpp` e `routes.hpp`).
+- `src/config.cpp`: leitura e validação de configuração.
+- `src/routes.cpp`: registro de rotas e respostas de erro.
+- `build/native/bin/`: executável gerado na compilação nativa; ignorado pelo Git.
 - `test/smoke.py`: contrato HTTP e validação de configuração no processo real.
 
 `GET /api/health` retorna `{"status":"ok","service":"bcc323-api"}` e não
@@ -48,7 +50,7 @@ docker compose -f compose.test.yml run --rm --no-deps backend-test
 Para testar o binário nativo já compilado, com Python 3 instalado:
 
 ```powershell
-python backend/test/smoke.py backend/build/native/bcc323-api.exe
+python backend/test/smoke.py backend/build/native/bin/bcc323-api.exe
 ```
 
 O teste escolhe uma porta livre e encerra seu próprio processo. Não precisa
