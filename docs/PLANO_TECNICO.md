@@ -50,7 +50,7 @@ Navegador (React + TypeScript + Vite)
     ├── Cloud Firestore: perfis e regras de acesso
     └── /api via proxy Vite → C++/Crow: verificação de funcionamento
 
-Desenvolvimento principal (Windows nativo)
+Desenvolvimento nativo (Windows/PowerShell ou Linux/Bash)
     ├── Bun: dependências e scripts de React/Vite
     ├── CMake + Ninja + GCC: compilação do C++
     └── Firebase CLI + Node + Java: emuladores e painel local
@@ -69,7 +69,7 @@ GitHub Actions
     └── Master → CI → Environment production → Firebase Hosting
 ```
 
-O desenvolvimento principal é nativo no Windows; Docker padroniza a bateria
+O desenvolvimento nativo usa scripts PowerShell no Windows e Bash no Linux; Docker padroniza a bateria
 integrada do CI e é uma alternativa local. Endereços, persistência e diferenças
 entre os modos estão em [Ambiente](AMBIENTE.md).
 

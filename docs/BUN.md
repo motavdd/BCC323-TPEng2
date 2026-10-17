@@ -15,6 +15,8 @@ Os scripts PowerShell preparam o ambiente e chamam essas mesmas ferramentas.
 
 O setup nativo fornece Node.js 22.23.3 portátil em `.tools/`. Os scripts locais carregam esse runtime no PATH de seus processos. Em execução manual fora deles, use Node 22.12 ou superior.
 As imagens e os workflows também incluem Node; os pacotes são instalados com Bun, sem npm. Não é necessário adicionar `--bun` aos comandos.
+No Linux, os scripts `.sh` usam Node, Java, Ninja e compilador instalados no PATH.
+Consulte os [pré-requisitos Linux](DESENVOLVIMENTO_LOCAL.md#preparar-no-linux).
 
 ## Comandos do frontend
 

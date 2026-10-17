@@ -39,11 +39,13 @@ Abra a [aplicação local](http://127.0.0.1:5173) e confira a
 Para Docker ou modo híbrido, siga [Ambiente](docs/AMBIENTE.md).
 A raiz não tem `package.json`; comandos Bun diretos são executados em `frontend/`.
 
-## Antes de enviar
+## Linux
 
 No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh SERVICO`
 e `bash scripts/check-local.sh`. Pré-requisitos e equivalências:
 [Linux e Windows](docs/DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
+
+## Antes de enviar
 
 Execute `./scripts/check-local.ps1` e valide o comportamento da tarefa.
 A integração nativa, com os três serviços ativos, usa

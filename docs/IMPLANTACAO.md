@@ -38,6 +38,11 @@ ou Rulesets. As seções seguintes descrevem como preparar e conferir a publica�
 
 ## 2. Testes no Docker
 
+Além dos quatro checks da bateria Docker, o job `linux-native` verifica o setup,
+a compilação, a qualidade do frontend e os testes HTTP pelos scripts Bash no
+Ubuntu. Os checks obrigatórios da política existente continuam sendo os quatro
+listados neste guia; a exigência do novo job depende da configuração do Ruleset.
+
 ```bash
 # Compilar os serviços e validar o backend C++
 docker compose -f compose.test.yml build
