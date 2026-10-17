@@ -18,3 +18,4 @@ backend/build/
 __pycache__/
 .tools/
 .firebase-data/
+.vs/
