@@ -1,5 +1,17 @@
 name: bcc323-dev
 services:
+  backend:
+    build:
+      context: ./backend
+      target: runtime
+    ports:
+      - "127.0.0.1:8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8081/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   firebase:
     build:
       context: .
@@ -19,11 +31,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.test
     depends_on:
+      backend:
+        condition: service_healthy
       firebase:
         condition: service_healthy
     ports:
       - "127.0.0.1:5173:5173"
     environment:
+      API_PROXY_TARGET: http://backend:8081
       VITE_USE_EMULATORS: "true"
       VITE_FIREBASE_EMULATOR_HOST: localhost
       VITE_FIREBASE_PROJECT_ID: demo-bcc323

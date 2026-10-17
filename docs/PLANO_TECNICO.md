@@ -2,7 +2,11 @@
 
 ## 1. Estrutura do sistema
 
-O sistema de planejamento acadêmico utiliza React, TypeScript e Vite no frontend. O navegador acessa Firebase Authentication e Cloud Firestore diretamente pelo SDK cliente. As regras do Firestore controlam o acesso aos documentos. O fluxo implementado não utiliza API própria.
+O sistema de planejamento acadêmico utiliza React, TypeScript, Vite e Tailwind CSS no frontend. O navegador acessa Firebase Authentication e Cloud Firestore diretamente pelo SDK cliente. As regras do Firestore controlam o acesso aos documentos. A preparação inclui um serviço C++17 com Crow e CMake, acessível pelo proxy `/api` do Vite. A API oferece somente verificação de funcionamento; o fluxo de cadastro e perfis ainda não a utiliza.
+
+Os comandos e limites desta preparação estão em [AMBIENTE.md](AMBIENTE.md).
+O fluxo principal da equipe é [nativo no Windows](DESENVOLVIMENTO_LOCAL.md),
+com Firebase emulado localmente; o Docker padroniza a bateria integrada no CI.
 
 O repositório é [BCC323-TPEng2](https://github.com/motavdd/BCC323-TPEng2). As branches principais são `Develop`, `Staging` e `Master`.
 
@@ -11,16 +15,24 @@ O repositório é [BCC323-TPEng2](https://github.com/motavdd/BCC323-TPEng2). As 
 ```text
 Navegador (React + TypeScript + Vite)
     ├── Firebase Authentication: cadastro, login e sessão
-    └── Cloud Firestore: perfis e regras de acesso
+    ├── Cloud Firestore: perfis e regras de acesso
+    └── /api via proxy Vite → C++/Crow: verificação de funcionamento
 
-Desenvolvimento e testes (Docker Compose)
+Desenvolvimento principal (Windows nativo)
+    ├── Bun: dependências e scripts de React/Vite
+    ├── CMake + Ninja + GCC: compilação do C++
+    └── Firebase CLI + Node + Java: emuladores e painel local
+
+CI e alternativa local (Docker Compose)
+    ├── backend-test: compilação C++ e testes HTTP via CTest
+    ├── backend: serviço C++ para os testes integrados
     ├── frontend: lint, tipos, testes unitários e build
     ├── firebase: emuladores de Authentication e Firestore
     ├── web: aplicação servida na rede interna
-    └── playwright: teste de cadastro e saída no Chromium
+    └── playwright: cadastro/saída e comunicação frontend → C++
 
 GitHub Actions
-    ├── PR → quality, integration e e2e
+    ├── PR → backend, quality, integration e e2e
     ├── Staging → CI → Environment staging → Firebase Hosting
     └── Master → CI → Environment production → Firebase Hosting
 ```
@@ -32,15 +44,19 @@ Os fluxos de publicação dependem dos GitHub Environments, das permissões IAM 
 | Caminho | Conteúdo |
 |---|---|
 | `frontend/src/` | Interface, inicialização do Firebase e validação de horários |
+| `backend/` | API C++/Crow, CMake, Dockerfile e testes HTTP |
 | `frontend/tests/integration/` | Testes das regras Firestore |
 | `frontend/e2e/` | Testes de navegador |
 | `frontend/bun.lock` | Versões resolvidas das dependências |
+| `tools/bun.lock` | Versões resolvidas das ferramentas Firebase locais |
 | `firebase/` | Regras e configuração de índices |
 | `docker/firebase/` | Imagem dos emuladores |
-| `compose.dev.yml` | Ambiente de desenvolvimento |
+| `compose.dev.yml` | Alternativa de desenvolvimento em Docker |
 | `compose.test.yml` | Ambiente isolado de testes |
 | `.github/workflows/` | CI, publicação de Hosting e publicação manual de regras |
 | `scripts/` | Instalação e execução da bateria de testes |
+| `tools/` | Firebase CLI local e lockfile das ferramentas |
+| `firebase.local.json` | Emuladores nativos e painel, vinculados a loopback |
 | `docs/` | Documentação técnica |
 | `implementacao.md` | Funcionalidades, execução e validação |
 
@@ -49,15 +65,24 @@ Os fluxos de publicação dependem dos GitHub Environments, das permissões IAM 
 | Verificação | Escopo |
 |---|---|
 | ESLint | Análise estática |
+| CMake e CTest | Compilação C++ e contrato HTTP do serviço |
 | TypeScript | Verificação de tipos |
 | Vitest e Testing Library | Conflitos de horário e componente de boas-vindas |
 | Integração | Autorização de acesso a perfis e catálogo |
-| Playwright | Cadastro e saída com emuladores |
+| Playwright | Cadastro e saída com emuladores; encaminhamento frontend → C++ |
 | Build | Geração da aplicação com Vite |
 
-A bateria completa utiliza Docker e o projeto fictício `demo-bcc323`. O navegador dos testes acessa `web:4173` e os emuladores em `firebase:8080` e `firebase:9099`. No desenvolvimento pelo navegador do computador, os serviços são acessados por `localhost`.
+A verificação rápida nativa usa `check-local.ps1`; com `-Integration` inclui regras
+Firestore e navegador, com os três serviços ativos. A bateria do CI utiliza Docker
+e o projeto fictício `demo-bcc323`. No Docker, o navegador dos testes acessa `web:4173`
+e os emuladores em `firebase:8080` e `firebase:9099`. O ambiente nativo usa loopback,
+conforme [Ambiente](AMBIENTE.md).
 
-As verificações locais foram aprovadas em 14/10/2026. O CI do PR #24 também foi concluído com sucesso. Os resultados dos testes não equivalem à validação da publicação nos ambientes remotos.
+As verificações da base anterior e o CI do PR #24 foram registrados como aprovados
+em 14/10/2026, antes de C++ e Tailwind. A validação local de 15/10/2026 está em
+[Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md#validação-desta-preparação).
+O workflow atualizado ainda precisa executar no GitHub após o envio do PR.
+Os resultados locais não comprovam publicação nos ambientes remotos.
 
 ## 5. Integração e publicação
 
@@ -71,7 +96,7 @@ As verificações locais foram aprovadas em 14/10/2026. O CI do PR #24 também f
 
 | Fase | Escopo | Issues | Entregável |
 |---|---|---|---|
-| 0 | Docker, CI e configuração Firebase | #4, #11, #12, #13, #15 | Infraestrutura de desenvolvimento e testes |
+| 0 | Ambiente nativo, Docker no CI e Firebase local | #4, #11, #12, #13, #15 | Infraestrutura de desenvolvimento e testes |
 | 1 | Autenticação e cadastro | #1, #16–#21 | Sessão autenticada com perfil |
 | 2 | Histórico, cursos e pré-requisitos | #2, #5 | Matriz e validação de disciplinas |
 | 3 | Painel de progresso | #3 | Cálculo de progresso acadêmico |

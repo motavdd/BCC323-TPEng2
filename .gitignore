@@ -1,4 +1,4 @@
-# Adições propostas; conciliar com o .gitignore existente.
+# Dependências, artefatos gerados, configurações locais e credenciais.
 node_modules/
 frontend/dist/
 frontend/coverage/
@@ -14,3 +14,7 @@ ui-debug.log
 .firebase/
 *credentials*.json
 gha-creds-*.json
+backend/build/
+__pycache__/
+.tools/
+.firebase-data/
