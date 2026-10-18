@@ -41,6 +41,8 @@ public:
      * * @return CoordenadorImpl& 
      */
     CoordenadorImpl& operator=(const CoordenadorImpl& c);
+
+    friend class Unit_Coordenador;
 };
 
 #endif
