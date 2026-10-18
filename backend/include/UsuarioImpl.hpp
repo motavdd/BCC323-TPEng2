@@ -52,6 +52,8 @@ public:
      * * @return UsuarioImpl& 
      */
     UsuarioImpl& operator=(const UsuarioImpl& u);
+
+    friend class Unit_Usuario; //Para os testes unitários
 };
 
 
