@@ -1,0 +1,184 @@
+\hypertarget{classCoordenadorImpl}{}\doxysection{Coordenador\+Impl Class Reference}
+\label{classCoordenadorImpl}\index{CoordenadorImpl@{CoordenadorImpl}}
+
+
+Essa classe representa a implementação da classe concreta do \mbox{\hyperlink{classCoordenador}{Coordenador}}.  
+
+
+
+
+{\ttfamily \#include $<$Coordenador\+Impl.\+hpp$>$}
+
+
+
+Inheritance diagram for Coordenador\+Impl\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{classCoordenadorImpl__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Coordenador\+Impl\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{classCoordenadorImpl__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classCoordenadorImpl_ac9a66607765930f4b4c2a034e2d40cf3}\label{classCoordenadorImpl_ac9a66607765930f4b4c2a034e2d40cf3}} 
+\mbox{\hyperlink{classCoordenadorImpl_ac9a66607765930f4b4c2a034e2d40cf3}{Coordenador\+Impl}} ()
+\begin{DoxyCompactList}\small\item\em Construtor por default. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classCoordenadorImpl_a370974ed5dab485a337c76b5dfebcbea}{Coordenador\+Impl}} (int \mbox{\hyperlink{classUsuarioImpl_a8e6859394e3039f29fd821a35c5615b2}{id}}, std\+::string \mbox{\hyperlink{classUsuarioImpl_ac67b5953bfd01ac4536d36c1ac0c693d}{nome}}, std\+::string \mbox{\hyperlink{classUsuarioImpl_a01bb8f246e1cfc715fec268dd019c81d}{email}}, std\+::string senha, Curso $\ast$\mbox{\hyperlink{classCoordenadorImpl_a565d48af8852b0a55e2d7f425ec90e66}{curso}})
+\begin{DoxyCompactList}\small\item\em Construtor Parametrizado. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCoordenadorImpl_aa9971f92150ed34a1a479876519c656f}\label{classCoordenadorImpl_aa9971f92150ed34a1a479876519c656f}} 
+virtual \mbox{\hyperlink{classCoordenadorImpl_aa9971f92150ed34a1a479876519c656f}{$\sim$\+Coordenador\+Impl}} ()
+\begin{DoxyCompactList}\small\item\em Destrutor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classCoordenadorImpl_ac6680d962d9050b32bc886a5f8ad26ce}{set\+Curso}} (Curso $\ast$\mbox{\hyperlink{classCoordenadorImpl_a565d48af8852b0a55e2d7f425ec90e66}{curso}}) override
+\begin{DoxyCompactList}\small\item\em Configurar o Curso. \end{DoxyCompactList}\item 
+Curso $\ast$ \mbox{\hyperlink{classCoordenadorImpl_a2232c8f803b4eb6170ec9207edaa06c5}{get\+Curso}} () const override
+\begin{DoxyCompactList}\small\item\em Retorna o Curso. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classCoordenadorImpl_aa0a12270523a82723a569203d8dfb3a4}{Coordenador\+Impl}} (const \mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \&c)
+\begin{DoxyCompactList}\small\item\em Construtor por copia. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \& \mbox{\hyperlink{classCoordenadorImpl_aeafa5762d442da9ed90e4abc763eb515}{operator=}} (const \mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \&c)
+\begin{DoxyCompactList}\small\item\em Operador de igualdade. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Curso $\ast$ \mbox{\hyperlink{classCoordenadorImpl_a565d48af8852b0a55e2d7f425ec90e66}{curso}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Essa classe representa a implementação da classe concreta do \mbox{\hyperlink{classCoordenador}{Coordenador}}. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classCoordenadorImpl_a370974ed5dab485a337c76b5dfebcbea}\label{classCoordenadorImpl_a370974ed5dab485a337c76b5dfebcbea}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!CoordenadorImpl@{CoordenadorImpl}}
+\index{CoordenadorImpl@{CoordenadorImpl}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{CoordenadorImpl()}{CoordenadorImpl()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Coordenador\+Impl\+::\+Coordenador\+Impl (\begin{DoxyParamCaption}\item[{int}]{id,  }\item[{std\+::string}]{nome,  }\item[{std\+::string}]{email,  }\item[{std\+::string}]{senha,  }\item[{Curso $\ast$}]{curso }\end{DoxyParamCaption})}
+
+
+
+Construtor Parametrizado. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & Id. \\
+\hline
+{\em nome} & Nome do \mbox{\hyperlink{classCoordenador}{Coordenador}}. \\
+\hline
+{\em email} & Email do \mbox{\hyperlink{classCoordenador}{Coordenador}}. \\
+\hline
+{\em senha} & Senha. \\
+\hline
+{\em curso} & Curso. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCoordenadorImpl_aa0a12270523a82723a569203d8dfb3a4}\label{classCoordenadorImpl_aa0a12270523a82723a569203d8dfb3a4}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!CoordenadorImpl@{CoordenadorImpl}}
+\index{CoordenadorImpl@{CoordenadorImpl}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{CoordenadorImpl()}{CoordenadorImpl()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Coordenador\+Impl\+::\+Coordenador\+Impl (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \&}]{c }\end{DoxyParamCaption})}
+
+
+
+Construtor por copia. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em c} & o coordenador a ser copiado \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classCoordenadorImpl_a2232c8f803b4eb6170ec9207edaa06c5}\label{classCoordenadorImpl_a2232c8f803b4eb6170ec9207edaa06c5}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!getCurso@{getCurso}}
+\index{getCurso@{getCurso}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{getCurso()}{getCurso()}}
+{\footnotesize\ttfamily Curso $\ast$ Coordenador\+Impl\+::get\+Curso (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Retorna o Curso. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+Curso$\ast$ -\/ o Curso. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implements \mbox{\hyperlink{classCoordenador_adcb03b6e72404e5cd6502363263dc891}{Coordenador}}.
+
+\mbox{\Hypertarget{classCoordenadorImpl_aeafa5762d442da9ed90e4abc763eb515}\label{classCoordenadorImpl_aeafa5762d442da9ed90e4abc763eb515}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!operator=@{operator=}}
+\index{operator=@{operator=}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \& Coordenador\+Impl\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}} \&}]{c }\end{DoxyParamCaption})}
+
+
+
+Operador de igualdade. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em c} & o coordenador a ser copiado.\\
+\hline
+\end{DoxyParams}
+
+\item \begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classCoordenadorImpl}{Coordenador\+Impl}}\& 
+\end{DoxyReturn}
+
+\end{DoxyItemize}\mbox{\Hypertarget{classCoordenadorImpl_ac6680d962d9050b32bc886a5f8ad26ce}\label{classCoordenadorImpl_ac6680d962d9050b32bc886a5f8ad26ce}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!setCurso@{setCurso}}
+\index{setCurso@{setCurso}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{setCurso()}{setCurso()}}
+{\footnotesize\ttfamily void Coordenador\+Impl\+::set\+Curso (\begin{DoxyParamCaption}\item[{Curso $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Configurar o Curso. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em curso} & o Curso \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implements \mbox{\hyperlink{classCoordenador_a82dd77da7672c36f2e11d08833527e1d}{Coordenador}}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classCoordenadorImpl_a565d48af8852b0a55e2d7f425ec90e66}\label{classCoordenadorImpl_a565d48af8852b0a55e2d7f425ec90e66}} 
+\index{CoordenadorImpl@{CoordenadorImpl}!curso@{curso}}
+\index{curso@{curso}!CoordenadorImpl@{CoordenadorImpl}}
+\doxysubsubsection{\texorpdfstring{curso}{curso}}
+{\footnotesize\ttfamily Curso$\ast$ Coordenador\+Impl\+::curso\hspace{0.3cm}{\ttfamily [protected]}}
+
+Curso 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/cesar/\+BCC323-\/\+TPEng2/backend/include/Coordenador\+Impl.\+hpp\item 
+/home/cesar/\+BCC323-\/\+TPEng2/backend/src/Coordenador.\+cpp\end{DoxyCompactItemize}

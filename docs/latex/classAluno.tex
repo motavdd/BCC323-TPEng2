@@ -1,0 +1,349 @@
+\hypertarget{classAluno}{}\doxysection{Aluno Class Reference}
+\label{classAluno}\index{Aluno@{Aluno}}
+
+
+Esta classe representa a interface de um aluno.  
+
+
+
+
+{\ttfamily \#include $<$Aluno.\+hpp$>$}
+
+
+
+Inheritance diagram for Aluno\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=146pt]{classAluno__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Aluno\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=134pt]{classAluno__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classAluno_ada5ec9967ed7b213515946ca0ebfb027}\label{classAluno_ada5ec9967ed7b213515946ca0ebfb027}} 
+virtual \mbox{\hyperlink{classAluno_ada5ec9967ed7b213515946ca0ebfb027}{$\sim$\+Aluno}} ()
+\begin{DoxyCompactList}\small\item\em Destrutor padrão para a interface \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_a959af0bb9b70fc6e54a2b9ff0fce6985}{set\+Curso}} (Curso $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Configura o Curso do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual Curso $\ast$ \mbox{\hyperlink{classAluno_a2d0e689bd1d2d0ed154ee8f3aad3d14a}{get\+Curso}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o Curso do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_a0d24aaeed09d181c3bf8a68f17182a29}{set\+Periodo\+Atual}} (int)=0
+\begin{DoxyCompactList}\small\item\em Configura o período do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual int \mbox{\hyperlink{classAluno_aec088a3fb053787ee24bdb97518a6174}{get\+Periodo\+Atual}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o período do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_a93409b3e65944d0ae30f3b6c9a3ffccb}{marcar\+Concluida}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Marca a disciplina como concluída. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_afda49f6d3cbb6192aaadc82c94cea283}{desmarcar\+Concluida}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Desmarca a disciplina concluída . \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_a206eb2d737ce3d64321716d2cc79444a}{marcar\+Em\+Andamento}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Marca a disciplina como em andamento. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAluno_a2c5249c77cad039d852c417b0f21ec2e}{desmarcar\+Em\+Andamento}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Desmarca a disciplina em andamento. \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ Disciplina $\ast$ $>$ \mbox{\hyperlink{classAluno_aa455493c802dc34297a8b0e1e721defc}{get\+Concluidas}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o vetor de disciplinas concluídas. \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ Disciplina $\ast$ $>$ \mbox{\hyperlink{classAluno_a84eeb9ce1c22fdc45facf4949bd78d09}{get\+Em\+Andamento}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o vetor de disciplinas em andamento. \end{DoxyCompactList}\item 
+virtual std\+::vector$<$ Disciplina $\ast$ $>$ \mbox{\hyperlink{classAluno_a46bbe71896ab40fd1d808109f160058d}{get\+Disponiveis}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna as disciplinas disponíveis\+: do curso, não concluídas, não em andamento e com todos os pré-\/requisitos atendidos. \end{DoxyCompactList}\item 
+virtual Estado\+Disciplina \mbox{\hyperlink{classAluno_a9d8640af89e28c61f8e31cd6b7426f73}{get\+Estado}} (Disciplina $\ast$) const =0
+\begin{DoxyCompactList}\small\item\em Retorna o status de uma disciplina do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\item 
+virtual double \mbox{\hyperlink{classAluno_ace57c9616feffb44fcf9693b6b0b3198}{get\+Progresso}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o progresso do \mbox{\hyperlink{classAluno}{Aluno}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Esta classe representa a interface de um aluno. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classAluno_afda49f6d3cbb6192aaadc82c94cea283}\label{classAluno_afda49f6d3cbb6192aaadc82c94cea283}} 
+\index{Aluno@{Aluno}!desmarcarConcluida@{desmarcarConcluida}}
+\index{desmarcarConcluida@{desmarcarConcluida}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{desmarcarConcluida()}{desmarcarConcluida()}}
+{\footnotesize\ttfamily virtual void Aluno\+::desmarcar\+Concluida (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Desmarca a disciplina concluída . 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a Disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a77072b7f386cc2bf6e4d56bbfe73d342}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a2c5249c77cad039d852c417b0f21ec2e}\label{classAluno_a2c5249c77cad039d852c417b0f21ec2e}} 
+\index{Aluno@{Aluno}!desmarcarEmAndamento@{desmarcarEmAndamento}}
+\index{desmarcarEmAndamento@{desmarcarEmAndamento}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{desmarcarEmAndamento()}{desmarcarEmAndamento()}}
+{\footnotesize\ttfamily virtual void Aluno\+::desmarcar\+Em\+Andamento (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Desmarca a disciplina em andamento. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a Disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_ad868bd1f2134b778b61350189e7b05e4}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_aa455493c802dc34297a8b0e1e721defc}\label{classAluno_aa455493c802dc34297a8b0e1e721defc}} 
+\index{Aluno@{Aluno}!getConcluidas@{getConcluidas}}
+\index{getConcluidas@{getConcluidas}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getConcluidas()}{getConcluidas()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$Disciplina$\ast$$>$ Aluno\+::get\+Concluidas (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o vetor de disciplinas concluídas. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+vector -\/ vetor de Disciplinas. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a1a2936b80664a6d8af7b6056d3aa7a64}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a2d0e689bd1d2d0ed154ee8f3aad3d14a}\label{classAluno_a2d0e689bd1d2d0ed154ee8f3aad3d14a}} 
+\index{Aluno@{Aluno}!getCurso@{getCurso}}
+\index{getCurso@{getCurso}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getCurso()}{getCurso()}}
+{\footnotesize\ttfamily virtual Curso$\ast$ Aluno\+::get\+Curso (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o Curso do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+Curso$\ast$ -\/ o Curso. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a62b29a126702ac5dd2a30cbc16883c8b}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a46bbe71896ab40fd1d808109f160058d}\label{classAluno_a46bbe71896ab40fd1d808109f160058d}} 
+\index{Aluno@{Aluno}!getDisponiveis@{getDisponiveis}}
+\index{getDisponiveis@{getDisponiveis}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getDisponiveis()}{getDisponiveis()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$Disciplina$\ast$$>$ Aluno\+::get\+Disponiveis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna as disciplinas disponíveis\+: do curso, não concluídas, não em andamento e com todos os pré-\/requisitos atendidos. 
+
+\begin{DoxyReturn}{Returns}
+vector -\/ vetor de Disciplinas. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a6ef2194a3375e8d9c309427d90e0011c}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a84eeb9ce1c22fdc45facf4949bd78d09}\label{classAluno_a84eeb9ce1c22fdc45facf4949bd78d09}} 
+\index{Aluno@{Aluno}!getEmAndamento@{getEmAndamento}}
+\index{getEmAndamento@{getEmAndamento}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getEmAndamento()}{getEmAndamento()}}
+{\footnotesize\ttfamily virtual std\+::vector$<$Disciplina$\ast$$>$ Aluno\+::get\+Em\+Andamento (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o vetor de disciplinas em andamento. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+vector -\/ vetor de Disciplinas. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_aa9b049eda6dde8ca56d3c93fe2ea1dbc}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a9d8640af89e28c61f8e31cd6b7426f73}\label{classAluno_a9d8640af89e28c61f8e31cd6b7426f73}} 
+\index{Aluno@{Aluno}!getEstado@{getEstado}}
+\index{getEstado@{getEstado}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getEstado()}{getEstado()}}
+{\footnotesize\ttfamily virtual Estado\+Disciplina Aluno\+::get\+Estado (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o status de uma disciplina do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a Disciplina.\\
+\hline
+\end{DoxyParams}
+
+\item \begin{DoxyReturn}{Returns}
+Estado\+Disciplina 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_adb676f79b60a490f3c08a33cdf92f457}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_aec088a3fb053787ee24bdb97518a6174}\label{classAluno_aec088a3fb053787ee24bdb97518a6174}} 
+\index{Aluno@{Aluno}!getPeriodoAtual@{getPeriodoAtual}}
+\index{getPeriodoAtual@{getPeriodoAtual}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getPeriodoAtual()}{getPeriodoAtual()}}
+{\footnotesize\ttfamily virtual int Aluno\+::get\+Periodo\+Atual (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o período do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+int -\/ o período atual. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a02e640cf4cce0ef9f2a404363a8f1f54}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_ace57c9616feffb44fcf9693b6b0b3198}\label{classAluno_ace57c9616feffb44fcf9693b6b0b3198}} 
+\index{Aluno@{Aluno}!getProgresso@{getProgresso}}
+\index{getProgresso@{getProgresso}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{getProgresso()}{getProgresso()}}
+{\footnotesize\ttfamily virtual double Aluno\+::get\+Progresso (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o progresso do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item \begin{DoxyReturn}{Returns}
+double -\/ poercentagem do progresso. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a9c7b5560dce32ae070e63ddfb917d5c6}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a93409b3e65944d0ae30f3b6c9a3ffccb}\label{classAluno_a93409b3e65944d0ae30f3b6c9a3ffccb}} 
+\index{Aluno@{Aluno}!marcarConcluida@{marcarConcluida}}
+\index{marcarConcluida@{marcarConcluida}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{marcarConcluida()}{marcarConcluida()}}
+{\footnotesize\ttfamily virtual void Aluno\+::marcar\+Concluida (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Marca a disciplina como concluída. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a Disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_aaec7c0d2c8a4129e93844d4163c813b6}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a206eb2d737ce3d64321716d2cc79444a}\label{classAluno_a206eb2d737ce3d64321716d2cc79444a}} 
+\index{Aluno@{Aluno}!marcarEmAndamento@{marcarEmAndamento}}
+\index{marcarEmAndamento@{marcarEmAndamento}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{marcarEmAndamento()}{marcarEmAndamento()}}
+{\footnotesize\ttfamily virtual void Aluno\+::marcar\+Em\+Andamento (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Marca a disciplina como em andamento. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a Disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a5e53bd0c90859875859ca3a2b77a45aa}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a959af0bb9b70fc6e54a2b9ff0fce6985}\label{classAluno_a959af0bb9b70fc6e54a2b9ff0fce6985}} 
+\index{Aluno@{Aluno}!setCurso@{setCurso}}
+\index{setCurso@{setCurso}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{setCurso()}{setCurso()}}
+{\footnotesize\ttfamily virtual void Aluno\+::set\+Curso (\begin{DoxyParamCaption}\item[{Curso $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configura o Curso do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em curso} & o Curso. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_a9440180d85ab7624bc8094faa7107e90}{Aluno\+Impl}}.
+
+\mbox{\Hypertarget{classAluno_a0d24aaeed09d181c3bf8a68f17182a29}\label{classAluno_a0d24aaeed09d181c3bf8a68f17182a29}} 
+\index{Aluno@{Aluno}!setPeriodoAtual@{setPeriodoAtual}}
+\index{setPeriodoAtual@{setPeriodoAtual}!Aluno@{Aluno}}
+\doxysubsubsection{\texorpdfstring{setPeriodoAtual()}{setPeriodoAtual()}}
+{\footnotesize\ttfamily virtual void Aluno\+::set\+Periodo\+Atual (\begin{DoxyParamCaption}\item[{int}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Configura o período do \mbox{\hyperlink{classAluno}{Aluno}}. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em periodo} & o período atual. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAlunoImpl_abd707323b1c4764db881bba7b20db3b6}{Aluno\+Impl}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/cesar/\+BCC323-\/\+TPEng2/backend/include/Aluno.\+hpp\end{DoxyCompactItemize}
