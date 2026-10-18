@@ -69,6 +69,8 @@ public:
      * * @return AlunoImpl& 
      */
     AlunoImpl& operator=(const AlunoImpl& a);
+
+    friend class Unit_Aluno;
 };
 
 #endif
