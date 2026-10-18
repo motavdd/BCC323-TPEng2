@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['usuario_51',['Usuario',['../classUsuario.html',1,'']]],
-  ['usuarioimpl_52',['UsuarioImpl',['../classUsuarioImpl.html',1,'']]]
+  ['usuario_68',['Usuario',['../classUsuario.html',1,'']]],
+  ['usuarioimpl_69',['UsuarioImpl',['../classUsuarioImpl.html',1,'']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['operator_3d_71',['operator=',['../classAlunoImpl.html#af1cab04db053bf6f9c3e6e489afd4249',1,'AlunoImpl::operator=()'],['../classCoordenadorImpl.html#aeafa5762d442da9ed90e4abc763eb515',1,'CoordenadorImpl::operator=()'],['../classUsuarioImpl.html#a9d161b0ecf5b420f8f43477cfbf5cd89',1,'UsuarioImpl::operator=()']]]
+  ['marcarconcluida_93',['marcarConcluida',['../classAluno.html#a93409b3e65944d0ae30f3b6c9a3ffccb',1,'Aluno::marcarConcluida()'],['../classAlunoImpl.html#aaec7c0d2c8a4129e93844d4163c813b6',1,'AlunoImpl::marcarConcluida()']]],
+  ['marcaremandamento_94',['marcarEmAndamento',['../classAluno.html#a206eb2d737ce3d64321716d2cc79444a',1,'Aluno::marcarEmAndamento()'],['../classAlunoImpl.html#a5e53bd0c90859875859ca3a2b77a45aa',1,'AlunoImpl::marcarEmAndamento()']]]
 ];

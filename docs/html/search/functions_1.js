@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['contem_55',['contem',['../classAlunoImpl.html#a8db7c5203afd54855e47e4403888365e',1,'AlunoImpl']]],
-  ['coordenadorimpl_56',['CoordenadorImpl',['../classCoordenadorImpl.html#ac9a66607765930f4b4c2a034e2d40cf3',1,'CoordenadorImpl::CoordenadorImpl()'],['../classCoordenadorImpl.html#a370974ed5dab485a337c76b5dfebcbea',1,'CoordenadorImpl::CoordenadorImpl(int id, std::string nome, std::string email, std::string senha, Curso *curso)'],['../classCoordenadorImpl.html#aa0a12270523a82723a569203d8dfb3a4',1,'CoordenadorImpl::CoordenadorImpl(const CoordenadorImpl &amp;c)']]]
+  ['buscarcurso_74',['buscarCurso',['../classAcademicSystem.html#a15a8ef9f4b6e012e2b048d35858ea05f',1,'AcademicSystem::buscarCurso()'],['../classAcademicSystemImpl.html#a9c1a4b4c5aaccc30e2c21761d7dd6ce8',1,'AcademicSystemImpl::buscarCurso()']]],
+  ['buscardisciplina_75',['buscarDisciplina',['../classAcademicSystem.html#ad8c55c778f91bfb63c68eb76ba600f7f',1,'AcademicSystem::buscarDisciplina()'],['../classAcademicSystemImpl.html#ae8a4bd30701bb571a5ac99fa4b19a1a7',1,'AcademicSystemImpl::buscarDisciplina()']]],
+  ['buscarusuario_76',['buscarUsuario',['../classAcademicSystem.html#a2d8d2b2fad3181f07e0b60201affe587',1,'AcademicSystem::buscarUsuario()'],['../classAcademicSystemImpl.html#ad5eccca3387205bdc08c87df773f179f',1,'AcademicSystemImpl::buscarUsuario()']]]
 ];

@@ -1,0 +1,4 @@
+<map id="AcademicSystem" name="AcademicSystem">
+<area shape="rect" id="node1" title="Esta classe representa a interface da plataforma: a classe geral que contém todos os usuários,..." alt="" coords="20,5,155,32"/>
+<area shape="rect" id="node2" href="$classAcademicSystemImpl.html" title="Esta classe representa a implementação concreta de um AcademicSystem." alt="" coords="5,80,169,107"/>
+</map>

@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['usuario_38',['Usuario',['../classUsuario.html',1,'']]],
-  ['usuarioimpl_39',['UsuarioImpl',['../classUsuarioImpl.html',1,'UsuarioImpl'],['../classUsuarioImpl.html#a00d179fbd74706c699d7ad98a4382217',1,'UsuarioImpl::UsuarioImpl()'],['../classUsuarioImpl.html#a0c3d53f9ad24a280164bc13353ca544a',1,'UsuarioImpl::UsuarioImpl(int id, std::string name, std::string email, std::string password)'],['../classUsuarioImpl.html#a873b9ff301789494224a51103f832118',1,'UsuarioImpl::UsuarioImpl(const UsuarioImpl &amp;u)']]]
+  ['senhahash_43',['senhaHash',['../classUsuarioImpl.html#a9068049eb85a9fc851712429baf0a986',1,'UsuarioImpl']]],
+  ['setcurso_44',['setCurso',['../classAluno.html#a959af0bb9b70fc6e54a2b9ff0fce6985',1,'Aluno::setCurso()'],['../classAlunoImpl.html#a9440180d85ab7624bc8094faa7107e90',1,'AlunoImpl::setCurso()'],['../classCoordenador.html#a82dd77da7672c36f2e11d08833527e1d',1,'Coordenador::setCurso()'],['../classCoordenadorImpl.html#ac6680d962d9050b32bc886a5f8ad26ce',1,'CoordenadorImpl::setCurso()']]],
+  ['setemail_45',['setEmail',['../classUsuario.html#a06fa4772eb9cac94ab32b2f8fa2faeb7',1,'Usuario::setEmail()'],['../classUsuarioImpl.html#a8fdea8bcd2f027cf56a66bd6fcca4644',1,'UsuarioImpl::setEmail(std::string email) override']]],
+  ['setid_46',['setId',['../classUsuarioImpl.html#ab18a5398737b6564f9e141c1e4815ede',1,'UsuarioImpl::setId()'],['../classUsuario.html#a980638910d7043afdaa425702a2658c9',1,'Usuario::setId()']]],
+  ['setnome_47',['setNome',['../classAcademicSystem.html#a916f1b274335cd167e4b0b8475092a29',1,'AcademicSystem::setNome()'],['../classAcademicSystemImpl.html#a793c1f9001434049b68fc795e7d66738',1,'AcademicSystemImpl::setNome()'],['../classUsuario.html#ada0a6204370acd9e1a9192624906159a',1,'Usuario::setNome()'],['../classUsuarioImpl.html#adb85cf984306fe865acc61a25ea87192',1,'UsuarioImpl::setNome()']]],
+  ['setperiodoatual_48',['setPeriodoAtual',['../classAluno.html#a0d24aaeed09d181c3bf8a68f17182a29',1,'Aluno::setPeriodoAtual()'],['../classAlunoImpl.html#abd707323b1c4764db881bba7b20db3b6',1,'AlunoImpl::setPeriodoAtual()']]],
+  ['setsenha_49',['setSenha',['../classUsuario.html#ad817a4c5fcb4c608ccdff141de791e73',1,'Usuario::setSenha()'],['../classUsuarioImpl.html#a153808cb1d9896198c7393e10edc8f95',1,'UsuarioImpl::setSenha()']]]
 ];
