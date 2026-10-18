@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structbcc323_1_1Config.html" title=" " alt="" coords="5,5,123,32"/>
+<area shape="rect" id="node1" href="$classAcademicSystem.html" title="Esta classe representa a interface da plataforma: a classe geral que contém todos os usuários,..." alt="" coords="5,5,140,32"/>
+<area shape="rect" id="node2" href="$classAcademicSystemImpl.html" title="Esta classe representa a implementação concreta de um AcademicSystem." alt="" coords="188,5,352,32"/>
 </map>

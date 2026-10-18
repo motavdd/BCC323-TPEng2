@@ -1,0 +1,397 @@
+\hypertarget{classAcademicSystem}{}\doxysection{Academic\+System Class Reference}
+\label{classAcademicSystem}\index{AcademicSystem@{AcademicSystem}}
+
+
+Esta classe representa a interface da plataforma\+: a classe geral que contém todos os usuários, cursos e disciplinas.  
+
+
+
+
+{\ttfamily \#include $<$Academic\+System.\+hpp$>$}
+
+
+
+Inheritance diagram for Academic\+System\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classAcademicSystem__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classAcademicSystem_ad033244d8587a4cbbe6b58aa980c1c27}\label{classAcademicSystem_ad033244d8587a4cbbe6b58aa980c1c27}} 
+virtual \mbox{\hyperlink{classAcademicSystem_ad033244d8587a4cbbe6b58aa980c1c27}{$\sim$\+Academic\+System}} ()
+\begin{DoxyCompactList}\small\item\em Destrutor. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_a916f1b274335cd167e4b0b8475092a29}{set\+Nome}} (std\+::string)=0
+\begin{DoxyCompactList}\small\item\em Define o nome. \end{DoxyCompactList}\item 
+virtual std\+::string \mbox{\hyperlink{classAcademicSystem_ac0781d11b3e4aad5d332749f4c92f37c}{get\+Nome}} () const =0
+\begin{DoxyCompactList}\small\item\em Retorna o nome. $\ast$. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_abdd5b26c8b3c0d6e58f3d8116d9ee502}{add}} (\mbox{\hyperlink{classUsuario}{Usuario}} $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Adiciona um usuário. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_a2490bc0d2c453dd2665ddd1ab75b8159}{add}} (Curso $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Adiciona um curso. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_aa27dfb117cd4e90095631bfd30ad84dc}{add}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Adiciona uma disciplina. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_a8aa296123b31c910ac0178fe526c70bd}{remove}} (\mbox{\hyperlink{classUsuario}{Usuario}} $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Desvincula um usuário. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_aa48ccdc838a54eeaed0e7684a01dbe9e}{remove}} (Curso $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Desvincula um curso. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{classAcademicSystem_a865592f1bb606dcd29ff36aee8b4ca2e}{remove}} (Disciplina $\ast$)=0
+\begin{DoxyCompactList}\small\item\em Desvincula uma disciplina. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classAluno}{Aluno}} $\ast$ \mbox{\hyperlink{classAcademicSystem_a3ae354197e4a5aa785fcc248c23c2998}{cadastrar\+Aluno}} (std\+::string nome, std\+::string email, std\+::string senha, Curso $\ast$curso, int periodo)=0
+\begin{DoxyCompactList}\small\item\em Cadastra um novo aluno. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classCoordenador}{Coordenador}} $\ast$ \mbox{\hyperlink{classAcademicSystem_a983fc20182188775d040a8fe7daab426}{cadastrar\+Coordenador}} (std\+::string nome, std\+::string email, std\+::string senha, Curso $\ast$curso)=0
+\begin{DoxyCompactList}\small\item\em Cadastra um novo coordenador. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classUsuario}{Usuario}} $\ast$ \mbox{\hyperlink{classAcademicSystem_aeb5c147768965aa20595da9a71d92927}{autenticar}} (std\+::string email, std\+::string senha)=0
+\begin{DoxyCompactList}\small\item\em RF01\+: Autentica um usuário. \end{DoxyCompactList}\item 
+virtual Curso $\ast$ \mbox{\hyperlink{classAcademicSystem_a15a8ef9f4b6e012e2b048d35858ea05f}{buscar\+Curso}} (std\+::string nome)=0
+\begin{DoxyCompactList}\small\item\em Busca um curso pelo nome. \end{DoxyCompactList}\item 
+virtual Disciplina $\ast$ \mbox{\hyperlink{classAcademicSystem_ad8c55c778f91bfb63c68eb76ba600f7f}{buscar\+Disciplina}} (std\+::string codigo)=0
+\begin{DoxyCompactList}\small\item\em Busca uma disciplina pelo código. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{classUsuario}{Usuario}} $\ast$ \mbox{\hyperlink{classAcademicSystem_a2d8d2b2fad3181f07e0b60201affe587}{buscar\+Usuario}} (std\+::string email)=0
+\begin{DoxyCompactList}\small\item\em Busca um usuário pelo e-\/mail. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Esta classe representa a interface da plataforma\+: a classe geral que contém todos os usuários, cursos e disciplinas. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classAcademicSystem_a2490bc0d2c453dd2665ddd1ab75b8159}\label{classAcademicSystem_a2490bc0d2c453dd2665ddd1ab75b8159}} 
+\index{AcademicSystem@{AcademicSystem}!add@{add}}
+\index{add@{add}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::add (\begin{DoxyParamCaption}\item[{Curso $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Adiciona um curso. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em c} & o curso. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a81ab94fba9102a54f37b3b5dc8e04ae1}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_aa27dfb117cd4e90095631bfd30ad84dc}\label{classAcademicSystem_aa27dfb117cd4e90095631bfd30ad84dc}} 
+\index{AcademicSystem@{AcademicSystem}!add@{add}}
+\index{add@{add}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::add (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Adiciona uma disciplina. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a1acba3f2d1c16553c81c97d49ebda35f}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_abdd5b26c8b3c0d6e58f3d8116d9ee502}\label{classAcademicSystem_abdd5b26c8b3c0d6e58f3d8116d9ee502}} 
+\index{AcademicSystem@{AcademicSystem}!add@{add}}
+\index{add@{add}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::add (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classUsuario}{Usuario}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Adiciona um usuário. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em u} & o usuário. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_ac3c96ec8f129b37286b699d85aa3890c}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_aeb5c147768965aa20595da9a71d92927}\label{classAcademicSystem_aeb5c147768965aa20595da9a71d92927}} 
+\index{AcademicSystem@{AcademicSystem}!autenticar@{autenticar}}
+\index{autenticar@{autenticar}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{autenticar()}{autenticar()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classUsuario}{Usuario}}$\ast$ Academic\+System\+::autenticar (\begin{DoxyParamCaption}\item[{std\+::string}]{email,  }\item[{std\+::string}]{senha }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+RF01\+: Autentica um usuário. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em email} & e-\/mail do usuário. \\
+\hline
+{\em senha} & senha. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Usuario$\ast$ -\/ o usuário autenticado. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_afcc6929053df76aced12f52d5ce64d34}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a15a8ef9f4b6e012e2b048d35858ea05f}\label{classAcademicSystem_a15a8ef9f4b6e012e2b048d35858ea05f}} 
+\index{AcademicSystem@{AcademicSystem}!buscarCurso@{buscarCurso}}
+\index{buscarCurso@{buscarCurso}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{buscarCurso()}{buscarCurso()}}
+{\footnotesize\ttfamily virtual Curso$\ast$ Academic\+System\+::buscar\+Curso (\begin{DoxyParamCaption}\item[{std\+::string}]{nome }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Busca um curso pelo nome. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em nome} & o nome do curso.\\
+\hline
+\end{DoxyParams}
+
+\item \begin{DoxyReturn}{Returns}
+Curso$\ast$ -\/ o Curso. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a9c1a4b4c5aaccc30e2c21761d7dd6ce8}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_ad8c55c778f91bfb63c68eb76ba600f7f}\label{classAcademicSystem_ad8c55c778f91bfb63c68eb76ba600f7f}} 
+\index{AcademicSystem@{AcademicSystem}!buscarDisciplina@{buscarDisciplina}}
+\index{buscarDisciplina@{buscarDisciplina}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{buscarDisciplina()}{buscarDisciplina()}}
+{\footnotesize\ttfamily virtual Disciplina$\ast$ Academic\+System\+::buscar\+Disciplina (\begin{DoxyParamCaption}\item[{std\+::string}]{codigo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Busca uma disciplina pelo código. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em codigo} & o código da disciplina.\\
+\hline
+\end{DoxyParams}
+
+\item \begin{DoxyReturn}{Returns}
+Disciplina$\ast$ -\/ a Disciplina. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_ae8a4bd30701bb571a5ac99fa4b19a1a7}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a2d8d2b2fad3181f07e0b60201affe587}\label{classAcademicSystem_a2d8d2b2fad3181f07e0b60201affe587}} 
+\index{AcademicSystem@{AcademicSystem}!buscarUsuario@{buscarUsuario}}
+\index{buscarUsuario@{buscarUsuario}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{buscarUsuario()}{buscarUsuario()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classUsuario}{Usuario}}$\ast$ Academic\+System\+::buscar\+Usuario (\begin{DoxyParamCaption}\item[{std\+::string}]{email }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Busca um usuário pelo e-\/mail. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em email} & o e-\/mail do usuário.\\
+\hline
+\end{DoxyParams}
+
+\item \begin{DoxyReturn}{Returns}
+Usuario$\ast$ -\/ o \mbox{\hyperlink{classUsuario}{Usuario}}. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_ad5eccca3387205bdc08c87df773f179f}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a3ae354197e4a5aa785fcc248c23c2998}\label{classAcademicSystem_a3ae354197e4a5aa785fcc248c23c2998}} 
+\index{AcademicSystem@{AcademicSystem}!cadastrarAluno@{cadastrarAluno}}
+\index{cadastrarAluno@{cadastrarAluno}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{cadastrarAluno()}{cadastrarAluno()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classAluno}{Aluno}}$\ast$ Academic\+System\+::cadastrar\+Aluno (\begin{DoxyParamCaption}\item[{std\+::string}]{nome,  }\item[{std\+::string}]{email,  }\item[{std\+::string}]{senha,  }\item[{Curso $\ast$}]{curso,  }\item[{int}]{periodo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Cadastra um novo aluno. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nome} & nome do aluno. \\
+\hline
+{\em email} & e-\/mail do aluno. \\
+\hline
+{\em senha} & senha. \\
+\hline
+{\em curso} & um curso já cadastrado na plataforma. \\
+\hline
+{\em periodo} & período/semestre atual. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Aluno$\ast$ -\/ o novo aluno. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_aae9fed2a11a08223d1834d3d45c19967}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a983fc20182188775d040a8fe7daab426}\label{classAcademicSystem_a983fc20182188775d040a8fe7daab426}} 
+\index{AcademicSystem@{AcademicSystem}!cadastrarCoordenador@{cadastrarCoordenador}}
+\index{cadastrarCoordenador@{cadastrarCoordenador}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{cadastrarCoordenador()}{cadastrarCoordenador()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{classCoordenador}{Coordenador}}$\ast$ Academic\+System\+::cadastrar\+Coordenador (\begin{DoxyParamCaption}\item[{std\+::string}]{nome,  }\item[{std\+::string}]{email,  }\item[{std\+::string}]{senha,  }\item[{Curso $\ast$}]{curso }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Cadastra um novo coordenador. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nome} & nome do coordenador. \\
+\hline
+{\em email} & e-\/mail do coordenador. \\
+\hline
+{\em senha} & senha. \\
+\hline
+{\em curso} & um curso já cadastrado na plataforma. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Coordenador$\ast$ -\/ o novo coordenador. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a523203c1cf150ec6ce4746699b78cb04}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_ac0781d11b3e4aad5d332749f4c92f37c}\label{classAcademicSystem_ac0781d11b3e4aad5d332749f4c92f37c}} 
+\index{AcademicSystem@{AcademicSystem}!getNome@{getNome}}
+\index{getNome@{getNome}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{getNome()}{getNome()}}
+{\footnotesize\ttfamily virtual std\+::string Academic\+System\+::get\+Nome (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retorna o nome. $\ast$. 
+
+\begin{DoxyReturn}{Returns}
+string -\/ o nome da plataforma. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a7688d72f9926fbd32796c6c745229a65}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_aa48ccdc838a54eeaed0e7684a01dbe9e}\label{classAcademicSystem_aa48ccdc838a54eeaed0e7684a01dbe9e}} 
+\index{AcademicSystem@{AcademicSystem}!remove@{remove}}
+\index{remove@{remove}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::remove (\begin{DoxyParamCaption}\item[{Curso $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Desvincula um curso. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em c} & o curso. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a89caebff4e37628eaec11147a291a46a}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a865592f1bb606dcd29ff36aee8b4ca2e}\label{classAcademicSystem_a865592f1bb606dcd29ff36aee8b4ca2e}} 
+\index{AcademicSystem@{AcademicSystem}!remove@{remove}}
+\index{remove@{remove}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::remove (\begin{DoxyParamCaption}\item[{Disciplina $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Desvincula uma disciplina. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em d} & a disciplina. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a239b20d0df647d9b9bad5e1be1212885}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a8aa296123b31c910ac0178fe526c70bd}\label{classAcademicSystem_a8aa296123b31c910ac0178fe526c70bd}} 
+\index{AcademicSystem@{AcademicSystem}!remove@{remove}}
+\index{remove@{remove}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::remove (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classUsuario}{Usuario}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Desvincula um usuário. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em u} & o usuário. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a3ddf0d9a1bae808ba99e1aec9f26495b}{Academic\+System\+Impl}}.
+
+\mbox{\Hypertarget{classAcademicSystem_a916f1b274335cd167e4b0b8475092a29}\label{classAcademicSystem_a916f1b274335cd167e4b0b8475092a29}} 
+\index{AcademicSystem@{AcademicSystem}!setNome@{setNome}}
+\index{setNome@{setNome}!AcademicSystem@{AcademicSystem}}
+\doxysubsubsection{\texorpdfstring{setNome()}{setNome()}}
+{\footnotesize\ttfamily virtual void Academic\+System\+::set\+Nome (\begin{DoxyParamCaption}\item[{std\+::string}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Define o nome. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em nome} & o nome da plataforma. \\
+\hline
+\end{DoxyParams}
+
+\end{DoxyItemize}
+
+Implemented in \mbox{\hyperlink{classAcademicSystemImpl_a793c1f9001434049b68fc795e7d66738}{Academic\+System\+Impl}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/cesar/\+BCC323-\/\+TPEng2/backend/include/Academic\+System.\+hpp\end{DoxyCompactItemize}

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['id_90',['id',['../classUsuarioImpl.html#a8e6859394e3039f29fd821a35c5615b2',1,'UsuarioImpl']]]
+  ['email_117',['email',['../classUsuarioImpl.html#a01bb8f246e1cfc715fec268dd019c81d',1,'UsuarioImpl']]],
+  ['emandamento_118',['emAndamento',['../classAlunoImpl.html#ad2a0d5dfc6d09d41831d3b2c8071be82',1,'AlunoImpl']]]
 ];
