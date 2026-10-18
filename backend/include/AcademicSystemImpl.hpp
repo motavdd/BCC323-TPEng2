@@ -50,6 +50,8 @@ public:
     Curso* buscarCurso(std::string nome) override;
     Disciplina* buscarDisciplina(std::string codigo) override;
     Usuario* buscarUsuario(std::string email) override;
+
+    friend class Unit_AcademicSystem;
 };
 
 #endif
