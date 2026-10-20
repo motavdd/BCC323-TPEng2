@@ -65,7 +65,9 @@ namespace bcc323 {
                 } else {
                     const auto profile = service.profile(context);
                     if (profile){
-                        body["profile"] = toJson(*profile); else body["profile"] = nullptr;
+                        body["profile"] = toJson(*profile);
+                    } else {
+                        body["profile"] = nullptr;
                     }
                 }
                 return body;

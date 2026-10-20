@@ -1,6 +1,7 @@
 #include "infrastructure/firestore/FirestoreRepository.hpp"
 #include <curl/curl.h>
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <regex>
@@ -60,7 +61,7 @@ namespace {
             return std::string(value["stringValue"].s());
         }
         if (value.has("integerValue")){
-            return std::stoll(std::string(value["integerValue"].s()));
+            return static_cast<std::int64_t>(std::stoll(std::string(value["integerValue"].s())));
         } 
         if (value.has("doubleValue")) {
             return value["doubleValue"].d();
