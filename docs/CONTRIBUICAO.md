@@ -35,6 +35,8 @@ Abra três terminais na raiz e execute um serviço em cada um:
 | 3 | `./scripts/dev-local.ps1 frontend` |
 
 Abra a [aplicação local](http://127.0.0.1:5173), crie uma conta fictícia e saia.
+Antes do primeiro cadastro, com os emuladores ativos, execute `node scripts/seed-demo.mjs`
+para cadastrar o catálogo ilustrativo. O comando preserva dados existentes.
 Confira a [API pelo proxy](http://127.0.0.1:5173/api/health): a resposta deve conter
 `status: "ok"` e `service: "bcc323-api"`. O [painel Firebase](http://127.0.0.1:4000)
 permite consultar os usuários e documentos criados.
@@ -66,24 +68,32 @@ Abra o PR para `Develop`; as promoções para `Staging` e `Master` seguem um flu
 
 | Área | Ponto de entrada | Responsabilidade atual |
 |---|---|---|
-| Interface | `frontend/src/App.tsx`, `components/`, `styles.css` | Cadastro, login e saída; Tailwind disponível |
-| Firebase no navegador | `frontend/src/lib/firebase.ts` | Authentication e Firestore pelo SDK cliente |
-| Regras de negócio existentes | `frontend/src/utils/schedule.ts` | Comparação de horários, ainda sem tela de grade |
-| API C++ | `backend/src/` e `backend/include/` | Implementações e cabeçalhos de inicialização, configuração e rotas |
+| Interface | `frontend/src/app/App.tsx`, `pages/`, `components/` | Cadastro, login e saída; Tailwind disponível |
+| Firebase no navegador | `frontend/src/services/firebase.ts` | Authentication e Firestore pelo SDK cliente |
+| Cliente do MVP | `frontend/src/services/academic.ts` | Perfil, matriz, histórico, progresso e elegibilidade pela API |
+| Regras acadêmicas | `backend/src/domain/` e `backend/src/application/` | Classes existentes e serviços do MVP |
+| API C++ | `backend/src/http/` e `backend/src/infrastructure/` | Contratos HTTP, autenticação e persistência |
 | Permissões do banco | `firebase/firestore.rules` | Validação e autorização dos documentos |
 | Ferramentas e testes | `scripts/`, `compose.test.yml`, `.github/workflows/ci.yml` | Execução local e CI |
 
-Cadastro, login e perfis já existem como protótipo. Histórico, matriz curricular,
-pré-requisitos, progresso, grade, fórum e administração ainda exigem implementação.
+O contrato do MVP está em [Contrato do MVP](../backend/CONTRATO_MVP.md) e
+[OpenAPI](../backend/openapi.json). A integração já usa o domínio existente e o
+Firestore; as telas definitivas e a matriz oficial podem ser desenvolvidas em paralelo.
+Fórum e administração continuam fora do MVP.
 Consulte [Implementação atual](../implementacao.md) e [Plano técnico](PLANO_TECNICO.md)
 para distinguir o que está implementado do que está planejado.
 
 ### Frontend
 
-Coloque componentes reutilizáveis em `frontend/src/components/` e lógica sem UI
-em módulos próprios, como `utils/`. O projeto ainda não tem um roteador de telas;
-caso sua tarefa precise dele, combine essa mudança e versione a dependência e seu
-lockfile juntos. Reutilize a inicialização de `lib/firebase.ts`.
+As páginas React ficam em `frontend/src/pages/`, os componentes reutilizáveis em
+`components/` e os hooks em `hooks/`. Cada página ou componente com regras
+visuais próprias mantém seu CSS na mesma pasta e importa esse arquivo no TSX.
+A base visual e os estilos compartilhados ficam em `styles/`.
+
+Chamadas à API ficam em `services/academic.ts`; a persistência dos planos fica
+em `services/planStorage.ts`. Reutilize a inicialização de `services/firebase.ts`.
+A navegação atual usa o hash da URL, acompanhada por `hooks/usePlannerRoute.ts`.
+Consulte a [organização do frontend](../frontend/README.md) antes de criar arquivos.
 
 Para chamar a API local, use caminhos relativos, como `fetch('/api/health')`.
 O Vite encaminha a chamada para o C++; não coloque `localhost:8081` nas telas.
@@ -103,9 +113,10 @@ pode acessá-lo. Inclua testes de comportamento. Se usar o tratamento atual de 4
 ajuste o cabeçalho `Allow` para corresponder aos métodos da rota.
 Após editar C++, encerre o backend com Ctrl+C e inicie-o novamente para recompilar.
 
-O C++ ainda não verifica tokens Firebase nem acessa Firestore. Rotas privadas
-dependem dessa implementação; o login no navegador não autentica automaticamente
-uma requisição recebida pelo C++.
+O C++ valida o token Firebase enviado em `Authorization: Bearer` e acessa o Firestore
+com a identidade do aluno. Use `academicApi` no front; não duplique consultas nem
+cálculos nas telas. Mantenha domínio sem HTTP/Firebase, orquestração na aplicação,
+adaptação JSON em `http/` e acesso externo em `infrastructure/`.
 
 ### Firestore
 

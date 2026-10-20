@@ -8,6 +8,8 @@ tarefa e localizar o código, siga o [guia da equipe](CONTRIBUICAO.md).
 
 Instalar Git, Bun 1.3.14, CMake 3.24 ou superior e
 GCC/MinGW do MSYS2 UCRT64. `git`, `bun`, `cmake` e `g++` devem estar no PATH.
+OpenSSL e libcurl de desenvolvimento também devem estar disponíveis para o CMake
+na mesma distribuição UCRT64 do compilador.
 Node, Ninja e Java são fornecidos pelo setup; não precisam de instalação global.
 Os scripts também reconhecem o compilador em `C:/msys64/ucrt64/bin/g++.exe`.
 Referências: [MSYS2](https://www.msys2.org/) e [CMake](https://cmake.org/download/).
@@ -44,6 +46,7 @@ HTTP do backend. O setup Linux não usa `sudo` nem instala ferramentas globais.
 
 No Ubuntu/Debian, as ferramentas de compilação podem ser instaladas com
 `sudo apt-get install git build-essential cmake ninja-build python3`.
+Instale também `libssl-dev` e `libcurl4-openssl-dev` para autenticação e Firestore REST.
 Instale também Bun, Node e Java nas versões indicadas acima; confira com
 `bun --version`, `node --version` e `java -version`.
 

@@ -1,7 +1,7 @@
 # Implementação — Planejamento Acadêmico
 
 **Disciplina:** BCC323 — Trabalho Prático de Engenharia de Software II  
-**Revisão:** 17/10/2026
+**Revisão:** 20/10/2026
 
 O documento descreve a implementação presente no repositório. Os resultados de
 validação têm datas próprias e não confirmam publicação remota. Os guias operacionais
@@ -11,7 +11,24 @@ estão no [índice de documentação](docs/README.md).
 
 Este documento descreve a implementação atual do protótipo de planejamento acadêmico, as funcionalidades disponíveis, as limitações e os resultados de validação.
 
-A versão atual estabelece a base técnica do sistema: interface web, autenticação, armazenamento de perfis, regras de acesso ao banco e infraestrutura para testes. As funcionalidades completas de planejamento acadêmico ainda dependem de desenvolvimento.
+A versão atual inclui as jornadas do Figma: entrada, cadastro, recuperação de perfil
+incompleto, visão geral, matriz, detalhe, histórico, planejamento e plano salvo.
+A evolução v2 da matriz é a referência: conclusões são editadas no detalhe da matriz;
+o histórico é para consulta. A interface tem navegação por hash e adaptação móvel.
+O React consulta rotas autenticadas do C++ para o catálogo e os cálculos acadêmicos.
+Perfis e conclusões do MVP são lidos e gravados pela API C++ no Firestore REST,
+usando o token Firebase do aluno e respeitando as Security Rules. O fluxo anterior
+de plano salvo continua com o SDK cliente e está fora do contrato do MVP.
+
+O catálogo é um recorte ilustrativo de 24 disciplinas, com duas turmas de BCC202.
+Somente o requisito BCC202 → BCC201 é explicitado para disciplinas avançadas;
+os demais ficam “a validar”, sem liberar planejamento por suposição. O progresso
+calculado refere-se ao recorte, não à integralização oficial do curso. A interface
+de agenda calcula sobreposições, permite trocar turma e impede salvar planos
+inválidos. A remoção de conclusão exige confirmação e sinaliza os planos afetados.
+
+A implantação da API C++ e o encaminhamento remoto de `/api` continuam pendentes.
+Consulte o contrato e as variáveis em [Backend](backend/README.md).
 
 A arquitetura, a lista de tecnologias e a organização dos arquivos ficam no
 [plano técnico](docs/PLANO_TECNICO.md). Para executar o projeto, consulte
@@ -24,13 +41,17 @@ A arquitetura, a lista de tecnologias e a organização dos arquivos ficam no
 
 O formulário solicita e-mail, senha, curso e período. Os campos são obrigatórios; a interface exige senha com pelo menos seis caracteres e período entre 1 e 20.
 
-Ao cadastrar, a aplicação cria a conta no Firebase Authentication e, em seguida, grava o perfil em `users/{uid}` no Firestore, usando o identificador da conta como identificador do documento. A senha é tratada pelo Authentication e não é gravada nesse perfil.
+Ao cadastrar, a aplicação cria a conta no Firebase Authentication e envia o perfil
+para `PUT /api/profile`. O backend grava `users/{uid}` no Firestore, usando o UID
+validado pelo token. Uma falha permite completar o perfil sem recriar a conta.
+A senha é tratada pelo Authentication e não é enviada à API.
 
 | Campo do perfil | Conteúdo |
 |---|---|
 | `displayName` | Texto inicialmente vazio |
 | `course` | Curso informado no formulário |
 | `period` | Período informado pelo usuário |
+| `courseId` | Identificador persistente do curso no catálogo |
 | `createdAt` | Data e hora atribuídas pelo servidor |
 
 ### 2.2 Login e controle de sessão
@@ -43,7 +64,7 @@ Após a autenticação, a interface mostra o e-mail do usuário e o botão **Sai
 
 A função `hasScheduleConflict` compara dois intervalos, cada um composto por dia, início e término. Há conflito quando os intervalos se sobrepõem no mesmo dia. Horários consecutivos, em que um termina exatamente quando o outro começa, são permitidos.
 
-A função valida o formato `HH:mm` e rejeita intervalos cujo início seja igual ou posterior ao término. Essa lógica está implementada e possui testes unitários, mas ainda não está integrada a uma tela de montagem de grade.
+A função valida o formato `HH:mm` e rejeita intervalos cujo início seja igual ou posterior ao término. A tela de planejamento utiliza essa lógica antes de permitir salvar o plano.
 
 ### 2.4 Serviço C++
 
@@ -59,8 +80,10 @@ módulos separados. Erros 404, 405 e 500 retornam JSON no formato
 detalhes internos na resposta. Veja o [guia do backend](backend/README.md).
 
 O Vite encaminha `/api` para o backend durante desenvolvimento e preview.
-O build estático não inclui esse proxy. O serviço ainda não recebe tokens Firebase,
-acessa Firestore ou executa regras de negócio acadêmicas.
+O build estático não inclui esse proxy. O serviço valida tokens Firebase, acessa
+Firestore REST e usa `AlunoImpl`, `CursoImpl` e `DisciplinaImpl` nos cálculos do MVP.
+O catálogo ilustrativo é um fixture carregado no emulador por seed, sem dados
+embutidos no executável. Veja [Contrato do MVP](backend/CONTRATO_MVP.md).
 
 ## 3. Regras de acesso ao banco
 
@@ -74,7 +97,8 @@ As regras em `firebase/firestore.rules` estabelecem as seguintes permissões:
 - Usuários autenticados podem consultar o catálogo `courses`, mas não podem alterá-lo pelo cliente.
 - Os demais caminhos têm leitura e escrita negadas por padrão.
 
-As regras para disciplinas concluídas e catálogo preparam parte da estrutura de dados; elas não representam telas já implementadas.
+As regras são exercitadas tanto pelo SDK quanto pelas requisições do backend,
+que usam o token do aluno, sem acesso administrativo.
 
 ## 4. Cobertura e histórico de validação
 

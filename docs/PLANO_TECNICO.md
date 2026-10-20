@@ -16,7 +16,7 @@ As funcionalidades entregues e os resultados de validação estão em
 | Tailwind CSS 4 | Base de estilos integrada ao Vite; as telas atuais ainda usam estilos inline |
 | Bun 1.3.14 | Instalação de dependências e execução dos scripts |
 | Node.js | Runtime das ferramentas; 22.23.3 portátil no fluxo nativo e Node 22 no CI |
-| C++17 e Crow 1.3.0 | Serviço HTTP inicial para futuras funcionalidades acadêmicas |
+| C++17 e Crow 1.3.0 | API do MVP usando domínio e persistência Firestore REST |
 | CMake, Ninja e GCC | Compilação do backend nativo no Windows |
 | Java 21 | Execução do emulador Firestore |
 | Firebase Authentication | Cadastro e autenticação por e-mail e senha |
@@ -32,15 +32,20 @@ local é definido por `tools/package.json` e `tools/bun.lock`. Os manifestos e o
 lockfiles correspondentes são versionados juntos. Bun instala ambos; não há
 manifesto de pacotes na raiz.
 
-O frontend acessa Authentication e Firestore pelo SDK cliente. A autorização dos
-documentos é feita pelas Security Rules; o C++ ainda não participa desse fluxo.
-A API possui somente a rota pública de saúde. Rotas privadas exigirão validação
-de tokens no servidor; não há permissões administrativas para coordenadores.
+O frontend usa Authentication para a sessão. Perfil, matriz, histórico, progresso
+e elegibilidade do MVP passam pela API C++, que valida o token, acessa o Firestore
+REST com a identidade do usuário e chama as classes do domínio. As Security Rules
+continuam controlando o acesso. O fluxo anterior de planos, fora do MVP, conserva
+seu acesso direto pelo SDK. Não há permissões administrativas para coordenadores.
 
-O backend separa inicialização (`main.cpp`), configuração (`config.*`) e rotas
-(`routes.*`). O contrato HTTP e a configuração estão no
+O backend separa domínio (`domain/`), aplicação (`application/`), HTTP (`http/`),
+infraestrutura (`infrastructure/`) e configuração (`config/`), espelhados em
+`include/` e `src/`. O contrato HTTP e a configuração estão no
 [guia do backend](../backend/README.md). Os detalhes de instalação e atualização
 de dependências ficam em [Bun](BUN.md).
+
+O contrato para dividir tarefas entre front e back está em
+[Contrato do MVP](../backend/CONTRATO_MVP.md) e [OpenAPI](../backend/openapi.json).
 
 ## 2. Arquitetura
 
@@ -87,8 +92,11 @@ e proteção de branches estão descritos em [Implantação](IMPLANTACAO.md).
 | `frontend/src/` | Interface, inicialização do Firebase e validação de horários |
 | `backend/` | API C++/Crow, CMake, Dockerfile e testes HTTP |
 | `backend/include/` | Cabeçalhos próprios da API |
-| `backend/src/config.cpp` | Configuração de endereço e porta do processo |
-| `backend/src/routes.cpp` | Registro das rotas, saúde e erros HTTP em JSON |
+| `backend/src/config/` | Configuração de endereço e porta do processo |
+| `backend/src/http/` | Registro de rotas, DTOs e respostas HTTP em JSON |
+| `backend/src/domain/` | Classes de domínio existentes |
+| `backend/src/application/` | Serviços do MVP e contrato do repositório |
+| `backend/src/infrastructure/` | Tokens Firebase e persistência Firestore |
 | `backend/build/native/bin/` | Executável nativo gerado, ignorado pelo Git |
 | `frontend/tests/integration/` | Testes das regras Firestore |
 | `frontend/e2e/` | Testes de navegador |

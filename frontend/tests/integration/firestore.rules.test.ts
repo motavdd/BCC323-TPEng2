@@ -34,8 +34,30 @@ describe('Regras Firestore', () => {
     const db = env.unauthenticatedContext().firestore();
     await assertFails(getDoc(doc(db, 'users/aluno-1')));
   });
+  it('aceita courseId válido e impede tipo inválido no perfil do MVP', async () => {
+    const db = env.authenticatedContext('aluno-1').firestore();
+    await assertSucceeds(setDoc(doc(db, 'users/aluno-1'), { ...profile, courseId: 'computacao-exemplo' }));
+    await assertFails(setDoc(doc(db, 'users/aluno-1'), { ...profile, courseId: 123 }));
+  });
   it('impede que aluno altere catálogo de disciplinas', async () => {
     const db = env.authenticatedContext('aluno-1').firestore();
     await assertFails(setDoc(doc(db, 'courses/BCC323'), { name: 'TPEng2' }));
+  });
+  it('salva e recupera o plano apenas para o dono', async () => {
+    const db = env.authenticatedContext('aluno-1').firestore();
+    const ref = doc(db, 'users/aluno-1/plans/next');
+    await assertSucceeds(setDoc(ref, { offeringIds: ['BCC202-A'], updatedAt: serverTimestamp() }));
+    await assertSucceeds(getDoc(ref));
+    const other = env.authenticatedContext('aluno-2').firestore();
+    await assertFails(getDoc(doc(other, 'users/aluno-1/plans/next')));
+    await assertFails(setDoc(doc(other, 'users/aluno-1/plans/next'), { offeringIds: [], updatedAt: serverTimestamp() }));
+  });
+  it('rejeita turmas duplicadas, desconhecidas e campos extras no plano', async () => {
+    const db = env.authenticatedContext('aluno-1').firestore();
+    const ref = doc(db, 'users/aluno-1/plans/next');
+    for (const offeringIds of [['BCC202-A', 'BCC202-A'], ['BCC202-A', 'BCC202-B'], ['invalid']]) {
+      await assertFails(setDoc(ref, { offeringIds, updatedAt: serverTimestamp() }));
+    }
+    await assertFails(setDoc(ref, { offeringIds: [], updatedAt: serverTimestamp(), admin: true }));
   });
 });
