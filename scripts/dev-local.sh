@@ -25,6 +25,8 @@ case "$1" in
   backend)
     build_local_backend
     export HOST=127.0.0.1 PORT=8081
+    export FIREBASE_PROJECT_ID=demo-bcc323 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+    export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
     exec "$task_build/bin/bcc323-api"
     ;;
   frontend)

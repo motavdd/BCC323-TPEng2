@@ -1,7 +1,7 @@
 FROM debian:trixie-slim AS build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates cmake g++ git libasio-dev ninja-build python3 \
-    && rm -rf /var/lib/apt/lists/*
+    libssl-dev libcurl4-openssl-dev && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY CMakeLists.txt ./
 COPY src ./src
@@ -15,7 +15,7 @@ CMD ["ctest", "--test-dir", "build", "--output-on-failure"]
 
 FROM debian:trixie-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates curl libstdc++6 \
+    ca-certificates curl libstdc++6 libssl3t64 libcurl4t64 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --system --uid 10001 --create-home app
 COPY --from=build /app/build/bin/bcc323-api /usr/local/bin/bcc323-api

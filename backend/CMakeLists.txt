@@ -25,28 +25,82 @@ FetchContent_Declare(crow
     GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(crow)
+find_package(OpenSSL REQUIRED)
+find_package(CURL REQUIRED)
 
-add_executable(bcc323-api src/main.cpp src/config.cpp src/routes.cpp)
-target_include_directories(bcc323-api PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(JWT_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(jwt_cpp
+    GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+    GIT_TAG v0.7.1
+    GIT_SHALLOW TRUE
+)
+
+FetchContent_MakeAvailable(jwt_cpp)
+
+file(GLOB DOMAIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/domain/*.cpp")
+add_library(academic-domain STATIC ${DOMAIN_SOURCES})
+target_include_directories(academic-domain PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+add_library(academic-application STATIC src/application/AcademicService.cpp)
+target_link_libraries(academic-application PUBLIC academic-domain)
+
+file(GLOB_RECURSE INFRASTRUCTURE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/infrastructure/*.cpp")
+add_library(academic-infrastructure STATIC ${INFRASTRUCTURE_SOURCES})
+target_link_libraries(academic-infrastructure PUBLIC academic-application Crow::Crow jwt-cpp::jwt-cpp OpenSSL::Crypto CURL::libcurl)
+
+file(GLOB HTTP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/http/*.cpp")
+add_executable(bcc323-api src/main.cpp src/config/config.cpp ${HTTP_SOURCES})
+target_link_libraries(bcc323-api PRIVATE academic-infrastructure)
 set_target_properties(bcc323-api PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin/$<0:>"
 )
-target_link_libraries(bcc323-api PRIVATE Crow::Crow)
 if(WIN32)
-    target_link_libraries(bcc323-api PRIVATE ws2_32 mswsock)
-    target_compile_definitions(bcc323-api PRIVATE _WIN32_WINNT=0x0A00)
+    target_link_libraries(academic-infrastructure PUBLIC ws2_32 mswsock)
+    target_compile_definitions(academic-infrastructure PUBLIC _WIN32_WINNT=0x0A00)
 endif()
-if(MSVC)
-    target_compile_options(bcc323-api PRIVATE /W4)
-else()
-    target_compile_options(bcc323-api PRIVATE -Wall -Wextra -Wpedantic)
-endif()
+foreach(target academic-domain academic-application academic-infrastructure bcc323-api)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /W4)
+    else()
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+    endif()
+endforeach()
 
 include(CTest)
 if(BUILD_TESTING)
-    find_package(Python3 REQUIRED COMPONENTS Interpreter)
-    add_test(NAME api-smoke
-        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/smoke.py
-                $<TARGET_FILE:bcc323-api>)
-    set_tests_properties(api-smoke PROPERTIES TIMEOUT 30)
+    add_executable(application-tests test/application/academic_service_test.cpp)
+    target_link_libraries(application-tests PRIVATE academic-application)
+    add_test(NAME academic-service COMMAND application-tests)
+    add_executable(auth-tests
+        test/auth/token_verifier_test.cpp
+        src/infrastructure/auth/FirebaseTokenVerifier.cpp
+    )
+
+    target_include_directories(auth-tests PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    )
+
+    target_link_libraries(auth-tests PRIVATE
+        jwt-cpp::jwt-cpp
+    )
+
+    target_compile_definitions(auth-tests PRIVATE
+        AUTH_FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test/auth/fixtures"
+    )
+
+    add_test(
+        NAME auth-token-verifier
+        COMMAND auth-tests
+    )
+    find_package(Python3 COMPONENTS Interpreter)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME api-smoke
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/smoke.py
+                    $<TARGET_FILE:bcc323-api>)
+        set_tests_properties(api-smoke PROPERTIES TIMEOUT 30)
+    else()
+        message(STATUS "Python 3 ausente: smoke HTTP disponível no CI; testes C++ continuam habilitados.")
+    endif()
 endif()

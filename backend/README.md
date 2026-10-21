@@ -1,72 +1,113 @@
-# Backend C++
+# Backend C++ — MVP acadêmico
 
-API C++17 com Crow. O cadastro e os perfis continuam no SDK Firebase do frontend.
+O C++ autentica as requisições, carrega dados do Firestore e utiliza as classes
+`AlunoImpl`, `CursoImpl` e `DisciplinaImpl` para histórico, progresso e elegibilidade.
+O React usa Firebase Authentication para cadastro e login, e a API para os dados
+do MVP. O banco não exige credenciais administrativas no backend: as requisições
+REST usam o token Firebase do aluno e respeitam as Security Rules.
 
-## Desenvolvimento
+Consulte [Contrato e divisão de trabalho](CONTRATO_MVP.md) e
+[OpenAPI](openapi.json). O cliente tipado das telas fica em
+[academic.ts](../frontend/src/services/academic.ts).
 
-Na raiz, execute `./scripts/setup-local.ps1` e depois
-`./scripts/dev-local.ps1 backend`. A API responde em
-`http://127.0.0.1:8081/api/health`. O frontend usa o proxy `/api` do Vite.
+## Estrutura
 
-| Variável | Padrão do executável | Docker |
+As pastas `include/` e `src/` espelham as mesmas camadas:
+
+| Pasta | Responsabilidade |
+|---|---|
+| `domain/` | Interfaces e implementações de aluno, usuário, curso, disciplina e sistema acadêmico |
+| `application/` | Serviços do MVP, DTOs e interface do repositório |
+| `http/` | Rotas Crow, validação de entrada e serialização JSON |
+| `infrastructure/auth/` | Verificação de tokens e certificados Firebase |
+| `infrastructure/firestore/` | Repositório persistente pela API REST |
+| `config/` | Configuração de host e porta |
+| `src/main.cpp` | Inicialização |
+| `test/application/` | Regras e integração com o domínio, sem rede |
+| `test/auth/` | Verificação criptográfica de tokens |
+| `test/fixtures/` | Dados ilustrativos usados exclusivamente para preparar testes |
+| `test/smoke.py` | Contrato HTTP do processo e configuração, sem Firebase |
+
+As bibliotecas CMake separam `academic-domain`, `academic-application` e
+`academic-infrastructure`. O domínio e a aplicação compilam sem Crow ou Firebase.
+Não coloque consultas ao banco nas entidades nem cálculos acadêmicos nos handlers.
+
+## Executar localmente
+
+Depois de `./scripts/setup-local.ps1`, abra terminais separados na raiz:
+
+1. `./scripts/dev-local.ps1 firebase`
+2. `node scripts/seed-demo.mjs` (após os emuladores iniciarem)
+3. `./scripts/dev-local.ps1 backend`
+4. `./scripts/dev-local.ps1 frontend`
+
+No Linux, use `bash scripts/setup-local.sh` e
+`bash scripts/dev-local.sh firebase|backend|frontend`.
+O seed preserva catálogo existente e só aceita projeto `demo-*` no emulador.
+Não é executado automaticamente no início do servidor nem usado em produção.
+
+| Variável | Execução direta | Scripts locais / Compose |
 |---|---|---|
-| `HOST` | `127.0.0.1` | `0.0.0.0` |
+| `HOST` | `127.0.0.1` | `127.0.0.1` / `0.0.0.0` |
 | `PORT` | `8081` | `8081` |
+| `FIREBASE_PROJECT_ID` | Obrigatório nas rotas privadas | `demo-bcc323` |
+| `FIREBASE_AUTH_EMULATOR_HOST` | Ausente: validação RS256 | `127.0.0.1:9099` / `firebase:9099` |
+| `FIRESTORE_EMULATOR_HOST` | Ausente: Firestore HTTPS | `127.0.0.1:8080` / `firebase:8080` |
 
-`HOST` aceita endereços IPv4 ou IPv6, sem protocolo nem porta; `PORT` aceita
-inteiros de 1 a 65535. O inicializador nativo fixa `127.0.0.1:8081`.
-Configurações inválidas encerram o processo com código de erro.
+Tokens sem assinatura só são aceitos quando o projeto começa com `demo-` e
+`FIREBASE_AUTH_EMULATOR_HOST` está explicitamente definido. Firestore emulado
+também exige projeto demo. Na implantação remota, remova ambas as variáveis de
+emulador e configure o projeto real. `GET /api/health` verifica apenas o processo.
 
-## Organização
+## API
 
-- `src/main.cpp`: inicialização do processo.
-- `include/`: cabeçalhos próprios (`config.hpp` e `routes.hpp`).
-- `src/config.cpp`: leitura e validação de configuração.
-- `src/routes.cpp`: registro de rotas e respostas de erro.
-- `build/native/bin/`: executável gerado na compilação nativa; ignorado pelo Git.
-- `test/smoke.py`: contrato HTTP e validação de configuração no processo real.
+Envie `Authorization: Bearer <Firebase ID token>`. Nunca envie senha ou UID no corpo.
 
-`GET /api/health` retorna `{"status":"ok","service":"bcc323-api"}` e não
-consulta serviços externos. `HEAD` e `OPTIONS` são tratados pelo Crow.
-Rotas inexistentes retornam 404; métodos não permitidos retornam 405.
-Erros usam `{"error":{"code":"not_found","message":"Route not found"}}`,
-com código e mensagem correspondentes ao status. Exceções nas rotas retornam 500
-sem expor detalhes internos. As respostas de saúde e erro usam `Cache-Control: no-store`.
+| Operação | Método e caminho |
+|---|---|
+| Identidade | `GET /api/me` |
+| Cursos | `GET /api/courses` |
+| Perfil | `GET /api/profile`, `PUT /api/profile` |
+| Matriz do aluno | `GET /api/curriculum` |
+| Histórico | `GET /api/history` |
+| Progresso e elegibilidade | `GET /api/academic/summary` |
+| Concluir disciplina | `PUT /api/history/{codigo}` |
+| Remover conclusão | `DELETE /api/history/{codigo}` |
 
-Ao adicionar rotas, mantenha os módulos separados por funcionalidade e atualize
-o registro, os testes e os métodos do cabeçalho `Allow` para as novas rotas.
-Endpoints privados precisam verificar o token Firebase no servidor antes de
-acessar dados; essa integração ainda não está implementada.
+O servidor lê o histórico persistido para calcular o progresso. O antigo
+`POST /api/academic/evaluate` e o cabeçalho `example_curriculum.hpp` foram removidos.
+O catálogo fica em `courses/{courseId}` no Firestore. Perfis antigos que só guardam
+o nome do curso continuam legíveis; novos perfis persistem também `courseId`.
+Mudar de curso com histórico existente exige uma migração ainda fora do MVP.
+
+Erros seguem `{"error":{"code":"...","message":"..."}}`; respostas usam
+`Cache-Control: no-store`. O contrato detalha os estados e o tratamento esperado.
 
 ## Testes
 
-No Linux, prepare com `bash scripts/setup-local.sh` e inicie com
-`bash scripts/dev-local.sh backend`. O executável fica em
-`backend/build/linux/bin/bcc323-api`. Para os testes HTTP:
+```sh
+cmake -S backend -B backend/build/native -DBUILD_TESTING=ON
+cmake --build backend/build/native --parallel 2
+ctest --test-dir backend/build/native --output-on-failure
+```
 
-```bash
+Use um diretório de build configurado para o compilador da sua máquina. No Windows,
+carregue `. ./scripts/local-env.ps1` antes de compilar para configurar GCC e DLLs.
+Se Python 3 não estiver disponível, CMake habilita os testes C++ e informa que
+o smoke HTTP ficará disponível no CI. Quando instalado, pode executar também:
+
+```sh
 python3 backend/test/smoke.py backend/build/linux/bin/bcc323-api
 ```
 
-A bateria existente do CI compila e executa CTest em Docker. Na raiz:
+A bateria Docker completa continua em `scripts/test-all.ps1` / `scripts/test-all.sh`.
+`frontend/e2e/academic-api.spec.ts` testa a API com Firebase emulado, incluindo
+persistência e isolamento entre alunos. O setup do Playwright prepara o catálogo
+de teste; ele não depende de telas para validar esses contratos.
 
-```sh
-docker compose -f compose.test.yml build backend-test
-docker compose -f compose.test.yml run --rm --no-deps backend-test
-```
+## Fora desta etapa
 
-Para testar o binário nativo já compilado, com Python 3 instalado:
-
-```powershell
-python backend/test/smoke.py backend/build/native/bin/bcc323-api.exe
-```
-
-O teste escolhe uma porta livre e encerra seu próprio processo. Não precisa
-iniciar o Firebase. `check-local.ps1` compila o C++, mas os testes HTTP são
-executados separadamente ou no CI.
-
-## Publicação
-
-O Dockerfile gera uma imagem de execução com usuário sem privilégios e suporte
-a `HOST`/`PORT`. A publicação da API e o encaminhamento de `/api` no Firebase
-Hosting ainda precisam ser configurados antes de usar endpoints C++ remotamente.
+Planejamento com turmas, conflitos, fórum e coordenação não fazem parte do contrato
+do MVP. O fluxo anterior de planos no front foi preservado e ainda usa o SDK cliente.
+A matriz oficial, a hospedagem do C++ e o encaminhamento remoto de `/api` precisam
+ser preparados antes da entrega publicada. Nenhum deploy é feito por esta alteração.

@@ -1,0 +1,237 @@
+{
+  "id": "computacao-exemplo",
+  "name": "Ciência da Computação",
+  "illustrative": true,
+  "subjects": [
+    {
+      "id": "BCC201",
+      "name": "Introdução à Programação",
+      "hours": 90,
+      "period": 1,
+      "prerequisites": [],
+      "requirementsKnown": true
+    },
+    {
+      "id": "MTM122",
+      "name": "Cálculo Diferencial e Integral I",
+      "hours": 90,
+      "period": 1,
+      "prerequisites": [],
+      "requirementsKnown": true
+    },
+    {
+      "id": "BCC101",
+      "name": "Matemática Discreta I",
+      "hours": 60,
+      "period": 1,
+      "prerequisites": [],
+      "requirementsKnown": true
+    },
+    {
+      "id": "BCC202",
+      "name": "Estrutura de Dados I",
+      "hours": 90,
+      "period": 2,
+      "prerequisites": [
+        "BCC201"
+      ],
+      "requirementsKnown": true
+    },
+    {
+      "id": "BCC266",
+      "name": "Organização de Computadores",
+      "hours": 60,
+      "period": 2,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "MTM123",
+      "name": "Cálculo Diferencial e Integral II",
+      "hours": 60,
+      "period": 2,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC203",
+      "name": "Estrutura de Dados II",
+      "hours": 60,
+      "period": 3,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC221",
+      "name": "Programação Orientada a Objetos",
+      "hours": 60,
+      "period": 3,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "MTM112",
+      "name": "Introdução à Álgebra Linear",
+      "hours": 60,
+      "period": 3,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC204",
+      "name": "Teoria dos Grafos",
+      "hours": 60,
+      "period": 4,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC264",
+      "name": "Sistemas Operacionais",
+      "hours": 60,
+      "period": 4,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC322",
+      "name": "Engenharia de Software I",
+      "hours": 60,
+      "period": 4,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC241",
+      "name": "Projeto e Análise de Algoritmos",
+      "hours": 60,
+      "period": 5,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC321",
+      "name": "Banco de Dados I",
+      "hours": 60,
+      "period": 5,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC323",
+      "name": "Engenharia de Software II",
+      "hours": 60,
+      "period": 5,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC325",
+      "name": "Inteligência Artificial",
+      "hours": 60,
+      "period": 6,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC327",
+      "name": "Computação Gráfica",
+      "hours": 60,
+      "period": 6,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC328",
+      "name": "Construção de Compiladores I",
+      "hours": 60,
+      "period": 6,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC392",
+      "name": "Monografia I",
+      "hours": 120,
+      "period": 7,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC503",
+      "name": "Informática e Sociedade",
+      "hours": 30,
+      "period": 7,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "ELT002",
+      "name": "Disciplina Eletiva",
+      "hours": 60,
+      "period": 7,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "BCC393",
+      "name": "Monografia II",
+      "hours": 120,
+      "period": 8,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "DIR260",
+      "name": "Direito da Informática",
+      "hours": 30,
+      "period": 8,
+      "prerequisites": [],
+      "requirementsKnown": false
+    },
+    {
+      "id": "PRO302",
+      "name": "Ações Empreendedoras",
+      "hours": 60,
+      "period": 8,
+      "prerequisites": [],
+      "requirementsKnown": false
+    }
+  ],
+  "offerings": [
+    {
+      "id": "BCC202-A",
+      "subjectId": "BCC202",
+      "group": "A",
+      "times": [
+        {
+          "day": "Seg",
+          "start": "08:00",
+          "end": "10:00"
+        },
+        {
+          "day": "Qua",
+          "start": "08:00",
+          "end": "10:00"
+        }
+      ]
+    },
+    {
+      "id": "BCC202-B",
+      "subjectId": "BCC202",
+      "group": "B",
+      "times": [
+        {
+          "day": "Ter",
+          "start": "10:00",
+          "end": "12:00"
+        },
+        {
+          "day": "Qui",
+          "start": "10:00",
+          "end": "12:00"
+        }
+      ]
+    }
+  ]
+}

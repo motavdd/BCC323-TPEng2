@@ -14,6 +14,9 @@ try {
         }
         backend {
             Build-LocalBackend
+            $env:FIREBASE_PROJECT_ID = 'demo-bcc323'
+            $env:FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099'
+            $env:FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080'
             $env:PORT = '8081'
             $env:HOST = '127.0.0.1'
             Invoke-Checked "$taskBuild/bin/bcc323-api.exe" @()

@@ -1,5 +1,6 @@
 """Verifica o processo HTTP real sem bibliotecas Python adicionais."""
 import json
+import base64
 import os
 from pathlib import Path
 import socket
@@ -26,6 +27,8 @@ class ApiSmokeTest(unittest.TestCase):
             port = listener.getsockname()[1]
         process = subprocess.Popen([BINARY], env={
             **os.environ, "HOST": "127.0.0.1", "PORT": str(port),
+            "FIREBASE_PROJECT_ID": "demo-bcc323",
+            "FIREBASE_AUTH_EMULATOR_HOST": "127.0.0.1:9099",
         })
         base_url = f"http://127.0.0.1:{port}"
         try:
@@ -45,6 +48,25 @@ class ApiSmokeTest(unittest.TestCase):
                     if time.monotonic() >= deadline:
                         self.fail("API não respondeu em 10 segundos")
                     time.sleep(0.1)
+            # O modo demo é explícito; rotas privadas rejeitam ausência de token.
+            with self.assertRaises(HTTPError) as error:
+                urlopen(base_url + "/api/curriculum", timeout=2)
+            self.assertEqual(error.exception.code, 401)
+            def encode(value):
+                return base64.urlsafe_b64encode(json.dumps(value).encode()).rstrip(b"=").decode()
+            now = int(time.time())
+            token = encode({"alg": "none", "typ": "JWT"}) + "." + encode({
+                "sub": "student-1", "aud": "demo-bcc323",
+                "iss": "https://securetoken.google.com/demo-bcc323",
+                "iat": now, "exp": now + 3600,
+            }) + "."
+            headers = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
+            with urlopen(Request(base_url + "/api/me", headers=headers), timeout=2) as response:
+                self.assertEqual(json.load(response), {"uid": "student-1"})
+            with self.assertRaises(HTTPError) as error:
+                urlopen(Request(base_url + "/api/profile", headers=headers,
+                                method="PUT", data=b'{"course":"Computacao","period":0}'), timeout=2)
+            self.assertEqual(error.exception.code, 400)
             with self.assertRaises(HTTPError) as error:
                 urlopen(base_url + "/api/unknown", timeout=2)
             self.assertEqual(error.exception.code, 404)

@@ -1,0 +1,166 @@
+.access {
+  display: grid;
+  grid-template-columns: 460px minmax(0, 660px);
+  max-width: 1120px;
+  min-height: 760px;
+  margin: max(0px, calc((100vh - 760px) / 2)) auto;
+}
+.access-brand {
+  background: var(--wine-dark);
+  color: white;
+  padding: 44px 48px;
+}
+.access-brand > strong {
+  font-size: 26px;
+}
+.access-brand > div {
+  margin-top: 150px;
+}
+.access-brand h1 {
+  line-height: 1.47;
+  margin-bottom: 32px;
+}
+.access-brand p {
+  font-size: 17px;
+  color: #dbeafe;
+  margin-bottom: 14px;
+}
+.access-body {
+  padding: 114px 100px 60px 80px;
+  display: flex;
+  flex-direction: column;
+}
+.access-body header {
+  margin-bottom: 38px;
+}
+.access-body header p {
+  font-size: 16px;
+}
+.access-form label {
+  margin-bottom: 28px;
+}
+.access-form .actions {
+  margin-top: 54px;
+}
+.access-form .actions > button:first-child {
+  flex: 1;
+}
+.access-form label[for="password"] {
+  margin-bottom: 0;
+}
+.password-field {
+  display: block;
+  position: relative;
+  margin-bottom: 28px;
+}
+.password-field input {
+  padding-right: 95px;
+}
+.password-field button {
+  position: absolute;
+  top: 2px;
+  right: 20px;
+  font-size: 13px;
+}
+.switch-access {
+  align-self: center;
+  margin-top: 18px;
+  font-size: 16px;
+}
+.access:not(.register) {
+  background: url("/figma/login-surface.svg") center / 100% 100% no-repeat;
+}
+.access:not(.register) .access-brand {
+  background: url("/figma/login-brand.svg") center / 100% 100% no-repeat;
+}
+.access:not(.register) input {
+  background: white url("/figma/login-input.svg") center / 100% 100% no-repeat;
+  border-color: transparent;
+}
+.access:not(.register) button[type="submit"] {
+  background: url("/figma/login-button.svg") center / 100% 100% no-repeat;
+  border-color: transparent;
+}
+.register {
+  grid-template-columns: 210px minmax(0, 910px);
+}
+.register .access-brand {
+  background: transparent;
+  color: var(--wine);
+  padding: 24px;
+}
+.register .access-brand strong {
+  font-size: 22px;
+}
+.register .access-body {
+  padding: 24px 50px 24px 40px;
+}
+.register .access-body header {
+  margin-bottom: 14px;
+}
+.register .access-body header p {
+  font-size: 14px;
+}
+.register .access-form {
+  padding: 32px;
+}
+.register input[type="number"] {
+  max-width: 344px;
+}
+.register .actions {
+  margin-top: 36px;
+}
+.register .actions button {
+  flex: initial;
+  min-width: 220px;
+}
+@media (max-width: 1000px) {
+  .access {
+    grid-template-columns: 40% 60%;
+  }
+  .access-brand {
+    padding: 32px;
+  }
+  .access-body {
+    padding: 100px 40px;
+  }
+  .register {
+    grid-template-columns: 160px 1fr;
+  }
+  .register .access-body {
+    padding: 30px;
+  }
+}
+@media (max-width: 650px) {
+  .access,
+  .register {
+    display: block;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .access-brand,
+  .register .access-brand {
+    padding: 24px;
+  }
+  .access-brand > div {
+    margin-top: 30px;
+  }
+  .access-brand h1 {
+    font-size: 25px;
+    margin-bottom: 20px;
+  }
+  .access-brand p {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .access-body,
+  .register .access-body {
+    padding: 32px 24px;
+  }
+  .register .access-form {
+    padding: 24px;
+  }
+  .access-form .actions {
+    margin-top: 28px;
+  }
+}

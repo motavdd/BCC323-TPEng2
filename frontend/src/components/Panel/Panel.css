@@ -1,0 +1,22 @@
+.panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 26px;
+}
+.panel > :last-child {
+  margin-bottom: 0;
+}
+.highlight {
+  background: var(--selection);
+  border-color: #ffb8d0;
+}
+.highlight h2 {
+  color: var(--wine-dark);
+}
+@media (max-width: 650px) {
+  .panel {
+    padding: 22px;
+  }
+}

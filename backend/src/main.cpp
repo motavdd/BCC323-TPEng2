@@ -1,5 +1,5 @@
-#include "config.hpp"
-#include "routes.hpp"
+#include "config/config.hpp"
+#include "http/routes.hpp"
 
 #include <cstdlib>
 #include <exception>
