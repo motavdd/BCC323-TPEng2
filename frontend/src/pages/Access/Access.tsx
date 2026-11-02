@@ -4,6 +4,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { message } from "../../utils/errors";
 
+type FieldErrors = {
+  email?: string;
+  password?: string;
+  course?: string;
+  period?: string;
+};
+
 export function Access({
   registerAccount,
 }: {
@@ -21,21 +28,70 @@ export function Access({
   const [course, setCourse] = useState("Ciência da Computação");
   const [period, setPeriod] = useState(1);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [busy, setBusy] = useState(false);
+
+  // Função de validação local dos campos de entrada (Issue #18)
+  function validateFields(): boolean {
+    const errors: FieldErrors = {};
+
+    // 1. Validação do E-mail
+    if (!email.trim()) {
+      errors.email = "O e-mail é obrigatório.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errors.email = "Insira um e-mail válido (ex: usuario@dominio.com).";
+    }
+
+    // 2. Validação da Senha
+    if (!password) {
+      errors.password = "A senha é obrigatória.";
+    } else if (password.length < 6) {
+      errors.password = "A senha deve ter pelo menos 6 caracteres.";
+    }
+
+    // 3. Validações adicionais para o fluxo de Cadastro
+    if (register) {
+      if (!course.trim()) {
+        errors.course = "Informe o nome do curso.";
+      }
+      if (!period || period < 1 || period > 20) {
+        errors.period = "O período deve ser um número entre 1 e 20.";
+      }
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
+    setFieldErrors({});
+
+    // Interrompe o envio caso a validação de campos falhe
+    if (!validateFields()) {
+      return;
+    }
+
     setBusy(true);
     try {
       if (register) {
         await registerAccount(email, password, course, period);
-      } else await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
     } catch (e) {
       setError(message(e));
     } finally {
       setBusy(false);
     }
   }
+
+  const resetFormState = () => {
+    setError("");
+    setFieldErrors({});
+  };
+
   return (
     <main className={register ? "access register" : "access"}>
       <aside className="access-brand">
@@ -65,6 +121,7 @@ export function Access({
         <form
           className={register ? "panel access-form" : "access-form"}
           onSubmit={(event) => void submit(event)}
+          noValidate
         >
           <label htmlFor="email">
             E-mail
@@ -75,10 +132,16 @@ export function Access({
               placeholder="seuemail@exemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
               maxLength={254}
+              className={fieldErrors.email ? "input-error" : ""}
             />
           </label>
+          {fieldErrors.email && (
+            <p role="alert" className="notice danger font-xs">
+              {fieldErrors.email}
+            </p>
+          )}
+
           <label htmlFor="password">Senha</label>
           <div className="password-field">
             <input
@@ -90,8 +153,7 @@ export function Access({
               }
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              minLength={6}
-              required
+              className={fieldErrors.password ? "input-error" : ""}
             />
             <button
               type="button"
@@ -103,6 +165,12 @@ export function Access({
               {visible ? "Ocultar" : "Mostrar"}
             </button>
           </div>
+          {fieldErrors.password && (
+            <p role="alert" className="notice danger font-xs">
+              {fieldErrors.password}
+            </p>
+          )}
+
           {register && (
             <>
               <label htmlFor="course">
@@ -111,10 +179,16 @@ export function Access({
                   id="course"
                   value={course}
                   onChange={(e) => setCourse(e.target.value)}
-                  required
                   maxLength={100}
+                  className={fieldErrors.course ? "input-error" : ""}
                 />
               </label>
+              {fieldErrors.course && (
+                <p role="alert" className="notice danger font-xs">
+                  {fieldErrors.course}
+                </p>
+              )}
+
               <label htmlFor="period">
                 Período atual
                 <input
@@ -125,17 +199,25 @@ export function Access({
                   step={1}
                   value={period}
                   onChange={(e) => setPeriod(Number(e.target.value))}
-                  required
+                  className={fieldErrors.period ? "input-error" : ""}
                 />
               </label>
-              <p className="muted">Informe um período de 1 a 20.</p>
+              {fieldErrors.period ? (
+                <p role="alert" className="notice danger font-xs">
+                  {fieldErrors.period}
+                </p>
+              ) : (
+                <p className="muted">Informe um período de 1 a 20.</p>
+              )}
             </>
           )}
+
           {error && (
             <p role="alert" className="notice danger">
               {error}
             </p>
           )}
+
           <div className="actions">
             <button type="submit" disabled={busy}>
               {busy ? "Aguarde…" : register ? "Criar conta" : "Entrar"}
@@ -146,7 +228,7 @@ export function Access({
                 className="secondary"
                 onClick={() => {
                   setRegister(false);
-                  setError("");
+                  resetFormState();
                 }}
               >
                 Já tenho conta
@@ -159,7 +241,7 @@ export function Access({
             className="text-button switch-access"
             onClick={() => {
               setRegister(true);
-              setError("");
+              resetFormState();
             }}
           >
             Primeiro acesso? Criar conta

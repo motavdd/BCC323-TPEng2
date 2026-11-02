@@ -14,6 +14,7 @@ import { Planner } from "../pages/planner/Planner";
 export default function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const registering = useRef(false);
+
   useEffect(
     () =>
       onAuthStateChanged(auth, (value) => {
@@ -21,12 +22,14 @@ export default function App() {
       }),
     [],
   );
+
   if (user === undefined)
     return (
       <main className="loading" role="status">
         Carregando sua sessão…
       </main>
     );
+
   return user ? (
     <Planner key={user.uid} user={user} onSignOut={() => signOut(auth)} />
   ) : (
@@ -36,6 +39,9 @@ export default function App() {
         try {
           await createUserWithEmailAndPassword(auth, email, password);
           await academicApi.saveProfile({ course: course.trim(), period });
+        } catch (error) {
+          // Relança o erro para que o componente Access trate e exiba na interface
+          throw error;
         } finally {
           registering.current = false;
           setUser(auth.currentUser);
