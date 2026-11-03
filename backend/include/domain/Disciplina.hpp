@@ -16,6 +16,10 @@ public:
     virtual void setCargaHoraria(int cargaHoraria) = 0;
     virtual int getCargaHoraria() const = 0;
 
+    /** @brief Define o período sugerido para a disciplina. */
+    virtual void setPeriodoSugerido(int periodoSugerido) = 0;
+    virtual int getPeriodoSugerido() const = 0;
+
     /** @brief Vincula um pre-requisito sem assumir sua propriedade. */
     virtual void addPreRequisito(Disciplina* disciplina) = 0;
     virtual void removePreRequisito(Disciplina* disciplina) = 0;
