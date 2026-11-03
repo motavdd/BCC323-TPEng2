@@ -65,3 +65,21 @@ int CursoImpl::getCargaTotal() const {
 
     return total;
 }
+
+Disciplina* CursoImpl::buscarDisciplina(const std::string& codigo) {
+    for (auto* d : disciplinas) {
+        if (d != nullptr && d->getCodigo() == codigo) {
+            return d;
+        }
+    }
+    return nullptr;
+}
+
+bool CursoImpl::editarDisciplina(const std::string& codigo, const std::string& novoNome, int novaCargaHoraria, int novoPeriodoSugerido) {
+    Disciplina* d = buscarDisciplina(codigo);
+    if (d == nullptr) {
+        return false;
+    }
+    d->editarDados(novoNome, novaCargaHoraria, novoPeriodoSugerido);
+    return true;
+}

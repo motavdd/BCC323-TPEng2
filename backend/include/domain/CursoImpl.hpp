@@ -31,6 +31,9 @@ public:
     // A cópia compartilha referências às mesmas disciplinas.
     CursoImpl(const CursoImpl&) = default;
     CursoImpl& operator=(const CursoImpl&) = default;
+
+    Disciplina* buscarDisciplina(const std::string& codigo) override;
+    bool editarDisciplina(const std::string& codigo, const std::string& novoNome, int novaCargaHoraria, int novoPeriodoSugerido) override;
 };
 
 #endif

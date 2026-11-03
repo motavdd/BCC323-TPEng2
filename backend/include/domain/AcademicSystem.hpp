@@ -103,6 +103,17 @@ public:
      * * @return Usuario* - o Usuario. 
      */
     virtual Usuario* buscarUsuario(std::string email) = 0;
+
+    /*!
+     * @brief Cadastra uma nova disciplina e a vincula a matriz de um curso.
+     * @param curso o curso cuja matriz recebera a disciplina.
+     * @param codigo codigo unico da disciplina.
+     * @param nome nome da disciplina.
+     * @param cargaHoraria carga horaria da disciplina.
+     * @param periodoSugerido periodo recomendado no curso.
+     * @return Disciplina* - a nova disciplina cadastrada ou nullptr caso falhe.
+     */
+    virtual Disciplina* cadastrarDisciplinaNaMatriz(Curso* curso, std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido) = 0;
 };
 
 #endif
