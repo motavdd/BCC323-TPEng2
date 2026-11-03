@@ -32,6 +32,8 @@ public:
     void setPeriodoSugerido(int periodoSugerido) override;
     int getPeriodoSugerido() const override;
 
+    void editarDados(std::string novoNome, int novaCargaHoraria, int novoPeriodoSugerido) override;
+
     /**
      * @brief Ignora nulos e duplicados por ponteiro.
      * @throws std::invalid_argument Se o vinculo formar um ciclo.

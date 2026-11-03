@@ -20,6 +20,9 @@ public:
     virtual void setPeriodoSugerido(int periodoSugerido) = 0;
     virtual int getPeriodoSugerido() const = 0;
 
+    /** @brief Edita os dados cadastrais da disciplina de uma so vez. */
+    virtual void editarDados(std::string novoNome, int novaCargaHoraria, int novoPeriodoSugerido) = 0;
+
     /** @brief Vincula um pre-requisito sem assumir sua propriedade. */
     virtual void addPreRequisito(Disciplina* disciplina) = 0;
     virtual void removePreRequisito(Disciplina* disciplina) = 0;

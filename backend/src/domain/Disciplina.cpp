@@ -89,3 +89,9 @@ void DisciplinaImpl::setPeriodoSugerido(int periodoSugerido) {
 int DisciplinaImpl::getPeriodoSugerido() const {
     return periodoSugerido;
 }
+
+void DisciplinaImpl::editarDados(std::string novoNome, int novaCargaHoraria, int novoPeriodoSugerido) {
+    setNome(std::move(novoNome));
+    setCargaHoraria(novaCargaHoraria);
+    setPeriodoSugerido(novoPeriodoSugerido);
+}
