@@ -3,6 +3,8 @@
 #include <vector>
 #include <stdexcept>
 
+namespace bcc323 {
+
 enum class DiaSemana {
     SEGUNDA,
     TERCA,
@@ -14,10 +16,10 @@ enum class DiaSemana {
 
 struct HorarioAula {
     DiaSemana dia;
-    int horaInicio;
-    int minutoInicio;
-    int horaFim;
-    int minutoFim;
+    int horaInicio;    // 0 a 23
+    int minutoInicio;  // 0 a 59
+    int horaFim;       // 0 a 23
+    int minutoFim;     // 0 a 59
     std::string sala;
 
     int inicioEmMinutos() const {
@@ -40,8 +42,8 @@ struct HorarioAula {
 };
 
 struct Turma {
-    std::string codigo;
-    std::string disciplinaCodigo;
+    std::string codigo;             // Ex: "T01"
+    std::string disciplinaCodigo;   // Ex: "BCC323"
     int vagasTotais{0};
     std::vector<HorarioAula> horarios;
 
@@ -60,3 +62,5 @@ struct Turma {
         }
     }
 };
+
+} // namespace bcc323

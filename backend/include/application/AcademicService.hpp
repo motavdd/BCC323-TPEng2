@@ -14,7 +14,7 @@ namespace bcc323 {
         AcademicSummary summary(const RequestContext& context);
         AcademicSummary setCompleted(const RequestContext& context, const std::string& subjectId, bool completed);
         // Ponto puro, usado também nos testes: mesmas classes do domínio, sem Firebase.
-        static AcademicSummary evaluate(const CourseRecord&, const Aca  demicProfile&, const std::vector<std::string>&);
+        static AcademicSummary evaluate(const CourseRecord&, const AcademicProfile&, const std::vector<std::string>&);
 
         // Turmas e conflitos de horários
         static bool verificarConflitoHorarios(const HorarioAula& h1, const HorarioAula& h2);
