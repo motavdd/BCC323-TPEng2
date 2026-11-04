@@ -1,0 +1,34 @@
+import { expect, test } from '@playwright/test';
+
+test('conclusão atualiza histórico, libera planejamento e persiste após recarregar', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Primeiro acesso? Criar conta' }).click();
+  await page.getByLabel('E-mail', { exact: true }).fill(`planner-${Date.now()}@example.test`);
+  await page.getByLabel('Senha', { exact: true }).fill('senha12345');
+  await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Seu progresso começa na matriz' })).toBeVisible();
+  await page.getByRole('button', { name: 'Abrir matriz interativa' }).click();
+  await page.getByRole('button', { name: /BCC201 Introdução/ }).click();
+  await page.getByRole('button', { name: 'Marcar como concluída' }).click();
+  await expect(page.getByRole('heading', { name: '✓ Concluída' })).toBeVisible();
+  await page.getByRole('link', { name: 'Histórico', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '90 horas concluídas' })).toBeVisible();
+  await page.getByRole('link', { name: 'Planejar semestre', exact: true }).click();
+  await page.getByRole('button', { name: 'Adicionar disciplina' }).click();
+  await page.getByRole('button', { name: 'Usar turma A' }).click();
+  await page.getByRole('button', { name: 'Salvar plano', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '✓ Plano salvo com sucesso' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '✓ Plano salvo com sucesso' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Estrutura de Dados I · Turma A' })).toBeVisible();
+  await page.getByRole('link', { name: 'Matriz curricular', exact: true }).click();
+  await page.getByRole('button', { name: /BCC201 Introdução/ }).click();
+  await page.getByRole('button', { name: 'Remover conclusão', exact: true }).click();
+  await page.getByRole('button', { name: 'Manter conclusão', exact: true }).click();
+  await expect(page.getByRole('heading', { name: '✓ Concluída' })).toBeVisible();
+  await page.getByRole('button', { name: 'Remover conclusão', exact: true }).click();
+  await page.getByRole('button', { name: 'Remover e atualizar matriz' }).click();
+  await page.getByRole('link', { name: 'Planejar semestre', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Seu plano precisa de revisão' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Salvar plano', exact: true })).toBeDisabled();
+});

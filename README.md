@@ -1,76 +1,62 @@
-# 🎓 Sistema de Planejamento e Organização Acadêmica
+# BCC323-TPEng2 — Desenvolvimento (`Develop`)
 
-> Plataforma para estruturar, visualizar e acompanhar o progresso acadêmico ao longo dos semestres.
+Protótipo de planejamento acadêmico com React, TypeScript, Tailwind CSS,
+C++/Crow e Firebase. A base oferece cadastro, login, perfis e uma API de saúde;
+as funcionalidades acadêmicas estão em desenvolvimento.
 
-[🔗 Repositório no GitHub](https://github.com/motavdd/BCC323-TPEng2) · [📋 Quadro Kanban](https://github.com/users/motavdd/projects/7)
+Comece pelo [guia de contribuição da equipe](docs/CONTRIBUICAO.md), com o roteiro
+da primeira execução até o PR. Consulte o [índice de documentação](docs/README.md)
+para encontrar os guias de cada área.
 
----
+- [Quadro da equipe](https://github.com/users/motavdd/projects/7)
+- [Issues](https://github.com/motavdd/BCC323-TPEng2/issues)
 
-## Sobre o Projeto
+## Início rápido
 
-O **Sistema de Planejamento e Organização Acadêmica** é uma solução voltada ao ambiente universitário que ajuda estudantes a planejarem sua trajetória no curso.
-A plataforma centraliza as informações sobre disciplinas **concluídas**, **em andamento** e **pendentes**, facilita a montagem da grade horária e promove a troca de experiências entre os próprios alunos.
+No Windows x64, instale Git, Bun 1.3.14, CMake e GCC/MinGW UCRT64 conforme
+[Desenvolvimento local](docs/DESENVOLVIMENTO_LOCAL.md). O setup fornece Node,
+Ninja e Java portáteis. Na raiz da cópia do repositório:
 
-## Problema
+```powershell
+git switch Develop
+git pull --ff-only origin Develop
+./scripts/setup-local.ps1
+```
 
-Muitos estudantes têm dificuldade em planejar sua rotina acadêmica por não saberem ao certo o esforço exigido por determinado conjunto de disciplinas. O sistema reduz esse problema combinando **controle visual do progresso** com **colaboração entre alunos**.
+Inicie um serviço por terminal, sempre na raiz:
 
-## Atores
+```powershell
+# Terminal 1
+./scripts/dev-local.ps1 firebase
+# Terminal 2
+./scripts/dev-local.ps1 backend
+# Terminal 3
+./scripts/dev-local.ps1 frontend
+```
 
-| Ator | Responsabilidades |
-| --- | --- |
-| **Aluno** | Realiza o autocadastro (curso, período atual e histórico de disciplinas cursadas); monta a grade, acompanha o progresso e participa do fórum de discussão. |
-| **Coordenador do Curso** (Administrador) | Mantém atualizadas as disciplinas do curso a cada período letivo, incluindo horários e pré-requisitos. |
+Abra a [aplicação local](http://127.0.0.1:5173) e confira a
+[API pelo proxy](http://127.0.0.1:5173/api/health).
+Para Docker ou modo híbrido, siga [Ambiente](docs/AMBIENTE.md).
+A raiz não tem `package.json`; comandos Bun diretos são executados em `frontend/`.
 
-## Funcionalidades
+## Linux
 
-| Funcionalidade | Descrição |
-| --- | --- |
-| **Cadastro e Perfis** | O aluno informa seus dados acadêmicos e marca as disciplinas já concluídas. |
-| **Painel de Progresso** | Barra de progresso do curso e categorização visual das matérias em três estados: *Concluídas*, *Em Andamento* e *Disponíveis*. |
-| **Simulador de Grade** | Seleção das disciplinas que o aluno pretende cursar no período. |
-| **Agenda Semanal Personalizada** | Geração automática de uma grade de horários (segunda a sexta) com base nas turmas escolhidas. |
-| **Publicação da Grade** | O aluno publica sua proposta de grade horária para o semestre. |
-| **Feedback** | Outros estudantes do mesmo curso comentam a publicação, opinando se a combinação de matérias é pesada ou equilibrada. |
+No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh SERVICO`
+e `bash scripts/check-local.sh`. Pré-requisitos e equivalências:
+[Linux e Windows](docs/DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
 
-## Estrutura do Repositório
+## Antes de enviar
 
-| Diretório | Conteúdo |
-| --- | --- |
-| `src/` | Código-fonte com as implementações das funcionalidades e cabeçalhos |
-| `bin/` | Binários e executáveis |
-| `test/` | Testes funcionais e de regressão |
-| `doc/` | Documentação técnica |
+Execute `./scripts/check-local.ps1` e valide o comportamento da tarefa.
+A integração nativa, com os três serviços ativos, usa
+`./scripts/check-local.ps1 -Integration` e limpa dados do Firestore emulado.
+Alterações no C++ também exigem os [testes HTTP do backend](backend/README.md#testes).
 
-> 📍 Este README está na branch **`staging`**, usada para homologação. **Não se desenvolve aqui.**
+Trabalhe em uma branch da tarefa e abra PR para `Develop`. Aguarde os checks
+`backend`, `quality`, `integration` e `e2e` e a revisão antes do merge.
+O fluxo completo e os testes por área estão no [guia da equipe](docs/CONTRIBUICAO.md).
 
-Todo o trabalho da equipe é organizado por **Issues** e pelo **Quadro Kanban**.
-
-### Regras da `staging`
-
-- A branch é **protegida**: não há push direto nem criação de branches a partir dela.
-- Ela só recebe código vindo da **`develop`**, por Pull Request.
-- Serve para validar o que foi desenvolvido antes de seguir para a `master`.
-
-### Fluxo
-
-1. Uma versão estável da `develop` é promovida para a `staging` via Pull Request.
-2. A equipe testa e valida as funcionalidades na `staging`.
-3. Se for encontrado um problema, **abra uma Issue** descrevendo-o e mova o card no Kanban. A correção é feita em uma branch criada **a partir da `develop`**, nunca da `staging`, e volta pelo mesmo caminho.
-4. Com tudo validado, a `staging` é promovida para a `master` via Pull Request.
-
-### Como desenvolver
-
-Para contribuir com código, use a branch **`develop`**: consulte o README dela para o passo a passo (criação de branch, Pull Request e convenções).
-
-## 👨‍💻 Equipe
-
-| Nome | Matrícula |
-| --- | --- |
-| César Augusto Tiago Totô | 24.1.4038 |
-| Ciro Junio | _a preencher_ |
-| Jhonata | _a preencher_ |
-| Juliana Borges | 22.1.4161 |
-| Luisa Notaro | 21.2.4156 |
-| Matheus Mota | 22.2.4101 |
-| Samara Paloma | 22.2.4091 |
+A promoção segue `Develop → Staging → Master`, respeitando maiúsculas e
+minúsculas. Nos PRs de promoção, preserve o README específico da branch de destino.
+As proteções e a publicação são descritas em [Implantação](docs/IMPLANTACAO.md).
+Os workflows atuais publicam somente o frontend; a hospedagem da API C++ está pendente.

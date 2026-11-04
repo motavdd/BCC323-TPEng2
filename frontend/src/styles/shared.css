@@ -1,0 +1,66 @@
+.text-button {
+  color: var(--wine);
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  font-weight: 400;
+}
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+.notice > :last-child {
+  margin-bottom: 0;
+}
+.notice {
+  padding: 20px 24px;
+  border: 1px solid;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+.success,
+.panel.success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+.warning,
+.panel.warning {
+  background: #fffbeb;
+  border-color: #fcd34d;
+  color: #92400e;
+}
+.danger,
+.panel.danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+.green {
+  color: #166534;
+}
+.red {
+  color: #b91c1c;
+}
+.amber {
+  color: #a63d00;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+  margin-top: 28px;
+}
+.actions button {
+  min-width: 200px;
+  text-align: left;
+}
+@media (max-width: 650px) {
+  .actions {
+    gap: 12px;
+  }
+  .actions button {
+    width: 100%;
+  }
+}

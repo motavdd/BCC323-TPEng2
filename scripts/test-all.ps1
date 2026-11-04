@@ -6,6 +6,7 @@ function Invoke-Compose {
 }
 try {
     Invoke-Compose build
+    Invoke-Compose run --rm --no-deps backend-test
     foreach ($taskName in @('lint', 'typecheck', 'test:unit', 'build')) {
         Invoke-Compose run --rm --no-deps frontend bun run $taskName
     }

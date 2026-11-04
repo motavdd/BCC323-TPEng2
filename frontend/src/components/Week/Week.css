@@ -1,0 +1,35 @@
+.week-scroll {
+  overflow-x: auto;
+}
+.week {
+  width: 100%;
+  min-width: 430px;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 26px 0;
+  table-layout: fixed;
+}
+.week th {
+  color: var(--muted);
+  font-weight: 400;
+  padding: 12px 4px;
+}
+.week td {
+  border-top: 1px solid var(--line);
+  height: 76px;
+  padding: 6px;
+  vertical-align: top;
+}
+.week th:first-child {
+  width: 48px;
+}
+.class-slot {
+  padding: 10px 6px;
+  background: #dbeafe;
+  color: var(--wine-dark);
+  border: 1px solid #f9a8c9;
+  border-radius: 6px;
+  font-size: 11px;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}

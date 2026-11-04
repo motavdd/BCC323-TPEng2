@@ -1,5 +1,24 @@
 name: bcc323-test
 services:
+  backend-test:
+    build:
+      context: ./backend
+      target: test
+
+  backend:
+    environment:
+      FIREBASE_PROJECT_ID: demo-bcc323
+      FIREBASE_AUTH_EMULATOR_HOST: firebase:9099
+      FIRESTORE_EMULATOR_HOST: firebase:8080
+    build:
+      context: ./backend
+      target: runtime
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8081/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   firebase:
     build:
       context: .
@@ -36,9 +55,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.test
     depends_on:
+      backend:
+        condition: service_healthy
       firebase:
         condition: service_healthy
     environment:
+      API_PROXY_TARGET: http://backend:8081
       CI: "true"
       VITE_USE_EMULATORS: "true"
       VITE_FIREBASE_EMULATOR_HOST: firebase
@@ -64,7 +86,13 @@ services:
     environment:
       CI: "true"
       E2E_BASE_URL: http://web:4173
+      E2E_AUTH_EMULATOR_URL: http://firebase:9099
+      FIRESTORE_EMULATOR_HOST: firebase:8080
+      SEED_SCRIPT_PATH: /seed/seed-demo.mjs
+      COURSE_FIXTURE_PATH: /seed/curriculum.json
     volumes:
       - ./frontend/playwright-report:/app/playwright-report
       - ./frontend/test-results:/app/test-results
+      - ./scripts/seed-demo.mjs:/seed/seed-demo.mjs:ro
+      - ./backend/test/fixtures/curriculum.json:/seed/curriculum.json:ro
     command: ["bun", "run", "test:e2e"]

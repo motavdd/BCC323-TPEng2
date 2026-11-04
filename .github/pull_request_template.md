@@ -1,20 +1,39 @@
 ## Objetivo
+
 Descreva o problema e a solução.
 
 ## Issue
+
 Closes #NUMERO
 
 ## Mudanças
-- 
+
+- Descreva as alterações relevantes.
 
 ## Como testar
-- [ ] `docker compose -f compose.test.yml run --rm --no-deps frontend bun run test:unit`
-- [ ] `docker compose -f compose.test.yml run --rm frontend bun run test:integration`
-- [ ] `docker compose -f compose.test.yml run --rm playwright`
+
+Informe os comandos executados, o resultado e os passos para conferir o comportamento.
+Use somente as verificações aplicáveis à alteração:
+
+- Verificação rápida no Windows: `./scripts/check-local.ps1`.
+- Integração nativa com os três serviços ativos: `./scripts/check-local.ps1 -Integration`.
+- Alternativa completa em Docker: `./scripts/test-all.ps1` ou `bash scripts/test-all.sh`.
+- Backend: a verificação rápida apenas compila C++; descreva também os testes HTTP executados, conforme `backend/README.md`.
+- Para documentação, confira links e instruções; descreva essa validação.
+
+Os testes de regras limpam o Firestore emulado do projeto de demonstração.
+Consulte o [guia da equipe](https://github.com/motavdd/BCC323-TPEng2/blob/Develop/docs/CONTRIBUICAO.md) para o fluxo da tarefa e `docs/DESENVOLVIMENTO_LOCAL.md` para iniciar os serviços.
+
+O CI executa em Docker; não é necessário executar Docker localmente para abrir o PR.
 
 ## Checklist
-- [ ] Branch criada a partir de `Develop`
-- [ ] Testes adicionados/atualizados
+
+- [ ] Origem e destino seguem o fluxo da tarefa ou a promoção `Develop → Staging → Master`
+- [ ] Alteração atende à Issue vinculada
+- [ ] Validações aplicáveis descritas acima
+- [ ] Testes de comportamento adicionados/atualizados quando necessário
 - [ ] Nenhum segredo incluído
 - [ ] Documentação atualizada
+- [ ] README da branch de destino preservado, quando for promoção
+- [ ] Checks `backend`, `quality`, `integration` e `e2e` aprovados antes do merge
 - [ ] Solicitei revisão

@@ -1,5 +1,9 @@
 # Implantação, CI/CD e proteção de branches
 
+Este guia publica o frontend no Firebase Hosting. O serviço C++ preparado em
+[AMBIENTE.md](AMBIENTE.md) ainda precisa de hospedagem e encaminhamento remoto de
+`/api`; o proxy do Vite não é incluído no site estático.
+
 ## 0. Pré-requisitos
 
 - GitHub: permissão de administrador para criar Rulesets e Environments.
@@ -7,7 +11,7 @@
 - Em cada projeto: registrar um aplicativo Web, obter `projectId`, `apiKey`, `authDomain`, `appId`.
 - Firebase Authentication: habilitar o provedor **E-mail/senha**; conferir domínios autorizados.
 - Google Cloud: permissão para criar contas de serviço, Workload Identity Pool/Provider e conceder IAM.
-- Docker Compose V2 localmente; para executar fora do Docker, Bun 1.3.14 e Node 22.12+.
+- Para reproduzir a bateria do CI no computador: Docker com Compose V2. O desenvolvimento nativo segue [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md) e não exige Docker.
 
 ## Ambientes do projeto
 
@@ -16,24 +20,35 @@
 | Homologação | `spoa-eng2-staging` | `Staging` |
 | Produção | `spoa-eng2-prod` | `Master` |
 
-Os aplicativos Web, Authentication e Firestore estão configurados nos dois projetos. O cadastro e a gravação de perfis foram validados. As seções seguintes descrevem a configuração necessária à publicação automática.
+O registro da preparação de 14/10/2026 informa aplicativos Web, Authentication e
+Firestore configurados nos dois projetos, com cadastro e gravação de perfis validados.
+Isso não comprova publicação no Hosting nem a configuração atual de IAM, Environments
+ou Rulesets. As seções seguintes descrevem como preparar e conferir a publicação.
 
 ## 1. Preparar os arquivos no repositório
 
 1. Vincule a alteração à Issue correspondente e trabalhe em uma branch a partir de `Develop`.
 2. Em `frontend/`, execute `bun install --frozen-lockfile`. Os procedimentos de dependências estão em [Bun](BUN.md).
-3. Versione `frontend/bun.lock` e os arquivos de configuração, sem incluir arquivos `.env.*.local`.
-4. Execute os testes Docker e abra PR para `Develop`.
+3. Versione manifestos e lockfiles alterados em `frontend/` e `tools/`, sem incluir arquivos `.env.*.local`, ferramentas portáteis ou dados emulados.
+4. Execute `./scripts/check-local.ps1` e valide a funcionalidade local. Use `-Integration` com os serviços ativos para incluir regras e navegador. Abra PR para `Develop`; a bateria Docker executa no CI e também pode ser reproduzida localmente.
 5. Configure os GitHub Environments e a autenticação WIF antes de promover para `Staging` e `Master`, pois os pushes nessas branches disparam o deploy. O workflow reutilizável precisa existir na revisão que chama a publicação.
 6. Preserve o README específico da branch de destino na revisão de cada PR de promoção. Merges também incorporam alterações no `README.md` da origem.
 
-**Checks obrigatórios:** regras que ainda exigem `success` precisam ser atualizadas para os checks `quality`, `integration` e `e2e`, após a execução do CI e a confirmação dos nomes exibidos no GitHub.
+**Checks obrigatórios:** regras que ainda exigem `success` precisam ser atualizadas para os checks `backend`, `quality`, `integration` e `e2e`, após a execução do CI e a confirmação dos nomes exibidos no GitHub.
 
 ## 2. Testes no Docker
 
+Além dos quatro checks da bateria Docker, o job `linux-native` verifica o setup,
+a compilação, a qualidade do frontend e os testes HTTP pelos scripts Bash no
+Ubuntu. Os checks obrigatórios da política existente continuam sendo os quatro
+listados neste guia; a exigência do novo job depende da configuração do Ruleset.
+
 ```bash
+# Compilar os serviços e validar o backend C++
+docker compose -f compose.test.yml build
+docker compose -f compose.test.yml run --rm --no-deps backend-test
+
 # Qualidade sem emulador
-docker compose -f compose.test.yml build frontend
 docker compose -f compose.test.yml run --rm --no-deps frontend bun run lint
 docker compose -f compose.test.yml run --rm --no-deps frontend bun run typecheck
 docker compose -f compose.test.yml run --rm --no-deps frontend bun run test:unit
@@ -49,7 +64,8 @@ docker compose -f compose.test.yml run --rm playwright
 docker compose -f compose.test.yml down -v --remove-orphans
 ```
 
-No desenvolvimento local:
+Para o desenvolvimento nativo, siga [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md).
+Para a alternativa de desenvolvimento em Docker:
 
 ```bash
 docker compose -f compose.dev.yml up --build
@@ -124,13 +140,15 @@ Em **cada Environment**, configurar estas **Variables** (não precisam ser secre
 
 ## 5. Proteção de branches (GitHub Rulesets)
 
-Em **Settings → Rules → Rulesets**, após executar o primeiro CI e confirmar os nomes exatos dos checks:
+Configuração a aplicar em **Settings → Rules → Rulesets**, após executar o primeiro
+CI e confirmar os nomes exatos dos checks. Esta tabela descreve a política desejada;
+não confirma que os Rulesets remotos já estejam configurados:
 
 | Branch | PR obrigatório | Aprovações | Checks obrigatórios | Outras regras |
 |---|---|---:|---|---|
-| `Develop` | Sim | 1 | `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
-| `Staging` | Sim | 1 | `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
-| `Master` | Sim | 1–2 | `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
+| `Develop` | Sim | 1 | `backend`, `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
+| `Staging` | Sim | 1 | `backend`, `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
+| `Master` | Sim | 1–2 | `backend`, `quality`, `integration`, `e2e` | Bloquear exclusão/force push |
 
 Os checks são selecionados pelos nomes exibidos no GitHub após um workflow bem-sucedido. O CI executa em PRs para as três branches; o CD executa outra rodada de CI no push para `Staging` ou `Master`. A lista de bypass define quem pode ignorar as proteções; o modo **For pull requests only** exige PR, mas ainda permite ignorar exigências ao fazer merge.
 
@@ -138,7 +156,7 @@ Os checks são selecionados pelos nomes exibidos no GitHub após um workflow bem
 
 ## 6. Implantação automática
 
-- PR para `Develop`, `Staging` ou `Master` → `CI / Docker`: quality, integration, e2e.
+- PR para `Develop`, `Staging` ou `Master` → `CI / Docker`: backend, quality, integration, e2e.
 - Push após merge em `Staging` → `CD / Firebase Hosting`: chama CI novamente, usa Environment `staging`, publica no projeto Firebase de homologação.
 - Push após merge em `Master` → CI novamente, aguarda aprovação de Environment `production`, publica no projeto Firebase de produção.
 - `firebase deploy --only hosting` **não publica regras Firestore**.
