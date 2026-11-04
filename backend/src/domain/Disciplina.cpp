@@ -6,9 +6,10 @@
 #include <utility>
 
 DisciplinaImpl::DisciplinaImpl(
-    std::string codigo, std::string nome, int cargaHoraria
+    std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido
 ) : codigo(std::move(codigo)), nome(std::move(nome)) {
     setCargaHoraria(cargaHoraria);
+    setPeriodoSugerido(periodoSugerido);
 }
 
 void DisciplinaImpl::setCodigo(std::string codigo) {
@@ -76,4 +77,21 @@ void DisciplinaImpl::removePreRequisito(Disciplina* disciplina) {
 
 std::vector<Disciplina*> DisciplinaImpl::getPreRequisitos() const {
     return preRequisitos;
+}
+
+void DisciplinaImpl::setPeriodoSugerido(int periodoSugerido) {
+    if (periodoSugerido <= 0) {
+        throw std::invalid_argument("O periodo sugerido deve ser maior que zero");
+    }
+    this->periodoSugerido = periodoSugerido;
+}
+
+int DisciplinaImpl::getPeriodoSugerido() const {
+    return periodoSugerido;
+}
+
+void DisciplinaImpl::editarDados(std::string novoNome, int novaCargaHoraria, int novoPeriodoSugerido) {
+    setNome(std::move(novoNome));
+    setCargaHoraria(novaCargaHoraria);
+    setPeriodoSugerido(novoPeriodoSugerido);
 }

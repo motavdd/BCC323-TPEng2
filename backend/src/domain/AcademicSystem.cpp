@@ -130,3 +130,17 @@ Usuario* AcademicSystemImpl::buscarUsuario(std::string email) {
     }
     return nullptr;
 }
+
+Disciplina* AcademicSystemImpl::cadastrarDisciplinaNaMatriz(
+    Curso* curso, std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido
+) {
+    if (curso == nullptr || buscarDisciplina(codigo) != nullptr) {
+        return nullptr;
+    }
+
+    DisciplinaImpl* novaDisciplina = new DisciplinaImpl(codigo, nome, cargaHoraria, periodoSugerido);
+    add(novaDisciplina);
+    curso->add(novaDisciplina);
+
+    return novaDisciplina;
+}

@@ -13,11 +13,12 @@ protected:
     std::string codigo;
     std::string nome;
     int cargaHoraria = 0;
+    int periodoSugerido = 1;
     std::vector<Disciplina*> preRequisitos;
 
 public:
     DisciplinaImpl() = default;
-    DisciplinaImpl(std::string codigo, std::string nome, int cargaHoraria);
+    DisciplinaImpl(std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido = 1);
     ~DisciplinaImpl() override = default;
 
     void setCodigo(std::string codigo) override;
@@ -27,6 +28,11 @@ public:
     /** @throws std::invalid_argument Se a carga for negativa. */
     void setCargaHoraria(int cargaHoraria) override;
     int getCargaHoraria() const override;
+
+    void setPeriodoSugerido(int periodoSugerido) override;
+    int getPeriodoSugerido() const override;
+
+    void editarDados(std::string novoNome, int novaCargaHoraria, int novoPeriodoSugerido) override;
 
     /**
      * @brief Ignora nulos e duplicados por ponteiro.

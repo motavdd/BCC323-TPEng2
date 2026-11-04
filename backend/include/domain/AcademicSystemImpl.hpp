@@ -50,6 +50,7 @@ public:
     Curso* buscarCurso(std::string nome) override;
     Disciplina* buscarDisciplina(std::string codigo) override;
     Usuario* buscarUsuario(std::string email) override;
+    Disciplina* cadastrarDisciplinaNaMatriz(Curso* curso, std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido) override;
 };
 
 #endif
