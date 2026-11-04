@@ -58,6 +58,52 @@ namespace {
         }
         throw std::runtime_error("Era esperado erro de aplicação");
     }
+
+void testarConflitoHorariosETurmas(AcademicService& service) {
+        // 1. Dias distintos -> Sem conflito
+        HorarioAula seg8_10{DiaSemana::SEGUNDA, 8, 0, 10, 0, "Sala 101"};
+        HorarioAula ter8_10{DiaSemana::TERCA, 8, 0, 10, 0, "Sala 101"};
+        check(!AcademicService::verificarConflitoHorarios(seg8_10, ter8_10),
+              "Aulas em dias distintos nao devem conflitar");
+
+        // 2. Mesmo dia, contíguas (uma termina às 10:00 e a outra começa às 10:00) -> Sem conflito
+        HorarioAula seg10_12{DiaSemana::SEGUNDA, 10, 0, 12, 0, "Sala 102"};
+        check(!AcademicService::verificarConflitoHorarios(seg8_10, seg10_12),
+              "Aulas contiguas nao devem conflitar");
+
+        // 3. Mesmo dia, sobreposição parcial (08:00-10:00 vs 09:00-11:00) -> Conflito detectado
+        HorarioAula seg9_11{DiaSemana::SEGUNDA, 9, 0, 11, 0, "Sala 103"};
+        check(AcademicService::verificarConflitoHorarios(seg8_10, seg9_11),
+              "Sobreposicao parcial de horario deve gerar conflito");
+
+        // 4. Validação de invariante temporal (hora fim <= hora início) -> Dispara std::invalid_argument
+        HorarioAula horarioInvalido{DiaSemana::SEXTA, 12, 0, 10, 0, "Lab 1"};
+        bool disparouExcecao = false;
+        try {
+            horarioInvalido.validar();
+        } catch (const std::invalid_argument&) {
+            disparouExcecao = true;
+        }
+        check(disparouExcecao, "Horario com termino anterior ao inicio deve disparar excecao");
+
+        // 5. Conflito entre turmas completas
+        Turma turmaA{"T01", "BCC323", 40, {seg8_10}};
+        Turma turmaB{"T02", "BCC264", 30, {seg9_11}}; // Choque com turmaA na segunda
+        Turma turmaC{"T01", "MTM112", 40, {ter8_10}}; // Terça, compatível com turmaA
+        check(AcademicService::verificarConflitoTurmas(turmaA, turmaB),
+              "Turmas com choque de horario devem ser detectadas");
+        check(!AcademicService::verificarConflitoTurmas(turmaA, turmaC),
+              "Turmas sem choque de horario devem ser compativeis");
+
+        // 6. Validação de matrícula em grade com múltiplas turmas existentes
+        std::vector<Turma> gradeAluno = {turmaA, turmaC};
+        check(!service.validarMatriculaTurmas(gradeAluno, turmaB),
+              "Matricula com choque de horario na grade deve ser recusada");
+
+        Turma turmaCompativel{"T03", "BCC322", 35, {seg10_12}};
+        check(service.validarMatriculaTurmas(gradeAluno, turmaCompativel),
+              "Matricula em turma de horario compativel deve ser aceita");
+    }
 }
 int main() {
     try {
@@ -85,6 +131,10 @@ int main() {
         repository.catalog.subjects[0].prerequisites = {"B"};
         expectError(503, [&] { service.summary(first); });
         check(repository.history[first.uid].empty(), "falha não grava histórico");
+
+        // Execução da suíte de turmas e conflitos
+        testarConflitoHorariosETurmas(service);
+
         std::cout << "PASS: perfil, domínio, progresso, elegibilidade, isolamento e persistência\n";
         return 0;
     } catch (const std::exception& e) { 
