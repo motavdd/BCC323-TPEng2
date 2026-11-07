@@ -3,8 +3,10 @@ import { expect, test } from '@playwright/test';
 test('conclusão atualiza histórico, libera planejamento e persiste após recarregar', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Primeiro acesso? Criar conta' }).click();
+  await page.getByLabel('Nome completo').fill('Aluno Planner');
   await page.getByLabel('E-mail', { exact: true }).fill(`planner-${Date.now()}@example.test`);
   await page.getByLabel('Senha', { exact: true }).fill('senha12345');
+  await page.getByLabel('Confirmar senha').fill('senha12345');
   await page.getByRole('button', { name: 'Criar conta', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Seu progresso começa na matriz' })).toBeVisible();
   await page.getByRole('button', { name: 'Abrir matriz interativa' }).click();

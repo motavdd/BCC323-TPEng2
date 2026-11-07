@@ -4,22 +4,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { message } from "../../utils/errors";
 
-export function Access({
-  registerAccount,
-}: {
-  registerAccount: (
-    email: string,
-    password: string,
-    course: string,
-    period: number,
-  ) => Promise<void>;
-}) {
-  const [register, setRegister] = useState(false);
+/**
+ * Tela de login. O autocadastro fica em pages/Register/RegisterPage (issue #16).
+ */
+export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
-  const [course, setCourse] = useState("Ciência da Computação");
-  const [period, setPeriod] = useState(1);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   async function submit(event: FormEvent) {
@@ -27,9 +18,7 @@ export function Access({
     setError("");
     setBusy(true);
     try {
-      if (register) {
-        await registerAccount(email, password, course, period);
-      } else await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (e) {
       setError(message(e));
     } finally {
@@ -37,35 +26,26 @@ export function Access({
     }
   }
   return (
-    <main className={register ? "access register" : "access"}>
+    <main className="access">
       <aside className="access-brand">
         <strong>MyPlanner</strong>
-        {!register && (
-          <div>
-            <h1>
-              Seu próximo semestre,
-              <br />
-              com mais clareza.
-            </h1>
-            <p>Acompanhe seu progresso.</p>
-            <p>Conheça suas possibilidades.</p>
-            <p>Organize uma grade sem conflitos.</p>
-          </div>
-        )}
+        <div>
+          <h1>
+            Seu próximo semestre,
+            <br />
+            com mais clareza.
+          </h1>
+          <p>Acompanhe seu progresso.</p>
+          <p>Conheça suas possibilidades.</p>
+          <p>Organize uma grade sem conflitos.</p>
+        </div>
       </aside>
       <section className="access-body">
         <header>
-          <h1>{register ? "Crie sua conta" : "Seja Bem Vindo"}</h1>
-          <p>
-            {register
-              ? "Comece pelo seu curso e período atual."
-              : "Entre para continuar seu planejamento."}
-          </p>
+          <h1>Seja Bem Vindo</h1>
+          <p>Entre para continuar seu planejamento.</p>
         </header>
-        <form
-          className={register ? "panel access-form" : "access-form"}
-          onSubmit={(event) => void submit(event)}
-        >
+        <form className="access-form" onSubmit={(event) => void submit(event)}>
           <label htmlFor="email">
             E-mail
             <input
@@ -84,10 +64,8 @@ export function Access({
             <input
               id="password"
               type={visible ? "text" : "password"}
-              autoComplete={register ? "new-password" : "current-password"}
-              placeholder={
-                register ? "Pelo menos 6 caracteres" : "Digite sua senha"
-              }
+              autoComplete="current-password"
+              placeholder="Digite sua senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
@@ -103,34 +81,6 @@ export function Access({
               {visible ? "Ocultar" : "Mostrar"}
             </button>
           </div>
-          {register && (
-            <>
-              <label htmlFor="course">
-                Curso
-                <input
-                  id="course"
-                  value={course}
-                  onChange={(e) => setCourse(e.target.value)}
-                  required
-                  maxLength={100}
-                />
-              </label>
-              <label htmlFor="period">
-                Período atual
-                <input
-                  id="period"
-                  type="number"
-                  min={1}
-                  max={20}
-                  step={1}
-                  value={period}
-                  onChange={(e) => setPeriod(Number(e.target.value))}
-                  required
-                />
-              </label>
-              <p className="muted">Informe um período de 1 a 20.</p>
-            </>
-          )}
           {error && (
             <p role="alert" className="notice danger">
               {error}
@@ -138,36 +88,13 @@ export function Access({
           )}
           <div className="actions">
             <button type="submit" disabled={busy}>
-              {busy ? "Aguarde…" : register ? "Criar conta" : "Entrar"}
+              {busy ? "Aguarde…" : "Entrar"}
             </button>
-            {register && (
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => {
-                  setRegister(false);
-                  setError("");
-                }}
-              >
-                Já tenho conta
-              </button>
-            )}
           </div>
         </form>
-        {!register && (
-          <button
-            className="text-button switch-access"
-            onClick={() => {
-              setRegister(true);
-              setError("");
-            }}
-          >
-            Primeiro acesso? Criar conta
-          </button>
-        )}
-        {register && (
-          <footer>Planejamento acadêmico · Não realiza matrícula</footer>
-        )}
+        <button className="text-button switch-access" onClick={onCreateAccount}>
+          Primeiro acesso? Criar conta
+        </button>
       </section>
     </main>
   );
