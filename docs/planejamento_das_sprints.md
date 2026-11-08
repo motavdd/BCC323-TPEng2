@@ -11,7 +11,7 @@
 | Jhonata | Desenvolvedor |
 | Juliana Borges | Desenvolvedora |
 | Luisa Notaro | Desenvolvedora  |
-| Matheus Mota | Scrum Master |
+| Matheus Mota | Scrum Master/Product Owner |
 | Samara Paloma | Desenvolvedora |
 
 ---
