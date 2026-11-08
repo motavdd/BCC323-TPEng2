@@ -2,14 +2,14 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { auth } from "../services/firebase";
-import { registerStudent } from "../services/authService";
-import type { RegistrationData } from "../types/registration";
+//import { registerStudent } from "../services/authService";
+//import type { RegistrationData } from "../types/registration";
 import { Access } from "../pages/Access/Access";
-import { RegisterPage } from "../pages/Register/RegisterPage";
+//import { RegisterPage } from "../pages/Register/RegisterPage";
 import { Planner } from "../pages/planner/Planner";
 
 /** Tela exibida para quem ainda não entrou. */
-type PublicScreen = "login" | "register";
+//type PublicScreen = "login" | "register";
 
 export default function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
