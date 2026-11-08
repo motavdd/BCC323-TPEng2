@@ -107,15 +107,13 @@ export function Access({
           </div>
         </form>
 
-        {onCreateAccount && (
-          <button
-            type="button"
-            className="text-button switch-access"
-            onClick={onCreateAccount}
-          >
-            Primeiro acesso? Criar conta
-          </button>
-        )}
+        <button
+          type="button"
+          className="text-button switch-access"
+          onClick={onCreateAccount}
+        >
+          Primeiro acesso? Criar conta
+        </button>
       </section>
     </main>
   );
