@@ -6,12 +6,12 @@
 
 | Integrante | Papel na Sprint 1 |
 |------------|-------------------|
-| César Augusto | Desenvolvedor |
+| César Augusto | Scrum Master/Desenvolvedor |
 | Ciro Junio | Desenvolvedor |
 | Jhonata | Desenvolvedor |
 | Juliana Borges | Desenvolvedora |
 | Luisa Notaro | Desenvolvedora  |
-| Matheus Mota | Scrum Master/Product Owner |
+| Matheus Mota | Product Owner |
 | Samara Paloma | Desenvolvedora |
 
 ---
