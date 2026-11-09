@@ -7,7 +7,7 @@ import { message } from "../../utils/errors";
 /**
  * Tela de login. O autocadastro fica em pages/Register/RegisterPage (issue #16).
  */
-export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
+export function Access({ onCreateAccount }: { onCreateAccount?: () => void; }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
