@@ -4,6 +4,7 @@
 #include "domain/CursoImpl.hpp"
 #include "domain/DisciplinaImpl.hpp"
 #include <algorithm>
+#include <stdexcept>
 
 namespace {
     // Adiciona p em v se não for nulo nem duplicado
@@ -24,7 +25,7 @@ namespace {
     }
 }
 
-//CONSTRUTORES
+// CONSTRUTORES
 AcademicSystemImpl::AcademicSystemImpl() {
     this->nome = "";
     this->proximoId = 1;
@@ -33,14 +34,14 @@ AcademicSystemImpl::AcademicSystemImpl() {
 AcademicSystemImpl::AcademicSystemImpl(std::string nome) : nome(nome), proximoId(1) {}
 
 AcademicSystemImpl::~AcademicSystemImpl() {
-    //deletar todos os objetos
-    for (auto u : usuarios){
+    // Deletar todos os objetos
+    for (auto u : usuarios) {
         delete u;
     }
     for (auto c : cursos) {
         delete c;
     }
-    for (auto d : disciplinas){ 
+    for (auto d : disciplinas) { 
         delete d;
     }
     usuarios.clear();
@@ -76,7 +77,7 @@ void AcademicSystemImpl::remove(Disciplina* d) {
 }
 
 Aluno* AcademicSystemImpl::cadastrarAluno(std::string nome, std::string email, std::string senha,
-                                      Curso* curso, int periodo) {
+                                     Curso* curso, int periodo) {
     // O curso precisa pertencer ao sistema e o e-mail não pode estar em uso
     if (std::find(cursos.begin(), cursos.end(), curso) == cursos.end()) {
         return nullptr;
@@ -143,4 +144,33 @@ Disciplina* AcademicSystemImpl::cadastrarDisciplinaNaMatriz(
     curso->add(novaDisciplina);
 
     return novaDisciplina;
+}
+
+bool AcademicSystemImpl::adicionarPreRequisito(const std::string& codigoDisciplina, const std::string& codigoPreRequisito) {
+    Disciplina* d = buscarDisciplina(codigoDisciplina);
+    Disciplina* pre = buscarDisciplina(codigoPreRequisito);
+
+    if (d == nullptr || pre == nullptr) {
+        return false;
+    }
+
+    try {
+        d->addPreRequisito(pre);
+        return true;
+    } catch (const std::invalid_argument&) {
+        // Captura exceções de ciclo geradas por DisciplinaImpl::addPreRequisito
+        return false;
+    }
+}
+
+bool AcademicSystemImpl::removerPreRequisito(const std::string& codigoDisciplina, const std::string& codigoPreRequisito) {
+    Disciplina* d = buscarDisciplina(codigoDisciplina);
+    Disciplina* pre = buscarDisciplina(codigoPreRequisito);
+
+    if (d == nullptr || pre == nullptr) {
+        return false;
+    }
+
+    d->removePreRequisito(pre);
+    return true;
 }

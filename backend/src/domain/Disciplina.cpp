@@ -46,7 +46,7 @@ void DisciplinaImpl::addPreRequisito(Disciplina* disciplina) {
         return;
     }
 
-    // Percorre as dependencias antes de alterar o objeto.
+    // Percorre as dependencias antes de alterar o objeto para detetar ciclos.
     std::vector<Disciplina*> pendentes{disciplina};
     std::unordered_set<Disciplina*> visitadas;
 
