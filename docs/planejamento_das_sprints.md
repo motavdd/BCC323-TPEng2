@@ -38,6 +38,7 @@
 | H01 | Criar formulário de autocadastro (campos: curso, período atual) | Luisa Notaro | #16 |
 | H01 | Criar Interface de Login e Cadastro | Samara Paloma | #17 |
 | H01 | Implementar validação dos campos de entrada | Jhonata | #18 |
+| H01 | Testar fluxo completo de entrada e cadastro (testes de componente e e2e, correção da mensagem de senha errada) | Luisa Notaro | #21 |
 | Geral | Conectar Frontend com o Backend | Matheus Mota | #20 |
 | H01 | Criar interfaces e implementações de usuários (`Usuario`, `Aluno` e `Coordenador`) | César Augusto | #30 |
 | H01 | Criar interface e classe concreta da classe central `AcademicSystem` | César Augusto | #32 |
