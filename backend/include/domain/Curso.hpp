@@ -22,6 +22,12 @@ public:
 
     /** @brief Retorna a soma das cargas horárias da matriz. */
     virtual int getCargaTotal() const = 0;
+
+    /** @brief Busca uma disciplina na matriz do curso pelo codigo. */
+    virtual Disciplina* buscarDisciplina(const std::string& codigo) = 0;
+
+    /** @brief Edita os dados de uma disciplina existente na matriz. */
+    virtual bool editarDisciplina(const std::string& codigo, const std::string& novoNome, int novaCargaHoraria, int novoPeriodoSugerido) = 0;
 };
 
 #endif

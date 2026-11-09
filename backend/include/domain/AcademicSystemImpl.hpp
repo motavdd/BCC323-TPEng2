@@ -26,13 +26,12 @@ public:
     AcademicSystemImpl();
 
     /*! @brief Construtor parametrizado. 
-     * * @param nome o nome da plataforma. 
+     * @param nome o nome da plataforma. 
      */
     AcademicSystemImpl(std::string nome);
 
     /*! @brief Destrutor: deleta todos os usuários, cursos e disciplinas armazenados. */
     virtual ~AcademicSystemImpl();
-
 
     void setNome(std::string nome) override;
     std::string getNome() const override;
@@ -50,6 +49,10 @@ public:
     Curso* buscarCurso(std::string nome) override;
     Disciplina* buscarDisciplina(std::string codigo) override;
     Usuario* buscarUsuario(std::string email) override;
+    Disciplina* cadastrarDisciplinaNaMatriz(Curso* curso, std::string codigo, std::string nome, int cargaHoraria, int periodoSugerido) override;
+
+    bool adicionarPreRequisito(const std::string& codigoDisciplina, const std::string& codigoPreRequisito) override;
+    bool removerPreRequisito(const std::string& codigoDisciplina, const std::string& codigoPreRequisito) override;
 };
 
 #endif

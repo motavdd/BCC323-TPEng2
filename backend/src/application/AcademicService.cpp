@@ -2,6 +2,7 @@
 #include "domain/AlunoImpl.hpp"
 #include "domain/CursoImpl.hpp"
 #include "domain/DisciplinaImpl.hpp"
+#include "domain/Turma.hpp"
 #include <algorithm>
 #include <memory>
 #include <set>
@@ -177,4 +178,45 @@ namespace bcc323 {
         repository_.setCompleted(context, subjectId, done);
         return result;
     }
+    bool AcademicService::verificarConflitoHorarios(const HorarioAula& h1, const HorarioAula& h2) {
+        h1.validar();
+        h2.validar();
+
+        if (h1.dia != h2.dia) {
+            return false;
+        }
+
+        // Teorema da sobreposicao de intervalos abertos:
+        // A_ini < B_fim E B_ini < A_fim
+        return (h1.inicioEmMinutos() < h2.fimEmMinutos()) &&
+               (h2.inicioEmMinutos() < h1.fimEmMinutos());
+    }
+
+    bool AcademicService::verificarConflitoTurmas(const Turma& t1, const Turma& t2) {
+        t1.validar();
+        t2.validar();
+
+        for (const auto& slot1 : t1.horarios) {
+            for (const auto& slot2 : t2.horarios) {
+                if (verificarConflitoHorarios(slot1, slot2)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool AcademicService::validarMatriculaTurmas(
+        const std::vector<Turma>& turmasExistentes,
+        const Turma& novaTurma
+    ) const {
+        novaTurma.validar();
+        for (const auto& turmaCadastrada : turmasExistentes) {
+            if (verificarConflitoTurmas(turmaCadastrada, novaTurma)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
