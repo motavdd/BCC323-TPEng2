@@ -13,9 +13,16 @@ export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
+
+    if (!email.trim() || !password) {
+      setError("Por favor, preencha o e-mail e a senha.");
+      return;
+    }
+
     setBusy(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -25,6 +32,7 @@ export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
       setBusy(false);
     }
   }
+
   return (
     <main className="access">
       <aside className="access-brand">
@@ -40,11 +48,13 @@ export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
           <p>Organize uma grade sem conflitos.</p>
         </div>
       </aside>
+
       <section className="access-body">
         <header>
           <h1>Seja Bem Vindo</h1>
           <p>Entre para continuar seu planejamento.</p>
         </header>
+
         <form className="access-form" onSubmit={(event) => void submit(event)}>
           <label htmlFor="email">
             E-mail
@@ -59,6 +69,7 @@ export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
               maxLength={254}
             />
           </label>
+
           <label htmlFor="password">Senha</label>
           <div className="password-field">
             <input
@@ -81,18 +92,25 @@ export function Access({ onCreateAccount }: { onCreateAccount: () => void }) {
               {visible ? "Ocultar" : "Mostrar"}
             </button>
           </div>
+
           {error && (
             <p role="alert" className="notice danger">
               {error}
             </p>
           )}
+
           <div className="actions">
             <button type="submit" disabled={busy}>
               {busy ? "Aguarde…" : "Entrar"}
             </button>
           </div>
         </form>
-        <button className="text-button switch-access" onClick={onCreateAccount}>
+
+        <button
+          type="button"
+          className="text-button switch-access"
+          onClick={onCreateAccount}
+        >
           Primeiro acesso? Criar conta
         </button>
       </section>

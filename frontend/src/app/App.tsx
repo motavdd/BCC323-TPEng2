@@ -16,6 +16,7 @@ export default function App() {
   const [screen, setScreen] = useState<PublicScreen>("login");
   // Durante o autocadastro, só mostra o Planner depois de salvar o perfil.
   const registering = useRef(false);
+
   useEffect(
     () =>
       onAuthStateChanged(auth, (value) => {
@@ -40,6 +41,7 @@ export default function App() {
         Carregando sua sessão…
       </main>
     );
+
   if (user)
     return (
       <Planner
@@ -51,6 +53,7 @@ export default function App() {
         }}
       />
     );
+
   return screen === "register" ? (
     <RegisterPage
       onRegister={registerAccount}
