@@ -1,7 +1,7 @@
 #ifndef ACADEMICSYSTEMIMPL_HPP
 #define ACADEMICSYSTEMIMPL_HPP
 
-#include "domain/AcademicSystem.hpp" // interface
+#include "AcademicSystem.hpp" // interface
 #include <string>
 #include <vector>
 

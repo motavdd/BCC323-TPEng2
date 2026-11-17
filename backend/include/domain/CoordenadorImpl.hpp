@@ -1,8 +1,8 @@
 #ifndef COORDENADORIMPL_HPP
 #define COORDENADORIMPL_HPP
 
-#include "domain/Coordenador.hpp"
-#include "domain/UsuarioImpl.hpp"
+#include "Coordenador.hpp"
+#include "UsuarioImpl.hpp"
 #include <string>
 
 /*!

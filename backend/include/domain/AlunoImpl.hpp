@@ -1,8 +1,8 @@
 #ifndef ALUNOIMPL_HPP
 #define ALUNOIMPL_HPP
 
-#include "domain/Aluno.hpp"
-#include "domain/UsuarioImpl.hpp"
+#include "Aluno.hpp"
+#include "UsuarioImpl.hpp"
 #include <string>
 #include <vector>
 

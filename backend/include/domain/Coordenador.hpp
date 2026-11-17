@@ -1,7 +1,7 @@
 #ifndef COORDENADOR_HPP
 #define COORDENADOR_HPP
 
-#include "domain/Usuario.hpp"
+#include "Usuario.hpp"
 
 class Curso;
 

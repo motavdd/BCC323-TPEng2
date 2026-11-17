@@ -1,7 +1,7 @@
 #ifndef USUARIOIMPL_H
 #define USUARIOIMPL_H
 
-#include "domain/Usuario.hpp"
+#include "Usuario.hpp"
 
 /*!
  * @brief Essa classe representa a implementação da classe concreta Usuário.

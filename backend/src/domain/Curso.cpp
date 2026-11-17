@@ -1,5 +1,5 @@
-#include "domain/CursoImpl.hpp"
-#include "domain/Disciplina.hpp"
+#include "../../include/domain/CursoImpl.hpp"
+#include "../../include/domain/Disciplina.hpp"
 
 #include <algorithm>
 #include <limits>

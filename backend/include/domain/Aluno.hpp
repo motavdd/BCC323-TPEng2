@@ -1,7 +1,7 @@
 #ifndef ALUNO_HPP
 #define ALUNO_HPP
 
-#include "domain/Usuario.hpp"
+#include "Usuario.hpp"
 #include <vector>
 
 class Curso;
