@@ -3,7 +3,7 @@
   "info": {
     "title": "Planejamento Acadêmico — contrato do MVP",
     "version": "1.0.0",
-    "description": "Perfil, matriz, histórico, progresso e elegibilidade. Authentication fica no Firebase; dados persistidos pelo C++ no Firestore. Catálogo de demonstração carregado somente por seed no emulador."
+    "description": "Autenticação Firebase, perfil, matriz, histórico, progresso e coordenação. Dados acadêmicos persistidos pela API C++ no Firestore. Operações acadêmicas exigem e-mail institucional confirmado, exceto o próprio perfil durante o cadastro."
   },
   "servers": [
     {
@@ -1015,6 +1015,301 @@
           }
         }
       }
+    },
+    "/api/session": {
+      "get": {
+        "summary": "Consulta o vínculo da sessão com a coordenação.",
+        "operationId": "getSession",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      }
+    },
+    "/api/coordinator/curriculum": {
+      "get": {
+        "summary": "Consulta a matriz e a revisão do curso autorizado.",
+        "operationId": "getCoordinatorCurriculum",
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatorCurriculum"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      }
+    },
+    "/api/coordinator/subjects/{codigo}": {
+      "parameters": [
+        {
+          "name": "codigo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,100}$"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Cadastra ou altera uma disciplina.",
+        "operationId": "saveSubject",
+        "parameters": [
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "Revisão retornada pela matriz da coordenação.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatorCurriculum"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "413": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Arquiva a disciplina e remove suas ofertas, preservando o histórico.",
+        "operationId": "archiveSubject",
+        "parameters": [
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "Revisão retornada pela matriz da coordenação.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatorCurriculum"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "413": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      }
+    },
+    "/api/coordinator/offerings/{codigo}": {
+      "parameters": [
+        {
+          "name": "codigo",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,100}$"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Cadastra ou altera uma turma.",
+        "operationId": "saveOffering",
+        "parameters": [
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "Revisão retornada pela matriz da coordenação.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatorCurriculum"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "413": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a turma da oferta atual.",
+        "operationId": "removeOffering",
+        "parameters": [
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "description": "Revisão retornada pela matriz da coordenação.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operação concluída.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatorCurriculum"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "401": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "413": {
+            "$ref": "#/components/responses/AcademicError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AcademicError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1209,6 +1504,9 @@
           },
           "requirementsKnown": {
             "type": "boolean"
+          },
+          "archived": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -1217,7 +1515,8 @@
           "hours",
           "period",
           "prerequisites",
-          "requirementsKnown"
+          "requirementsKnown",
+          "archived"
         ]
       },
       "Offering": {
@@ -1245,21 +1544,31 @@
                 },
                 "end": {
                   "type": "string"
+                },
+                "room": {
+                  "type": "string"
                 }
               },
               "required": [
                 "day",
                 "start",
-                "end"
+                "end",
+                "room"
               ]
             }
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
           }
         },
         "required": [
           "id",
           "subjectId",
           "group",
-          "times"
+          "times",
+          "capacity"
         ]
       },
       "Curriculum": {
@@ -1368,7 +1677,8 @@
                     "available",
                     "blocked",
                     "unknown",
-                    "in_progress"
+                    "in_progress",
+                    "archived"
                   ]
                 },
                 "missing": {
@@ -1397,6 +1707,155 @@
           "progress",
           "subjects"
         ]
+      },
+      "Session": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Identity"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinatorCourseId": {
+                "type": "string",
+                "description": "Presente para contas autorizadas a coordenar um curso."
+              }
+            }
+          }
+        ]
+      },
+      "CoordinatorCurriculum": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Curriculum"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "revision": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "revision"
+            ]
+          }
+        ]
+      },
+      "SubjectInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "hours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "period": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "prerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requirementsKnown": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "hours",
+          "period",
+          "prerequisites",
+          "requirementsKnown"
+        ]
+      },
+      "OfferingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "subjectId": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "times": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "day": {
+                  "type": "string",
+                  "enum": [
+                    "Seg",
+                    "Ter",
+                    "Qua",
+                    "Qui",
+                    "Sex",
+                    "Sáb"
+                  ]
+                },
+                "start": {
+                  "type": "string",
+                  "example": "08:30"
+                },
+                "end": {
+                  "type": "string",
+                  "example": "10:00"
+                },
+                "room": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "required": [
+                "day",
+                "start",
+                "end",
+                "room"
+              ]
+            }
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        },
+        "required": [
+          "subjectId",
+          "group",
+          "times",
+          "capacity"
+        ]
+      }
+    },
+    "responses": {
+      "AcademicError": {
+        "description": "Consulte error.code.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
     }
   }

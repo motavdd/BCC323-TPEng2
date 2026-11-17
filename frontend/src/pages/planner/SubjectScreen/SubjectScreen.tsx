@@ -104,7 +104,7 @@ export function SubjectScreen({
               atualizados.
             </p>
             <div className="actions">
-              <button disabled={busy} onClick={() => void toggleCompleted()}>
+              <button disabled={busy || state.state === "archived"} onClick={() => void toggleCompleted()}>
                 {state.state === "completed"
                   ? "Remover conclusão"
                   : "Marcar como concluída"}

@@ -13,6 +13,12 @@ namespace bcc323 {
         CourseRecord curriculum(const RequestContext& context);
         AcademicSummary summary(const RequestContext& context);
         AcademicSummary setCompleted(const RequestContext& context, const std::string& subjectId, bool completed);
+        std::optional<std::string> coordinatorCourse(const RequestContext&);
+        CourseRecord coordinatorCatalog(const RequestContext&);
+        CourseRecord changeSubject(const RequestContext&, const std::string& revision,
+                                   const std::string& id, const std::optional<SubjectRecord>&);
+        CourseRecord changeOffering(const RequestContext&, const std::string& revision,
+                                    const std::string& id, const std::optional<OfferingRecord>&);
         // Ponto puro, usado também nos testes: mesmas classes do domínio, sem Firebase.
         static AcademicSummary evaluate(const CourseRecord&, const AcademicProfile&, const std::vector<std::string>&);
 

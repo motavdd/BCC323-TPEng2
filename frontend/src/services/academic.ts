@@ -2,6 +2,7 @@ import { api, type Curriculum, type Evaluation, type Profile } from './api';
 
 // Contrato compartilhado pelas telas do MVP. Não recebe UID: a API usa o token.
 export const academicApi = {
+  session: () => api<{ uid: string; coordinatorCourseId?: string }>('/session'),
   profile: () => api<{ profile: Profile | null }>('/profile'),
   saveProfile: (profile: Pick<Profile, 'course' | 'period'> & Partial<Pick<Profile, 'courseId' | 'displayName'>>) =>
     api<{ profile: Profile }>('/profile', profile, 'PUT'),

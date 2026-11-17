@@ -152,13 +152,13 @@ export function PlanScreen({
         <Panel>
           <h2>Escolher turma</h2>
           <p>
-            Turmas ilustrativas do protótipo. Apenas ofertas com requisitos
-            conhecidos e cumpridos são exibidas.
+            {catalog.illustrative && "Catálogo ilustrativo. "}
+            Apenas ofertas com requisitos conhecidos e cumpridos são exibidas.
           </p>
           {catalog.offerings
             .filter(
               (item) =>
-                evaluation.subjects[item.subjectId].state === "available" &&
+                evaluation.subjects[item.subjectId]?.state === "available" &&
                 !plan.includes(item.id),
             )
             .map((item) => (
@@ -184,7 +184,7 @@ export function PlanScreen({
             ))}
           {!catalog.offerings.some(
             (item) =>
-              evaluation.subjects[item.subjectId].state === "available" &&
+              evaluation.subjects[item.subjectId]?.state === "available" &&
               !plan.includes(item.id),
           ) && (
             <p>

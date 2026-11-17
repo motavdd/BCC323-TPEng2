@@ -1,12 +1,9 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
+import { createAccount } from './auth-emulator';
 
 async function account(request: APIRequestContext) {
-  const base = process.env.E2E_AUTH_EMULATOR_URL || 'http://127.0.0.1:9099';
-  const response = await request.post(`${base}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key`, {
-    data: { email: `api-${Date.now()}-${Math.random().toString(16).slice(2)}@example.test`, password: 'senha12345', returnSecureToken: true },
-  });
-  expect(response.ok()).toBeTruthy();
-  const { idToken } = await response.json();
+  const { idToken } = await createAccount(request,
+    `api-${Date.now()}-${Math.random().toString(16).slice(2)}@aluno.ufop.edu.br`, 'senha12345');
   return { Authorization: `Bearer ${idToken}` };
 }
 

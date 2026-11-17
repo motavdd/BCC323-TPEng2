@@ -18,6 +18,11 @@ export function MatrixScreen({
   setSearch,
   go,
 }: Props) {
+  const periods = Math.max(8, ...catalog.subjects.map((item) => item.period));
+  const query = search.toLocaleLowerCase();
+  const matches = catalog.subjects.filter((item) =>
+    `${item.name} ${item.id}`.toLocaleLowerCase().includes(query),
+  );
   return (
     <>
       <Panel>
@@ -46,47 +51,33 @@ export function MatrixScreen({
       </label>
       <p className="legend">
         ✓ Concluída · ○ Disponível · ! Pré-requisito pendente · ? Requisitos a
-        validar
+        validar · Disciplina arquivada
       </p>
       <div
         className="matrix-scroll"
         tabIndex={0}
         aria-label="Matriz por período"
       >
-        <div className="matrix">
-          {Array.from({ length: 8 }, (_, index) => (
+        <div className="matrix" style={{ gridTemplateColumns: `repeat(${periods}, minmax(128px, 1fr))` }}>
+          {Array.from({ length: periods }, (_, index) => (
             <section key={index}>
               <h3>{index + 1}º período</h3>
-              {catalog.subjects
-                .filter(
-                  (item) =>
-                    item.period === index + 1 &&
-                    `${item.name} ${item.id}`
-                      .toLocaleLowerCase()
-                      .includes(search.toLocaleLowerCase()),
-                )
-                .map((item) => (
-                  <button
-                    className={`subject-card ${evaluation.subjects[item.id].state}`}
-                    key={item.id}
-                    onClick={() => go(`subject/${item.id}`)}
-                  >
+              {matches.filter((item) => item.period === index + 1).map((item) => {
+                const state = evaluation.subjects[item.id]?.state ?? "unknown";
+                return (
+                  <button className={`subject-card ${state}`} key={item.id} onClick={() => go(`subject/${item.id}`)}>
                     <span>{item.id}</span>
                     <b>{item.name}</b>
                     <small>{item.hours} h</small>
-                    <span>{labels[evaluation.subjects[item.id].state]}</span>
+                    <span>{labels[state]}</span>
                   </button>
-                ))}
+                );
+              })}
             </section>
           ))}
         </div>
       </div>
-      {search &&
-        !catalog.subjects.some((item) =>
-          `${item.name} ${item.id}`
-            .toLowerCase()
-            .includes(search.toLowerCase()),
-        ) && <p>Nenhuma disciplina encontrada.</p>}
+      {search && !matches.length && <p>Nenhuma disciplina encontrada.</p>}
       <Panel tone="highlight">
         <h2>Atualize seu progresso em um só lugar</h2>
         <p>
@@ -94,9 +85,9 @@ export function MatrixScreen({
           acompanha a matriz.
         </p>
         <div className="actions">
-          <button onClick={() => go("subject/BCC201")}>
+          {catalog.subjects.some((item) => item.id === "BCC201" && !item.archived) && <button onClick={() => go("subject/BCC201")}>
             Ver Introdução à Programação
-          </button>
+          </button>}
           <button className="secondary" onClick={() => go("history")}>
             Ver histórico
           </button>

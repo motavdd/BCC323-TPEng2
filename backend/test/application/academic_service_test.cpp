@@ -54,6 +54,15 @@ namespace {
             ids.erase(std::remove(ids.begin(), ids.end(), id), ids.end()); 
             if (done) ids.push_back(id);
         }
+
+        std::optional<std::string> coordinatorCourse(const RequestContext& c) override {
+            return c.uid == "coordinator" ? std::optional<std::string>(catalog.id) : std::nullopt;
+        }
+
+        CourseRecord saveCatalog(const CourseRecord& value) override {
+            catalog = value;
+            return catalog;
+        }
     };
 
     void expectError(int status, const std::function<void()>& action) {

@@ -30,7 +30,6 @@
 }
 .matrix {
   display: grid;
-  grid-template-columns: repeat(8, minmax(128px, 1fr));
   gap: 8px;
   min-width: 1100px;
 }

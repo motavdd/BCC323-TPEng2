@@ -11,6 +11,8 @@ export const PERIOD_MIN = 1;
 export const PERIOD_MAX = 20;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const isInstitutionalEmail = (email: string) =>
+  /^[^\s@]+@(aluno\.)?ufop\.edu\.br$/i.test(email.trim());
 
 /**
  * Valida os campos do autocadastro antes de enviar.
@@ -27,6 +29,7 @@ export function validateRegistration(data: RegistrationData): RegistrationErrors
   const email = data.email.trim();
   if (!email) errors.email = 'Informe seu e-mail.';
   else if (!EMAIL_PATTERN.test(email)) errors.email = 'Informe um e-mail válido (ex.: aluno@ufop.edu.br).';
+  else if (!isInstitutionalEmail(email)) errors.email = 'Use um e-mail institucional da UFOP.';
 
   if (!data.password) errors.password = 'Crie uma senha.';
   else if (data.password.length < PASSWORD_MIN_LENGTH) {

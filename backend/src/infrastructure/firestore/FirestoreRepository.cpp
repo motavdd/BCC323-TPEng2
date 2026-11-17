@@ -108,6 +108,9 @@ namespace {
         const std::string name = raw["name"].s();
         course.id = name.substr(name.find_last_of('/') + 1);
         course.name = fields["name"].s();
+        if (raw.has("updateTime")) {
+            course.revision = raw["updateTime"].s();
+        }
 
         if (course.name.empty() || course.name.size() > 100 || !fields.has("subjects") || fields["subjects"].t() != crow::json::type::List || fields["subjects"].size() == 0 || fields["subjects"].size() > 500) {
             throw std::invalid_argument("Matriz inválida");
@@ -125,6 +128,7 @@ namespace {
 
             subject.hours = static_cast<int>(s["hours"].i()); subject.period = static_cast<int>(s["period"].i());
             subject.requirementsKnown = s.has("requirementsKnown") && s["requirementsKnown"].b();
+            subject.archived = s.has("archived") && s["archived"].b();
 
             if (s.has("prerequisites")){
                 for (const auto& p : s["prerequisites"]) {
@@ -137,8 +141,12 @@ namespace {
             for (const auto& o : fields["offerings"]) {
                 bcc323::OfferingRecord offering;
                 offering.id = o["id"].s(); offering.subjectId = o["subjectId"].s(); offering.group = o["group"].s();
+                if (o.has("capacity")) {
+                    offering.capacity = static_cast<int>(o["capacity"].i());
+                }
                 for (const auto& t : o["times"]) {
-                    offering.times.push_back({t["day"].s(), t["start"].s(), t["end"].s()});
+                    offering.times.push_back({t["day"].s(), t["start"].s(), t["end"].s(),
+                        t.has("room") ? std::string(t["room"].s()) : ""});
                 }
                 course.offerings.push_back(std::move(offering));
             }
@@ -202,7 +210,12 @@ namespace bcc323 {
             throw AppError(503, "storage_unavailable", "Banco temporariamente indisponível.");
         }
         curl_slist* rawHeaders = nullptr;
-        rawHeaders = curl_slist_append(rawHeaders, ("Authorization: Bearer " + context.token).c_str());
+        const bool metadata = context.token.empty();
+        if (metadata) {
+            rawHeaders = curl_slist_append(rawHeaders, "Metadata-Flavor: Google");
+        } else {
+            rawHeaders = curl_slist_append(rawHeaders, ("Authorization: Bearer " + context.token).c_str());
+        }
         rawHeaders = curl_slist_append(rawHeaders, "Content-Type: application/json");
         std::unique_ptr<curl_slist, decltype(&curl_slist_free_all)> headers(rawHeaders, &curl_slist_free_all);
         const auto configure = [&](CURLoption option, auto value) {
@@ -223,6 +236,9 @@ namespace bcc323 {
         configure(CURLOPT_NOSIGNAL, 1L);
         configure(CURLOPT_SSL_VERIFYPEER, 1L); 
         configure(CURLOPT_SSL_VERIFYHOST, 2L);
+        if (metadata) {
+            configure(CURLOPT_NOPROXY, "*");
+        }
         if (input) { 
             configure(CURLOPT_POSTFIELDS, body.c_str()); 
             configure(CURLOPT_POSTFIELDSIZE, static_cast<long>(body.size())); 
@@ -299,7 +315,8 @@ namespace bcc323 {
         return documents;
     }
 
-    void FirestoreRepository::write(const RequestContext& context, const std::string& path, const Json& fields, const std::string& timestampField, bool createOnly) {
+    std::string FirestoreRepository::write(const RequestContext& context, const std::string& path, const Json& fields,
+                                           const std::string& timestampField, bool createOnly, const std::string& revision) {
         const auto plain = crow::json::load(fields.dump());
         Json commit, write;
         write["update"]["name"] = documentName_ + "/" + path;
@@ -314,6 +331,8 @@ namespace bcc323 {
         write["updateMask"]["fieldPaths"] = std::move(mask);
         if (createOnly) {
             write["currentDocument"]["exists"] = false;
+        } else if (!revision.empty()) {
+            write["currentDocument"]["updateTime"] = revision;
         }
         if (!timestampField.empty()) {
             Json transform; transform["fieldPath"] = timestampField; transform["setToServerValue"] = "REQUEST_TIME";
@@ -322,7 +341,12 @@ namespace bcc323 {
         }
         std::vector<Json> writes; writes.push_back(std::move(write)); 
         commit["writes"] = std::move(writes);
-        request(context, "POST", documents_ + ":commit", &commit);
+        const auto response = request(context, "POST", documents_ + ":commit", &commit);
+        if (!revision.empty()) {
+            const auto data = crow::json::load(response.dump());
+            return data["writeResults"][0]["updateTime"].s();
+        }
+        return {};
     }
 
     std::optional<AcademicProfile> FirestoreRepository::profile(const RequestContext& context) {
@@ -353,6 +377,79 @@ namespace bcc323 {
     }
     CourseRecord FirestoreRepository::course(const RequestContext& context, const std::string& id) {
         return courseOf(request(context, "GET", documents_ + "/courses/" + segment(id)));
+    }
+
+    std::optional<std::string> FirestoreRepository::coordinatorCourse(const RequestContext& context) {
+        const auto raw = request(context, "GET", documents_ + "/coordinators/" + segment(context.uid), nullptr, true);
+        if (raw.dump() == "null") {
+            return std::nullopt;
+        }
+        const auto fields = crow::json::load(fieldsOf(crow::json::load(raw.dump())).dump());
+        if (!fields.has("courseId") || fields["courseId"].t() != crow::json::type::String) {
+            throw AppError(503, "invalid_coordinator_grant", "A autorização da coordenação precisa de revisão.");
+        }
+        return segment(fields["courseId"].s());
+    }
+
+    CourseRecord FirestoreRepository::saveCatalog(const CourseRecord& catalog) {
+        if (catalog.revision.empty()) {
+            throw AppError(409, "write_conflict", "A matriz precisa ser recarregada antes de salvar.");
+        }
+        RequestContext writer;
+        if (!env("FIRESTORE_EMULATOR_HOST").empty()) {
+            writer.token = "owner";
+        } else {
+            if (env("FIRESTORE_CATALOG_USE_METADATA") != "true") {
+                throw AppError(503, "catalog_writer_unconfigured", "O servidor ainda não pode gravar o catálogo.");
+            }
+            const auto token = request({}, "GET",
+                "http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token");
+            const auto data = crow::json::load(token.dump());
+            if (!data.has("access_token") || data["access_token"].t() != crow::json::type::String) {
+                throw AppError(503, "catalog_writer_unavailable", "Identidade de gravação indisponível.");
+            }
+            writer.token = data["access_token"].s();
+            if (writer.token.empty()) {
+                throw AppError(503, "catalog_writer_unavailable", "Identidade de gravação indisponível.");
+            }
+        }
+
+        std::vector<Json> subjects, offerings;
+        for (const auto& subject : catalog.subjects) {
+            Json item;
+            item["id"] = subject.id;
+            item["name"] = subject.name;
+            item["hours"] = subject.hours;
+            item["period"] = subject.period;
+            item["prerequisites"] = subject.prerequisites;
+            item["requirementsKnown"] = subject.requirementsKnown;
+            item["archived"] = subject.archived;
+            subjects.push_back(std::move(item));
+        }
+        for (const auto& offering : catalog.offerings) {
+            Json item;
+            item["id"] = offering.id;
+            item["subjectId"] = offering.subjectId;
+            item["group"] = offering.group;
+            item["capacity"] = offering.capacity;
+            std::vector<Json> times;
+            for (const auto& slot : offering.times) {
+                Json time;
+                time["day"] = slot.day;
+                time["start"] = slot.start;
+                time["end"] = slot.end;
+                time["room"] = slot.room;
+                times.push_back(std::move(time));
+            }
+            item["times"] = std::move(times);
+            offerings.push_back(std::move(item));
+        }
+        Json fields;
+        fields["subjects"] = std::move(subjects);
+        fields["offerings"] = std::move(offerings);
+        auto saved = catalog;
+        saved.revision = write(writer, "courses/" + segment(catalog.id), fields, "", false, catalog.revision);
+        return saved;
     }
     std::vector<std::string> FirestoreRepository::completed(const RequestContext& context) {
         std::vector<std::string> result;

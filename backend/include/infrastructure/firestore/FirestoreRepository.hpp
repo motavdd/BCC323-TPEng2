@@ -7,7 +7,8 @@ namespace bcc323 {
 
         std::string base_, documents_, documentName_;
         crow::json::wvalue request(const RequestContext&, const std::string& method, const std::string& url, const crow::json::wvalue* body = nullptr, bool allowMissing = false);
-        void write(const RequestContext&, const std::string& path, const crow::json::wvalue& fields, const std::string& timestampField, bool createOnly = false);
+        std::string write(const RequestContext&, const std::string& path, const crow::json::wvalue& fields,
+                          const std::string& timestampField, bool createOnly = false, const std::string& revision = "");
         std::vector<crow::json::wvalue> list(const RequestContext&, const std::string& path);
 
     public:
@@ -25,6 +26,8 @@ namespace bcc323 {
         std::vector<std::string> completed(const RequestContext&) override;
 
         void setCompleted(const RequestContext&, const std::string&, bool) override;
+        std::optional<std::string> coordinatorCourse(const RequestContext&) override;
+        CourseRecord saveCatalog(const CourseRecord&) override;
 
     };
 }

@@ -17,9 +17,12 @@ namespace {
         crow::response response(status, body); response.set_header("Cache-Control", "no-store"); return response;
     }
 
-    template<class Action> crow::response handle(const crow::request& request, Action action) {
+    template<class Action> crow::response handle(const crow::request& request, Action action, bool allowUnverified = false) {
         try {
             const auto context = bcc323::authenticate(request);
+            if (!allowUnverified && !context.emailVerified) {
+                return error(403, "unverified_email", "Confirme seu e-mail institucional para continuar.");
+            }
             if (request.body.size() > 16384){
                 return error(413, "payload_too_large", "Dados demais.");
             } 
@@ -38,12 +41,28 @@ namespace {
             return error(500, "internal_error", "Não foi possível concluir a operação.");
         }
     }
+
+    Json coordinatorJson(const bcc323::CourseRecord& catalog) {
+        auto result = bcc323::toJson(catalog);
+        result["revision"] = catalog.revision;
+        return result;
+    }
 }
 namespace bcc323 {
     void register_academic_routes(crow::SimpleApp& app) {
         CROW_ROUTE(app, "/api/me")([](const crow::request& request) {
             return handle(request, [](const RequestContext& context, AcademicService&) {
                 Json body; body["uid"] = context.uid; return body;
+            });
+        });
+        CROW_ROUTE(app, "/api/session")([](const crow::request& request) {
+            return handle(request, [](const RequestContext& context, AcademicService& service) {
+                Json body; body["uid"] = context.uid;
+                const auto courseId = service.coordinatorCourse(context);
+                if (courseId) {
+                    body["coordinatorCourseId"] = *courseId;
+                }
+                return body;
             });
         });
         CROW_ROUTE(app, "/api/courses")([](const crow::request& request) {
@@ -71,7 +90,7 @@ namespace bcc323 {
                     }
                 }
                 return body;
-            });
+            }, true);
         });
 
         CROW_ROUTE(app, "/api/curriculum")([](const crow::request& request) {
@@ -93,6 +112,34 @@ namespace bcc323 {
         ([](const crow::request& request, const std::string& id) {
             return handle(request, [&](const RequestContext& context, AcademicService& service) {
                 return toJson(service.setCompleted(context, id, request.method == crow::HTTPMethod::PUT));
+            });
+        });
+
+        CROW_ROUTE(app, "/api/coordinator/curriculum")([](const crow::request& request) {
+            return handle(request, [](const RequestContext& context, AcademicService& service) {
+                return coordinatorJson(service.coordinatorCatalog(context));
+            });
+        });
+
+        CROW_ROUTE(app, "/api/coordinator/subjects/<string>").methods(crow::HTTPMethod::PUT, crow::HTTPMethod::DELETE)
+        ([](const crow::request& request, const std::string& id) {
+            return handle(request, [&](const RequestContext& context, AcademicService& service) {
+                std::optional<SubjectRecord> value;
+                if (request.method == crow::HTTPMethod::PUT) {
+                    value = subjectFromJson(id, crow::json::load(request.body));
+                }
+                return coordinatorJson(service.changeSubject(context, request.get_header_value("If-Match"), id, value));
+            });
+        });
+
+        CROW_ROUTE(app, "/api/coordinator/offerings/<string>").methods(crow::HTTPMethod::PUT, crow::HTTPMethod::DELETE)
+        ([](const crow::request& request, const std::string& id) {
+            return handle(request, [&](const RequestContext& context, AcademicService& service) {
+                std::optional<OfferingRecord> value;
+                if (request.method == crow::HTTPMethod::PUT) {
+                    value = offeringFromJson(id, crow::json::load(request.body));
+                }
+                return coordinatorJson(service.changeOffering(context, request.get_header_value("If-Match"), id, value));
             });
         });
     }

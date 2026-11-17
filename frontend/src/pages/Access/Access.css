@@ -68,7 +68,9 @@
   font-size: 16px;
 }
 .access:not(.register) {
-  background: url("/figma/login-surface.svg") center / 100% 100% no-repeat;
+  background: white;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 .access:not(.register) .access-brand {
   background: url("/figma/login-brand.svg") center / 100% 100% no-repeat;
@@ -112,7 +114,7 @@
 }
 .register .actions button {
   flex: initial;
-  min-width: 220px;
+  min-width: min(220px, 100%);
 }
 @media (max-width: 1000px) {
   .access {

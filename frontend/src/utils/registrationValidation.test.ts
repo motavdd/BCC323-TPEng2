@@ -29,6 +29,13 @@ describe('Validação do autocadastro', () => {
     expect(validateRegistration({ ...valid, email: 'aluno@ufop' }).email).toBeDefined();
   });
 
+  it('aceita somente os domínios institucionais da UFOP', () => {
+    expect(validateRegistration({ ...valid, email: 'aluno@aluno.ufop.edu.br' }).email).toBeUndefined();
+    for (const email of ['aluno@example.test', 'aluno@ufop.edu.br.example.test']) {
+      expect(validateRegistration({ ...valid, email }).email).toBe('Use um e-mail institucional da UFOP.');
+    }
+  });
+
   it('exige senha com pelo menos 6 caracteres', () => {
     const errors = validateRegistration({ ...valid, password: '123', passwordConfirmation: '123' });
     expect(errors.password).toBeDefined();

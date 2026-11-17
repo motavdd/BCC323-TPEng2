@@ -1,8 +1,17 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function institutionalAccount() {
+      return request.auth != null && request.auth.token.email is string
+        && request.auth.token.email.lower().matches('[^ @]+@(aluno[.])?ufop[.]edu[.]br');
+    }
+
     function isOwner(uid) {
-      return request.auth != null && request.auth.uid == uid;
+      return institutionalAccount() && request.auth.uid == uid;
+    }
+
+    function verifiedOwner(uid) {
+      return isOwner(uid) && request.auth.token.email_verified == true;
     }
 
     function validProfile() {
@@ -31,16 +40,16 @@ service cloud.firestore {
       allow delete: if false;
 
       match /completedCourses/{courseId} {
-        allow get, list: if isOwner(userId);
-        allow create, update: if isOwner(userId)
+        allow get, list: if verifiedOwner(userId);
+        allow create, update: if verifiedOwner(userId)
           && request.resource.data.keys().hasOnly(['completedAt'])
           && request.resource.data.completedAt is timestamp;
-        allow delete: if isOwner(userId);
+        allow delete: if verifiedOwner(userId);
       }
 
       match /plans/{planId} {
-        allow get, list: if isOwner(userId);
-        allow create, update: if isOwner(userId)
+        allow get, list: if verifiedOwner(userId);
+        allow create, update: if verifiedOwner(userId)
           && planId == 'next'
           && request.resource.data.keys().hasOnly(['offeringIds', 'updatedAt'])
           && request.resource.data.offeringIds is list
@@ -49,18 +58,22 @@ service cloud.firestore {
           && request.resource.data.offeringIds.toSet().size() == request.resource.data.offeringIds.size()
           && !(request.resource.data.offeringIds.hasAll(['BCC202-A', 'BCC202-B']))
           && request.resource.data.updatedAt == request.time;
-        allow delete: if isOwner(userId);
+        allow delete: if verifiedOwner(userId);
       }
     }
 
-    // Catálogo inicialmente somente leitura; cadastro/alteração requer
-    // API privilegiada ou regras com claims de coordenador ainda a definir.
+    // O catálogo pode ser consultado na criação do próprio perfil.
+    // Escritas passam pela autorização e validação da API.
     match /courses/{courseId} {
-      allow get, list: if request.auth != null;
+      allow get, list: if institutionalAccount();
       allow write: if false;
     }
 
-    // Fórum e grade: fechados até a modelagem de visibilidade/permissões.
+    match /coordinators/{userId} {
+      allow get: if verifiedOwner(userId);
+      allow list, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

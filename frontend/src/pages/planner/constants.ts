@@ -4,6 +4,7 @@ export const labels = {
   blocked: "! Pré-requisito pendente",
   unknown: "? Requisitos a validar",
   in_progress: "Em andamento",
+  archived: "Disciplina arquivada",
 };
 export const links = [
   ["overview", "Visão geral"],

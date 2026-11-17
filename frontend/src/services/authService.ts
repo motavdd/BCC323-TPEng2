@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from './firebase';
 import { academicApi } from './academic';
 import type { RegistrationData } from '../types/registration';
@@ -12,10 +12,11 @@ import type { RegistrationData } from '../types/registration';
  * na tela "Falta só um passo", sem criar outra conta.
  */
 export async function registerStudent(data: RegistrationData): Promise<void> {
-  await createUserWithEmailAndPassword(auth, data.email.trim(), data.password);
+  const { user } = await createUserWithEmailAndPassword(auth, data.email.trim(), data.password);
   await academicApi.saveProfile({
     displayName: data.name.trim(),
     course: data.course.trim(),
     period: data.period,
   });
+  await sendEmailVerification(user);
 }

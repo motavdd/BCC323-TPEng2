@@ -59,6 +59,7 @@ class ApiSmokeTest(unittest.TestCase):
                 "sub": "student-1", "aud": "demo-bcc323",
                 "iss": "https://securetoken.google.com/demo-bcc323",
                 "iat": now, "exp": now + 3600,
+                "email": "student@aluno.ufop.edu.br", "email_verified": True,
             }) + "."
             headers = {"Authorization": "Bearer " + token, "Content-Type": "application/json"}
             with urlopen(Request(base_url + "/api/me", headers=headers), timeout=2) as response:

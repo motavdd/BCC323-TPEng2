@@ -1,0 +1,109 @@
+.coordinator nav button {
+  width: 100%;
+  text-align: left;
+  color: var(--wine-dark);
+  background: transparent;
+  border-color: transparent;
+}
+
+.coordinator nav button[aria-current="page"] {
+  background: var(--selection);
+  border-color: var(--line);
+}
+
+.coordinator .actions {
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.coordinator .actions button {
+  min-width: 0;
+}
+
+.coordinator-form {
+  width: 100%;
+  max-width: 900px;
+}
+
+.coordinator-form fieldset {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.coordinator-form label:not(.check-field) {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.coordinator-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
+  gap: 0.8rem;
+}
+
+.coordinator-form input:not([type="checkbox"]),
+.coordinator-form select {
+  width: 100%;
+}
+
+.coordinator-form .check-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.coordinator-form .check-field input {
+  width: 1.125rem;
+  height: 1.125rem;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: var(--wine);
+}
+
+.prerequisites legend {
+  font-weight: 700;
+}
+
+.prerequisite-options {
+  max-height: min(18rem, 35vh);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--sidebar);
+  padding: 0.25rem 0.75rem;
+}
+
+.prerequisite-options .check-field {
+  padding-block: 0.25rem;
+}
+
+.prerequisite-options > :last-child,
+.prerequisites > p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 650px) {
+  .coordinator .panel {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .coordinator nav button {
+    width: auto;
+    padding-inline: 12px;
+  }
+
+  .coordinator .actions button {
+    flex: 1 1 120px;
+    width: auto;
+  }
+}

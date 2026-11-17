@@ -1,3 +1,7 @@
 .loading {
   padding: 64px;
 }
+.verification {
+  max-width: 720px;
+  margin-inline: auto;
+}

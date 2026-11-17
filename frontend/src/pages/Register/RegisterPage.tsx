@@ -109,7 +109,7 @@ export function RegisterPage({ onRegister, onBackToLogin }: Props) {
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="seuemail@exemplo.com"
+                placeholder="nome@aluno.ufop.edu.br"
                 value={data.email}
                 onChange={(e) => update("email", e.target.value)}
                 maxLength={254}

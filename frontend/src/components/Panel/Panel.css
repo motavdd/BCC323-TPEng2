@@ -2,6 +2,7 @@
   background: white;
   border: 1px solid var(--line);
   border-radius: 12px;
+  box-shadow: 0 2px 5px rgb(59 24 45 / 7%);
   padding: 28px;
   margin-bottom: 26px;
 }

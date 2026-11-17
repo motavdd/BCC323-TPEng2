@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { User } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
 import type { Curriculum, Evaluation, Offering, Profile } from "../services/api";
 import { academicApi } from "../services/academic";
 import { planStorage } from "../services/planStorage";
+import { db } from "../services/firebase";
 import { message } from "../utils/errors";
 import { hasScheduleConflict } from "../utils/schedule";
 import { usePlannerRoute } from "./usePlannerRoute";
@@ -22,6 +24,7 @@ export function usePlanner(user: User) {
   const [search, setSearch] = useState("");
   const [confirmRemoval, setConfirmRemoval] = useState(false);
   const [chooser, setChooser] = useState(false);
+  const historyVersion = useRef(0);
   const dirty = JSON.stringify(plan) !== JSON.stringify(savedPlan);
 
   useEffect(() => {
@@ -39,6 +42,27 @@ export function usePlanner(user: User) {
 
   useEffect(() => {
     let active = true;
+    let unsubscribe: (() => void) | undefined;
+    let refreshVersion = 0;
+
+    async function refreshAcademicData() {
+      const version = ++refreshVersion;
+      const history = historyVersion.current;
+      try {
+        const [curriculum, summary] = await Promise.all([academicApi.curriculum(), academicApi.summary()]);
+        if (!active || version !== refreshVersion) return;
+        if (history !== historyVersion.current) {
+          void refreshAcademicData();
+          return;
+        }
+        setCatalog(curriculum);
+        setCompleted(summary.completed);
+        setEvaluation(summary);
+      } catch (cause) {
+        if (active && version === refreshVersion) setError(message(cause));
+      }
+    }
+
     academicApi
       .profile()
       .then(async ({ profile: value }) => {
@@ -65,6 +89,11 @@ export function usePlanner(user: User) {
         const ids = saved;
         setPlan(ids);
         setSavedPlan(ids);
+        unsubscribe = onSnapshot(doc(db, "courses", curriculum.id), { includeMetadataChanges: true }, (snapshot) => {
+          if (active && !snapshot.metadata.fromCache) void refreshAcademicData();
+        }, (cause) => {
+          if (active) setError(message(cause));
+        });
       })
       .catch((e) => {
         if (active) {
@@ -73,6 +102,7 @@ export function usePlanner(user: User) {
       });
     return () => {
       active = false;
+      unsubscribe?.();
     };
   }, [user.uid, retry]);
 
@@ -154,6 +184,7 @@ export function usePlanner(user: User) {
 
     await perform(async () => {
       const summary = await academicApi.setCompleted(subject.id, !done);
+      historyVersion.current++;
       setEvaluation(summary);
       setCompleted(summary.completed);
       setConfirmRemoval(false);
