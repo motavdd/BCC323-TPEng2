@@ -1,7 +1,7 @@
 #ifndef DISCIPLINAIMPL_HPP
 #define DISCIPLINAIMPL_HPP
 
-#include "domain/Disciplina.hpp"
+#include "Disciplina.hpp"
 
 /**
  * @brief Implementacao concreta de uma disciplina.

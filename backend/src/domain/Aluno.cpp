@@ -1,6 +1,6 @@
-#include "domain/AlunoImpl.hpp"
-#include "domain/CursoImpl.hpp"
-#include "domain/DisciplinaImpl.hpp"
+#include "../../include/domain/AlunoImpl.hpp"
+#include "../../include/domain/CursoImpl.hpp"
+#include "../../include/domain/DisciplinaImpl.hpp"
 #include <algorithm>
 
 //CONSTRUTORES

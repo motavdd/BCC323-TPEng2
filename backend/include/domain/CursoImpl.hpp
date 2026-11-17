@@ -1,7 +1,7 @@
 #ifndef CURSOIMPL_HPP
 #define CURSOIMPL_HPP
 
-#include "domain/Curso.hpp"
+#include "Curso.hpp"
 
 /**
  * @brief Implementação concreta de um curso.

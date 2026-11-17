@@ -1,4 +1,4 @@
-#include "domain/CoordenadorImpl.hpp"
+#include "../../include/domain/CoordenadorImpl.hpp"
 
 //CONSTRTURORES
 CoordenadorImpl::CoordenadorImpl() : UsuarioImpl() {

@@ -1,4 +1,4 @@
-#include "domain/DisciplinaImpl.hpp"
+#include "../../include/domain/DisciplinaImpl.hpp"
 
 #include <algorithm>
 #include <stdexcept>

@@ -1,8 +1,8 @@
-#include "domain/AcademicSystemImpl.hpp"
-#include "domain/AlunoImpl.hpp"
-#include "domain/CoordenadorImpl.hpp"
-#include "domain/CursoImpl.hpp"
-#include "domain/DisciplinaImpl.hpp"
+#include "../../include/domain/AcademicSystemImpl.hpp"
+#include "../../include/domain/AlunoImpl.hpp"
+#include "../../include/domain/CoordenadorImpl.hpp"
+#include "../../include/domain/CursoImpl.hpp"
+#include "../../include/domain/DisciplinaImpl.hpp"
 #include <algorithm>
 #include <stdexcept>
 
