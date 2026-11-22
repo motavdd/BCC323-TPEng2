@@ -27,6 +27,12 @@ bool AlunoImpl::contem(const std::vector<Disciplina*>& v, Disciplina* d) {
 
 //Verifica se uma disciplina possui pre requisitos
 bool AlunoImpl::preRequisitosCumpridos(Disciplina* d) const {
+
+    //verificação se existe
+    if (d == nullptr){
+        return false;
+    }
+
     for (auto pre : d->getPreRequisitos()) {
         if (!contem(concluidas, pre)) {
             return false;
@@ -138,6 +144,84 @@ double AlunoImpl::getProgresso() const {
         }
     }
     return 100.0 * feita / curso->getCargaTotal();
+}
+
+
+//Verifica se a disciplina esta no historico
+bool AlunoImpl::isConcluida(Disciplina* d) const {
+    return d != nullptr && contem(concluidas, d);
+}
+
+//Verifica se os pre requisitos da disciplina foram cumpridos
+bool AlunoImpl::preRequisitosAtendidos(Disciplina* d) const {
+    return preRequisitosCumpridos(d);
+}
+
+//retorna os pre requisitos que ainda faltam
+std::vector<Disciplina*> AlunoImpl::getPreRequisitosPendentes(Disciplina* d) const {
+    std::vector<Disciplina*> pendentes;
+    if (d == nullptr) {
+        return pendentes;
+    }
+    for (auto pre : d->getPreRequisitos()) {
+        if (!contem(concluidas, pre)) {
+            pendentes.push_back(pre);
+        }
+    }
+    return pendentes;
+}
+
+//Registra uma disciplina concluida validando curso e pre requisitos
+bool AlunoImpl::registrarConcluida(Disciplina* d) {
+    if (d == nullptr || curso == nullptr) {
+        return false;
+    }
+    //so aceita disciplinas da matriz do curso do aluno
+    if (!contem(curso->getDisciplinas(), d)) {
+        return false;
+    }
+    //ja estava no historico: nada a fazer
+    if (contem(concluidas, d)) {
+        return true;
+    }
+    if (!preRequisitosCumpridos(d)) {
+        return false;
+    }
+    marcarConcluida(d); //tambem remove de "em andamento"
+    return true;
+}
+
+//Remove do historico sem deixar uma disciplina concluida sem seu pre requisito
+bool AlunoImpl::removerConcluida(Disciplina* d) {
+    if (d == nullptr || !contem(concluidas, d)) {
+        return false;
+    }
+    for (auto c : concluidas) {
+        if (c != d && contem(c->getPreRequisitos(), d)) {
+            return false; //alguma concluida depende de d
+        }
+    }
+    desmarcarConcluida(d);
+    return true;
+}
+
+//Registra varias disciplinas
+std::vector<Disciplina*> AlunoImpl::registrarHistorico(const std::vector<Disciplina*>& disciplinas) {
+    std::vector<Disciplina*> pendentes = disciplinas;
+    bool progresso = true;
+    while (progresso && !pendentes.empty()) {
+        progresso = false;
+        std::vector<Disciplina*> restantes;
+        for (auto d : pendentes) {
+            if (registrarConcluida(d)) {
+                progresso = true;
+            } else {
+                restantes.push_back(d);
+            }
+        }
+        pendentes = restantes;
+    }
+    return pendentes; //o que sobrou foi rejeitado
 }
 
 //Constrtutor de copia
