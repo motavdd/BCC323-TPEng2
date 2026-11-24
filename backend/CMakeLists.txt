@@ -73,6 +73,11 @@ if(BUILD_TESTING)
     add_executable(application-tests test/application/academic_service_test.cpp)
     target_link_libraries(application-tests PRIVATE academic-application)
     add_test(NAME academic-service COMMAND application-tests)
+
+    add_executable(domain-tests test/domain/academic_domain_test.cpp)
+    target_link_libraries(domain-tests PRIVATE academic-application)
+    add_test(NAME academic-domain COMMAND domain-tests)
+
     add_executable(auth-tests
         test/auth/token_verifier_test.cpp
         src/infrastructure/auth/FirebaseTokenVerifier.cpp
