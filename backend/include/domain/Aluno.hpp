@@ -89,6 +89,52 @@ public:
      * * @return double - poercentagem do progresso. 
      */
     virtual double getProgresso() const = 0;
+
+     /*! @brief Verifica se a disciplina consta no histórico (concluída).
+     * @param d a Disciplina.
+     * @return bool - true se a disciplina está concluída (false para nullptr).
+     */
+    virtual bool isConcluida(Disciplina*) const = 0;
+
+    /*! @brief Verifica se todos os pré-requisitos da disciplina estão concluídos.
+     * @param d a Disciplina.
+     * @return bool - true se todos foram cumpridos (false para nullptr).
+     */
+    virtual bool preRequisitosAtendidos(Disciplina*) const = 0;
+
+    /*! @brief Retorna os pré-requisitos da disciplina que o aluno ainda não concluiu.
+     * @param d a Disciplina.
+     * @return vector - vetor de Disciplinas pendentes (vazio se nenhum ou se d for nullptr).
+     */
+    virtual std::vector<Disciplina*> getPreRequisitosPendentes(Disciplina*) const = 0;
+
+    /*!
+     * @brief Registra uma disciplina no histórico validando as regras do curso.
+     * A disciplina só é registrada se pertencer à matriz do curso do aluno e se todos
+     * os seus pré-requisitos já estiverem concluídos. Se já estiver concluída, nada muda.
+     * Ao ser registrada, deixa de constar como "em andamento".
+     * @param d a Disciplina.
+     * @return bool - true se a disciplina consta no histórico após a chamada; false se foi rejeitada.
+     */
+    virtual bool registrarConcluida(Disciplina*) = 0;
+
+     /*!
+     * @brief Remove uma disciplina do histórico sem quebrar a consistência dele.
+     * É recusada se a disciplina não estiver concluída ou se outra disciplina
+     * concluída a tem como pré-requisito.
+     * @param d a Disciplina.
+     * @return bool - true se foi removida.
+     */
+    virtual bool removerConcluida(Disciplina*) = 0;
+
+    /*!
+     * @brief Registra várias disciplinas de uma vez.
+     * A ordem da lista não importa: pré-requisitos presentes na mesma lista são
+     * considerados. Cada disciplina passa pelas mesmas regras de registrarConcluida.
+     * @param disciplinas as disciplinas a registrar.
+     * @return vector - as disciplinas rejeitadas, na ordem em que foram enviadas.
+     */
+    virtual std::vector<Disciplina*> registrarHistorico(const std::vector<Disciplina*>& disciplinas) = 0;
 };
 
 #endif

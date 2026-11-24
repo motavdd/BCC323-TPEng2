@@ -60,6 +60,14 @@ public:
     EstadoDisciplina getEstado(Disciplina* d) const override;
     double getProgresso() const override;
 
+
+    bool isConcluida(Disciplina* d) const override;
+    bool preRequisitosAtendidos(Disciplina* d) const override;
+    std::vector<Disciplina*> getPreRequisitosPendentes(Disciplina* d) const override;
+    bool registrarConcluida(Disciplina* d) override;
+    bool removerConcluida(Disciplina* d) override;
+    std::vector<Disciplina*> registrarHistorico(const std::vector<Disciplina*>& disciplinas) override;
+
     /*! @brief Construtor por cópia. 
      * * @param a é Aluno */
     AlunoImpl(const AlunoImpl& a);
@@ -69,6 +77,8 @@ public:
      * * @return AlunoImpl& 
      */
     AlunoImpl& operator=(const AlunoImpl& a);
+
+    friend class Unit_Aluno;
 };
 
 #endif
