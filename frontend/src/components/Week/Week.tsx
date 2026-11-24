@@ -31,6 +31,7 @@ export function Week({
       key: JSON.stringify([offering.id, index]),
       name: names.get(offering.subjectId) ?? offering.subjectId,
       group: offering.group,
+      code: offering.id,
     })),
   );
   const hours = [...new Set(lessons.filter((lesson) => lesson.dayIndex >= 0)
@@ -59,11 +60,21 @@ export function Week({
                   <td key={day}>
                     {lessons.filter((lesson) => lesson.dayIndex === index && lesson.start === hour)
                       .map((lesson) => (
-                        <div className="class-slot" key={lesson.key}>
-                          <b>{lesson.name}</b>
-                          <div>Turma {lesson.group}</div>
-                          <div>{lesson.start}–{lesson.end}</div>
-                        </div>
+                        <details className="class-slot" key={lesson.key}>
+                          <summary>
+                            <b>{lesson.name}</b>
+                            <span>Turma {lesson.group}</span>
+                            <span>{lesson.start}–{lesson.end}</span>
+                          </summary>
+                          <dl className="class-slot-details">
+                            <dt>Código da turma</dt>
+                            <dd>{lesson.code}</dd>
+                            <dt>Sala</dt>
+                            <dd>Não informada</dd>
+                            <dt>Professor</dt>
+                            <dd>Não informado</dd>
+                          </dl>
+                        </details>
                       ))}
                   </td>
                 ))}

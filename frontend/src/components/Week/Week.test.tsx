@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 import { Week } from "./Week";
 
@@ -37,4 +37,21 @@ it("ordena os horários e coloca cada aula na coluna correspondente, incluindo s
 it("informa quando nenhuma turma foi selecionada", () => {
   render(<Week catalog={catalog} offerings={[]} />);
   expect(screen.getByText("Nenhuma aula na semana.")).toBeVisible();
+});
+
+it("abre e fecha os detalhes da aula e indica os campos ausentes no catálogo", () => {
+  render(<Week catalog={catalog} offerings={[{
+    id: "BCC202-A", subjectId: "BCC202", group: "A",
+    times: [{ day: "Seg", start: "08:00", end: "10:00" }],
+  }]} />);
+
+  const summary = screen.getByText("Estrutura de Dados I").closest("summary")!;
+  const code = screen.getByText("BCC202-A");
+  expect(code).not.toBeVisible();
+  fireEvent.click(summary);
+  expect(code).toBeVisible();
+  expect(screen.getByText("Não informada")).toBeVisible();
+  expect(screen.getByText("Não informado")).toBeVisible();
+  fireEvent.click(summary);
+  expect(code).not.toBeVisible();
 });
