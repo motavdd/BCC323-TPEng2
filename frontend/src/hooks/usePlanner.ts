@@ -172,6 +172,7 @@ export function usePlanner(user: User) {
 
   async function savePlan() {
     if (
+      busy ||
       conflicts.length ||
       invalidPlan.length ||
       missingOfferings.length ||
@@ -189,7 +190,7 @@ export function usePlanner(user: User) {
   function addOffering(id: string) {
     const offering = catalog?.offerings.find((item) => item.id === id);
 
-    if (!offering) return;
+    if (busy || !offering || evaluation?.subjects[offering.subjectId]?.state !== "available") return;
 
     setPlan((previous) => [
       ...previous.filter(
