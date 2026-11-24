@@ -47,6 +47,23 @@
 | H04 | Implementar cadastro e edição de disciplinas na Matriz Curricular | Juliana Borges | #35 |
 | H04 | Implementar Vínculo de Pré-requisitos entre disciplinas | Jhonata | #36 |
 
+| História | Tarefas | Responsável | Issue |
+|----------|---------|-------------|-------|
+| H02 | Criar interface e implementação para histórico de disciplinas no Aluno | César Augusto | #69 |
+| H02 | Criar testes unitários para registro de disciplinas e validação de pré-requisitos  | Juliana Borges | #70 |
+| H02 | Criar tela de seleção e marcação de disciplinas já cursadas (FrontEnd)  | Matheus Mota | #71 |
+| H03 | Criar filtro de status das disciplinas por aluno (Concluídas, Em Andamento e Disponíveis) | - | #72 |
+| H03 | Testes - Validar cálculos de progresso e filtragem de status com casos de teste | Samara Paloma  | #73 |
+| H03 | Frontend - Desenvolver componente de barra de progresso e listagem categorizada de disciplinas | Samara Paloma  | #74 |
+| H05 | Backend - Criar estrutura/classe para representar a Proposta de Grade Horária do aluno | César Augusto | #75 |
+| H05 | Integrar validação de pré-requisitos e vagas disponíveis na seleção de matérias | - | #77 |
+| H05 | Teste - Criar bateria de testes unitários para montagem de grade| Juliana Borges | #78 |
+| H05 | Frontend - Criar interface interativa de seleção de disciplinas com alerta visual de conflitos | Matheus Mota | #79 |
+| H06 | Criar método de formatação/exportação dos horários da grade por dia da semana e turno | - | #80 |
+| H06 | Testes - Testar geração da estrutura semanal com diferentes combinações de horários | - | #81 |
+| H06 | Frontend - Construir tabela/calendário visual semanal (Segunda a Sábado) com horários das aulas | - | #82 |
+| H06 | Frontend - Adicionar opção de visualização detalhada (sala, professor, código da turma) ao clicar na aula | - | #83 |
+
 ### Sprints seguintes
 
-As Sprints 2, 3 e 4 têm apenas o objetivo definido na tabela acima. O backlog de cada uma será detalhado no planejamento da própria sprint, e esta seção será atualizada nesse momento.
+As Sprints 3 e 4 têm apenas o objetivo definido na tabela acima. O backlog de cada uma será detalhado no planejamento da própria sprint, e esta seção será atualizada nesse momento.
