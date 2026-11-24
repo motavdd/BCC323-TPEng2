@@ -1,0 +1,21 @@
+.history-subjects {
+  list-style: none;
+  padding: 0;
+}
+
+.history-subjects label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.history-subjects input {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}

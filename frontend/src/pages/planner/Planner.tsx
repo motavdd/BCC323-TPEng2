@@ -47,6 +47,7 @@ export function Planner({
     planHours,
     title,
     toggleCompleted,
+    saveCompletion,
     savePlan,
     addOffering,
     setPlan,
@@ -130,9 +131,9 @@ export function Planner({
             {route === "history" && (
               <HistoryScreen
                 catalog={catalog}
-                completed={completed}
                 evaluation={evaluation}
-                go={go}
+                busy={busy}
+                save={saveCompletion}
               />
             )}
             {route === "plan" && (
