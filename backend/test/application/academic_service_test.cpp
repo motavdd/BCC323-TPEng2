@@ -199,6 +199,66 @@ namespace {
             "Disciplina bloqueada nao deve aparecer na lista de disponiveis");
     }
 
+    void testarHistoricoAcademico() {
+        MemoryRepository repository;
+        AcademicService service(repository);
+
+        RequestContext aluno{"historico", ""};
+
+        service.saveProfile(aluno, {"Aluno", "Computação", "", 1});
+
+        // 1. Registro com pre-requisito pendente
+        auto result = service.setCompleted(aluno, "B", true);
+
+        check(result.completedCount == 1,
+            "Historico deve conter uma disciplina concluida");
+
+        check(result.subjects.at("B").state == "completed",
+            "Registro deve permitir conclusao por equivalencia");
+
+        check(result.subjects.at("A").state == "available",
+            "Pre-requisito nao deve ser concluido automaticamente");
+
+        check(result.completedHours == 90,
+            "Carga horaria deve considerar apenas a disciplina concluida");
+
+        // 2. Consultar novamente o historico
+        result = service.summary(aluno);
+
+        check(result.completedCount == 1 &&
+            result.subjects.at("B").state == "completed",
+            "Conclusao deve ser preservada em nova consulta");
+
+        // 3. Remocao de disciplina ausente do historico
+        result = service.setCompleted(aluno, "A", false);
+
+        check(result.completedCount == 1 &&
+            result.subjects.at("B").state == "completed",
+            "Remover disciplina ausente deve preservar o historico");
+
+        // 4. Registro de disciplina inexistente
+        const auto historicoAnterior = repository.completed(aluno);
+
+        expectError(404, [&] {
+            service.setCompleted(aluno, "inexistente", true);
+        });
+
+        check(repository.completed(aluno) == historicoAnterior,
+            "Registro invalido nao deve modificar o historico");
+
+        // 5. Remocao da disciplina concluida
+        result = service.setCompleted(aluno, "B", false);
+
+        check(result.completedCount == 0,
+            "Historico deve ficar vazio apos a remocao");
+
+        check(result.completedHours == 0,
+            "Carga horaria concluida deve voltar a zero");
+
+        check(result.subjects.at("B").state == "blocked",
+            "Disciplina deve voltar a ficar bloqueada");
+    }
+
     void testarConflitoHorariosETurmas(AcademicService& service) {
         // 1. Dias distintos -> Sem conflito
         HorarioAula seg8_10{DiaSemana::SEGUNDA, 8, 0, 10, 0, "Sala 101"};
@@ -327,11 +387,14 @@ int main() {
         expectError(503, [&] { service.summary(first); });
         check(repository.history[first.uid].empty(), "falha não grava histórico");
 
-        // Execução da suíte de registro de disciplinas concluidas (Issue #70)
+        // Execução da suíte de registro de disciplinas concluidas (Issue 70)
         testarRegistroDisciplinasConcluidas();
 
-        // Testes de validacao de multiplos pre-requisitos (Issue #70)
+        // Execução da suíte de validacao de multiplos pre-requisitos (Issue 70)
         testarMultiplosPreRequisitos();
+
+        // Execução da suíte de historico academico (Issue 70)
+        testarHistoricoAcademico();
 
         // Execução da suíte de turmas e conflitos
         testarConflitoHorariosETurmas(service);
