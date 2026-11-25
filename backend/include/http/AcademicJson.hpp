@@ -6,4 +6,5 @@ namespace bcc323 {
     crow::json::wvalue toJson(const CourseRecord&);
     crow::json::wvalue toJson(const AcademicSummary&);
     AcademicProfile profileFromJson(const crow::json::rvalue&);
+    ScheduledChange changeFromJson(const crow::json::rvalue&);
 }

@@ -78,14 +78,48 @@ namespace bcc323 {
             return handle(request, [](const RequestContext& context, AcademicService& service) { return toJson(service.curriculum(context)); });
         });
 
+        CROW_ROUTE(app, "/api/courses/<string>/curriculum")
+        ([](const crow::request& request, const std::string& course) {
+            return handle(request, [&](const RequestContext& context, AcademicService& service) {
+                const char* term = request.url_params.get("term");
+                return toJson(service.courseAt(context, course, term ? term : ""));
+            });
+        });
+
+        CROW_ROUTE(app, "/api/courses/<string>/schedule").methods(crow::HTTPMethod::POST)
+        ([](const crow::request& request, const std::string& course) {
+            return handle(request, [&](const RequestContext& context, AcademicService& service) {
+                const auto change = service.scheduleChange(context, course, changeFromJson(crow::json::load(request.body)));
+                Json result;
+                result["term"] = change.term;
+                result["effectiveDate"] = change.effectiveDate;
+                return result;
+            });
+        });
+
         CROW_ROUTE(app, "/api/academic/summary")([](const crow::request& request) {
             return handle(request, [](const RequestContext& context, AcademicService& service) { return toJson(service.summary(context)); });
+        });
+
+        CROW_ROUTE(app, "/api/academic/planning")([](const crow::request& request) {
+            return handle(request, [](const RequestContext& context, AcademicService& service) {
+                const auto [catalog, summary] = service.planning(context);
+                Json body;
+                body["curriculum"] = toJson(catalog);
+                body["summary"] = toJson(summary);
+                return body;
+            });
         });
 
         CROW_ROUTE(app, "/api/history")([](const crow::request& request) {
             return handle(request, [](const RequestContext& context, AcademicService& service) {
                 const auto summary = service.summary(context);
-                Json body; body["completed"] = summary.completed; body["unmappedCompleted"] = summary.unmappedCompleted; return body;
+                Json body;
+                body["completed"] = summary.completed;
+                body["unmappedCompleted"] = summary.unmappedCompleted;
+                body["completedNames"] = Json::object{};
+                for (const auto& [id, name] : summary.completedNames) body["completedNames"][id] = name;
+                return body;
             });
         });
         

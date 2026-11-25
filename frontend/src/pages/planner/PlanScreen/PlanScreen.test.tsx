@@ -16,7 +16,7 @@ it("identifica as turmas em conflito e bloqueia o salvamento do rascunho", () =>
   render(<PlanScreen
     catalog={{ id: "computacao", name: "Computação", illustrative: true, subjects: [], offerings: selected }}
     evaluation={{
-      courseId: "computacao", illustrative: true, completed: [], unmappedCompleted: [],
+      courseId: "computacao", illustrative: true, completed: [], unmappedCompleted: [], completedNames: {},
       completedHours: 0, totalHours: 150, completedCount: 0, availableCount: 2,
       progress: 0, subjects: {
         BCC201: { state: "available", missing: [] },

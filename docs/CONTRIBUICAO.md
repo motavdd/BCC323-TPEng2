@@ -26,17 +26,13 @@ Ambos instalam dependências e preparam os emuladores. Para macOS, use a
 ./scripts/setup-local.ps1
 ```
 
-Abra três terminais na raiz e execute um serviço em cada um:
+Inicie os serviços e prepare o catálogo de demonstração com um único comando:
 
-| Terminal | Comando |
-|---|---|
-| 1 | `./scripts/dev-local.ps1 firebase` |
-| 2 | `./scripts/dev-local.ps1 backend` |
-| 3 | `./scripts/dev-local.ps1 frontend` |
+```powershell
+./scripts/dev-local.ps1
+```
 
 Abra a [aplicação local](http://127.0.0.1:5173), crie uma conta fictícia e saia.
-Antes do primeiro cadastro, com os emuladores ativos, execute `node scripts/seed-demo.mjs`
-para cadastrar o catálogo ilustrativo. O comando preserva dados existentes.
 Confira a [API pelo proxy](http://127.0.0.1:5173/api/health): a resposta deve conter
 `status: "ok"` e `service: "bcc323-api"`. O [painel Firebase](http://127.0.0.1:4000)
 permite consultar os usuários e documentos criados.
@@ -76,7 +72,7 @@ Abra o PR para `Develop`; as promoções para `Staging` e `Master` seguem um flu
 | Permissões do banco | `firebase/firestore.rules` | Validação e autorização dos documentos |
 | Ferramentas e testes | `scripts/`, `compose.test.yml`, `.github/workflows/ci.yml` | Execução local e CI |
 
-O contrato do MVP está em [Contrato do MVP](../backend/CONTRATO_MVP.md) e
+O contrato do MVP está no [guia da API](../backend/README.md#api) e
 [OpenAPI](../backend/openapi.json). A integração já usa o domínio existente e o
 Firestore; as telas definitivas e a matriz oficial podem ser desenvolvidas em paralelo.
 Fórum e administração continuam fora do MVP.

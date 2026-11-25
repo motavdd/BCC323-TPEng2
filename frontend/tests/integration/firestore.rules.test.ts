@@ -43,6 +43,24 @@ describe('Regras Firestore', () => {
     const db = env.authenticatedContext('aluno-1').firestore();
     await assertFails(setDoc(doc(db, 'courses/BCC323'), { name: 'TPEng2' }));
   });
+  it('protege o vínculo de coordenação e mantém a agenda privada', async () => {
+    const path = 'courses/computacao-exemplo';
+    await env.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), path, 'coordinators/coordenador-1'), { active: true });
+      await setDoc(doc(context.firestore(), path, 'schedules/catalog'), { changes: [] });
+    });
+    const student = env.authenticatedContext('aluno-1').firestore();
+    const coordinator = env.authenticatedContext('coordenador-1').firestore();
+    await assertFails(setDoc(doc(student, path, 'coordinators/aluno-1'), { active: true }));
+    await assertFails(getDoc(doc(student, path, 'schedules/catalog')));
+    await assertFails(setDoc(doc(coordinator, path, 'schedules/catalog'), { changes: [] }));
+  });
+  it('preserva o nome da disciplina registrado no histórico', async () => {
+    const db = env.authenticatedContext('aluno-1').firestore();
+    const ref = doc(db, 'users/aluno-1/completedCourses/BCC201');
+    await assertSucceeds(setDoc(ref, { subjectName: 'Nome original', completedAt: serverTimestamp() }));
+    await assertFails(setDoc(ref, { subjectName: 'Nome novo', completedAt: serverTimestamp() }));
+  });
   it('salva e recupera o plano apenas para o dono', async () => {
     const db = env.authenticatedContext('aluno-1').firestore();
     const ref = doc(db, 'users/aluno-1/plans/next');

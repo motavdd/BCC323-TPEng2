@@ -1,8 +1,9 @@
 # BCC323-TPEng2 — Desenvolvimento (`Develop`)
 
 Protótipo de planejamento acadêmico com React, TypeScript, Tailwind CSS,
-C++/Crow e Firebase. A base oferece cadastro, login, perfis e uma API de saúde;
-as funcionalidades acadêmicas estão em desenvolvimento.
+C++/Crow e Firebase. A aplicação oferece cadastro, matriz curricular, histórico
+de conclusões e planejamento acadêmico. A API também permite agendar alterações
+na matriz e nas turmas.
 
 Comece pelo [guia de contribuição da equipe](docs/CONTRIBUICAO.md), com o roteiro
 da primeira execução até o PR. Consulte o [índice de documentação](docs/README.md)
@@ -18,30 +19,24 @@ No Windows x64, instale Git, Bun 1.3.14, CMake e GCC/MinGW UCRT64 conforme
 Ninja e Java portáteis. Na raiz da cópia do repositório:
 
 ```powershell
-git switch Develop
-git pull --ff-only origin Develop
 ./scripts/setup-local.ps1
 ```
 
-Inicie um serviço por terminal, sempre na raiz:
+Inicie a aplicação a partir da raiz:
 
 ```powershell
-# Terminal 1
-./scripts/dev-local.ps1 firebase
-# Terminal 2
-./scripts/dev-local.ps1 backend
-# Terminal 3
-./scripts/dev-local.ps1 frontend
+./scripts/dev-local.ps1
 ```
 
 Abra a [aplicação local](http://127.0.0.1:5173) e confira a
 [API pelo proxy](http://127.0.0.1:5173/api/health).
 Para Docker ou modo híbrido, siga [Ambiente](docs/AMBIENTE.md).
-A raiz não tem `package.json`; comandos Bun diretos são executados em `frontend/`.
+O comando inicia os três serviços e prepara o catálogo fictício. Para rodar
+serviços individualmente, consulte [Desenvolvimento local](docs/DESENVOLVIMENTO_LOCAL.md).
 
 ## Linux
 
-No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh SERVICO`
+No Linux, use `bash scripts/setup-local.sh`, `bash scripts/dev-local.sh`
 e `bash scripts/check-local.sh`. Pré-requisitos e equivalências:
 [Linux e Windows](docs/DESENVOLVIMENTO_LOCAL.md#comandos-por-sistema).
 

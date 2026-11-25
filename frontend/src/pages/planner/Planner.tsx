@@ -25,6 +25,8 @@ export function Planner({
     catalog,
     completed,
     evaluation,
+    planCatalog,
+    planEvaluation,
     plan,
     savedPlan,
     error,
@@ -136,10 +138,13 @@ export function Planner({
                 save={saveCompletion}
               />
             )}
-            {route === "plan" && (
+            {(route === "plan" || route === "saved") && !planCatalog && (
+              <p role="status">Carregando dados do planejamento…</p>
+            )}
+            {route === "plan" && planCatalog && planEvaluation && (
               <PlanScreen
-                catalog={catalog}
-                evaluation={evaluation}
+                catalog={planCatalog}
+                evaluation={planEvaluation}
                 plan={plan}
                 setPlan={setPlan}
                 dirty={dirty}
@@ -155,9 +160,9 @@ export function Planner({
                 setChooser={setChooser}
               />
             )}
-            {route === "saved" && (
+            {route === "saved" && planCatalog && (
               <SavedPlanScreen
-                catalog={catalog}
+                catalog={planCatalog}
                 selected={selected}
                 planHours={planHours}
                 go={go}

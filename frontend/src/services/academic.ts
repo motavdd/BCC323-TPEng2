@@ -8,6 +8,7 @@ export const academicApi = {
   courses: () => api<{ courses: { id: string; name: string; illustrative: boolean }[] }>('/courses'),
   curriculum: () => api<Curriculum>('/curriculum'),
   summary: () => api<Evaluation>('/academic/summary'),
-  history: () => api<{ completed: string[]; unmappedCompleted: string[] }>('/history'),
+  planning: () => api<{ curriculum: Curriculum; summary: Evaluation }>('/academic/planning'),
+  history: () => api<{ completed: string[]; unmappedCompleted: string[]; completedNames: Record<string, string> }>('/history'),
   setCompleted: (id: string, done: boolean) => api<Evaluation>(`/history/${encodeURIComponent(id)}`, undefined, done ? 'PUT' : 'DELETE'),
 };

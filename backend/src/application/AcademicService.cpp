@@ -8,6 +8,22 @@
 #include <set>
 
 namespace bcc323 {
+    namespace {
+        AcademicSummary evaluateHistory(const CourseRecord& catalog, const CourseRecord& base,
+                                        const AcademicProfile& profile, std::map<std::string, std::string> names) {
+            std::vector<std::string> ids;
+            for (auto& [id, name] : names) {
+                ids.push_back(id);
+                if (!name.empty()) continue;
+                const auto original = std::find_if(base.subjects.begin(), base.subjects.end(),
+                    [&](const auto& item) { return item.id == id; });
+                name = original == base.subjects.end() ? "Disciplina sem nome registrado" : original->name;
+            }
+            auto result = AcademicService::evaluate(catalog, profile, ids);
+            result.completedNames = std::move(names);
+            return result;
+        }
+    }
     std::optional<AcademicProfile> AcademicService::profile(const RequestContext& context) { 
         return repository_.profile(context); 
     }
@@ -47,13 +63,17 @@ namespace bcc323 {
         return value;
     }
 
-    CourseRecord AcademicService::curriculum(const RequestContext& context) {
+    CourseRecord AcademicService::baseCurriculum(const RequestContext& context) {
         const auto value = repository_.profile(context);
         if (!value) throw AppError(409, "profile_required", "Complete seu perfil acadêmico para continuar.");
         if (!value->courseId.empty()) return repository_.course(context, value->courseId);
         // Compatibilidade com perfis anteriores, que persistiam somente o nome.
         for (const auto& c : repository_.courses(context)) if (c.name == value->course) return c;
         throw AppError(404, "course_not_found", "A matriz do seu curso ainda não foi cadastrada.");
+    }
+
+    CourseRecord AcademicService::curriculum(const RequestContext& context) {
+        return resolveCourse(context, baseCurriculum(context), {});
     }
 
     AcademicSummary AcademicService::evaluate(const CourseRecord& catalog, const AcademicProfile& profile, const std::vector<std::string>& completed) {
@@ -148,18 +168,31 @@ namespace bcc323 {
     }
 
     AcademicSummary AcademicService::summary(const RequestContext& context) {
-        const auto catalog = curriculum(context);
+        const auto base = baseCurriculum(context);
+        const auto catalog = resolveCourse(context, base, {});
         const auto p = repository_.profile(context);
         if (!p){
             throw AppError(409, "profile_required", "Complete seu perfil acadêmico.");
         } 
-        return evaluate(catalog, *p, repository_.completed(context));
+        return evaluateHistory(catalog, base, *p, repository_.completedNames(context));
+    }
+
+    std::pair<CourseRecord, AcademicSummary> AcademicService::planning(const RequestContext& context) {
+        const auto base = baseCurriculum(context);
+        auto catalog = resolveCourse(context, base, "next");
+        const auto profile = repository_.profile(context);
+        if (!profile) throw AppError(409, "profile_required", "Complete seu perfil acadêmico para continuar.");
+        auto summary = evaluateHistory(catalog, base, *profile, repository_.completedNames(context));
+        return {std::move(catalog), std::move(summary)};
     }
 
     AcademicSummary AcademicService::setCompleted(const RequestContext& context, const std::string& subjectId, bool done) {
         
-        const auto catalog = curriculum(context);
-        if (std::none_of(catalog.subjects.begin(), catalog.subjects.end(), [&](const auto& s) { return s.id == subjectId; })){
+        const auto base = baseCurriculum(context);
+        const auto catalog = resolveCourse(context, base, {});
+        const auto subject = std::find_if(catalog.subjects.begin(), catalog.subjects.end(),
+            [&](const auto& item) { return item.id == subjectId; });
+        if (subject == catalog.subjects.end()){
             throw AppError(404, "subject_not_found", "Disciplina fora da matriz do seu curso.");
 
         }
@@ -169,13 +202,14 @@ namespace bcc323 {
         if (!p){
             throw AppError(409, "profile_required", "Complete seu perfil acadêmico.");
         } 
-        auto history = repository_.completed(context);
-        history.erase(std::remove(history.begin(), history.end(), subjectId), history.end());
-        if (done){
-            history.push_back(subjectId);
+        auto history = repository_.completedNames(context);
+        if (done) {
+            history.try_emplace(subjectId, subject->name);
+        } else {
+            history.erase(subjectId);
         }
-        auto result = evaluate(catalog, *p, history);
-        repository_.setCompleted(context, subjectId, done);
+        auto result = evaluateHistory(catalog, base, *p, std::move(history));
+        repository_.setCompleted(context, subjectId, done, subject->name);
         return result;
     }
     bool AcademicService::verificarConflitoHorarios(const HorarioAula& h1, const HorarioAula& h2) {
