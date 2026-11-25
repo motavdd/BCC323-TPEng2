@@ -18,7 +18,7 @@ it("exibe o pré-requisito informado pela API e permite escolher a turma quando 
     }],
   };
   const evaluation: Evaluation = {
-    courseId: catalog.id, illustrative: true, completed: [], unmappedCompleted: [],
+    courseId: catalog.id, illustrative: true, completed: [], unmappedCompleted: [], completedNames: {},
     completedHours: 0, totalHours: 90, completedCount: 0, availableCount: 0,
     progress: 0, subjects: { BCC202: { state: "blocked", missing: ["BCC201"] } },
   };
