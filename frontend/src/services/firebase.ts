@@ -1,6 +1,5 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 
 const useEmulators = import.meta.env.VITE_USE_EMULATORS === 'true';
 const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
@@ -11,7 +10,7 @@ if (!useEmulators && (!projectId || !apiKey || !appId)) {
   throw new Error('Configuração Firebase ausente no build de produção.');
 }
 
-const app = getApps().length ? getApp() : initializeApp({
+export const app = getApps().length ? getApp() : initializeApp({
   projectId: projectId || 'demo-bcc323',
   apiKey: apiKey || 'demo-key',
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'demo-bcc323.firebaseapp.com',
@@ -19,11 +18,12 @@ const app = getApps().length ? getApp() : initializeApp({
 });
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 
-if (useEmulators) {
-  // Browser no Docker Playwright: "firebase". Browser do host: "localhost".
-  const host = import.meta.env.VITE_FIREBASE_EMULATOR_HOST || 'localhost';
-  connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
-  connectFirestoreEmulator(db, host, 8080);
+// No Docker, o navegador usa o nome do serviço. No host, usa localhost.
+export const emulatorHost = useEmulators
+  ? import.meta.env.VITE_FIREBASE_EMULATOR_HOST || 'localhost'
+  : undefined;
+
+if (emulatorHost) {
+  connectAuthEmulator(auth, `http://${emulatorHost}:9099`, { disableWarnings: true });
 }
