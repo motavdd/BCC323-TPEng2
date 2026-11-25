@@ -32,11 +32,15 @@ local é definido por `tools/package.json` e `tools/bun.lock`. Os manifestos e o
 lockfiles correspondentes são versionados juntos. Bun instala ambos; não há
 manifesto de pacotes na raiz.
 
-O frontend usa Authentication para a sessão. Perfil, matriz, histórico, progresso
-e elegibilidade do MVP passam pela API C++, que valida o token, acessa o Firestore
-REST com a identidade do usuário e chama as classes do domínio. As Security Rules
-continuam controlando o acesso. O fluxo anterior de planos, fora do MVP, conserva
-seu acesso direto pelo SDK. Não há permissões administrativas para coordenadores.
+O Firebase Authentication cuida do login. O frontend envia o token de sessão à
+API C++, que valida a identidade do aluno e usa o Firestore para consultar ou
+salvar os dados acadêmicos. A API calcula o progresso e verifica quais disciplinas
+o aluno pode planejar. O plano salvo continua sendo gravado pelo SDK do Firestore,
+diretamente pelo frontend.
+
+O coordenador do curso pode agendar alterações da matriz e das turmas pela API.
+Para acessar a agenda privada, o backend usa sua própria identidade de serviço.
+A tela administrativa ainda está pendente.
 
 O backend separa domínio (`domain/`), aplicação (`application/`), HTTP (`http/`),
 infraestrutura (`infrastructure/`) e configuração (`config/`), espelhados em
@@ -45,15 +49,15 @@ infraestrutura (`infrastructure/`) e configuração (`config/`), espelhados em
 de dependências ficam em [Bun](BUN.md).
 
 O contrato para dividir tarefas entre front e back está em
-[Contrato do MVP](../backend/CONTRATO_MVP.md) e [OpenAPI](../backend/openapi.json).
+[guia da API](../backend/README.md#api) e [OpenAPI](../backend/openapi.json).
 
 ## 2. Arquitetura
 
 ```text
 Navegador (React + TypeScript + Vite)
     ├── Firebase Authentication: cadastro, login e sessão
-    ├── Cloud Firestore: perfis e regras de acesso
-    └── /api via proxy Vite → C++/Crow: verificação de funcionamento
+    ├── Firestore via SDK: plano salvo
+    └── /api via Vite → C++/Crow → Firestore: perfil, matriz, histórico e agendamento
 
 Desenvolvimento nativo (Windows/PowerShell ou Linux/Bash)
     ├── Bun: dependências e scripts de React/Vite

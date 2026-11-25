@@ -1,9 +1,12 @@
 #include "infrastructure/firestore/FirestoreRepository.hpp"
 #include <curl/curl.h>
+#include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <memory>
+#include <mutex>
 #include <regex>
 
 namespace {
@@ -100,6 +103,72 @@ namespace {
         return result;
     }
 
+    bcc323::SubjectRecord subjectOf(const crow::json::rvalue& item) {
+        bcc323::SubjectRecord subject;
+        subject.id = segment(item["id"].s());
+        subject.name = item["name"].s();
+        if (item["hours"].i() < 0 || item["hours"].i() > 10000
+            || item["period"].i() < 1 || item["period"].i() > 20) {
+            throw std::invalid_argument("Carga horária ou período inválido");
+        }
+        subject.hours = static_cast<int>(item["hours"].i());
+        subject.period = static_cast<int>(item["period"].i());
+        subject.requirementsKnown = item.has("requirementsKnown") && item["requirementsKnown"].b();
+        if (item.has("prerequisites")) {
+            for (const auto& prerequisite : item["prerequisites"]) {
+                subject.prerequisites.push_back(segment(prerequisite.s()));
+            }
+        }
+        return subject;
+    }
+
+    bcc323::OfferingRecord offeringOf(const crow::json::rvalue& item) {
+        bcc323::OfferingRecord offering;
+        offering.id = item["id"].s();
+        offering.subjectId = item["subjectId"].s();
+        offering.group = item["group"].s();
+        if (item.has("professor")) offering.professor = item["professor"].s();
+        for (const auto& slot : item["times"]) {
+            offering.times.push_back({slot["day"].s(), slot["start"].s(), slot["end"].s(),
+                                       slot.has("room") ? std::string(slot["room"].s()) : ""});
+        }
+        return offering;
+    }
+
+    Json serialize(const bcc323::ScheduledChange& change) {
+        Json item;
+        item["term"] = change.term;
+        item["effectiveDate"] = change.effectiveDate;
+        if (change.subject) {
+            const auto& subject = *change.subject;
+            auto& data = item["subject"];
+            data["id"] = subject.id;
+            data["name"] = subject.name;
+            data["hours"] = subject.hours;
+            data["period"] = subject.period;
+            data["prerequisites"] = subject.prerequisites;
+            data["requirementsKnown"] = subject.requirementsKnown;
+        } else {
+            const auto& offering = *change.offering;
+            auto& data = item["offering"];
+            data["id"] = offering.id;
+            data["subjectId"] = offering.subjectId;
+            data["group"] = offering.group;
+            data["professor"] = offering.professor;
+            std::vector<Json> times;
+            for (const auto& time : offering.times) {
+                Json slot;
+                slot["day"] = time.day;
+                slot["start"] = time.start;
+                slot["end"] = time.end;
+                slot["room"] = time.room;
+                times.push_back(std::move(slot));
+            }
+            data["times"] = std::move(times);
+        }
+        return item;
+    }
+
     bcc323::CourseRecord parseCourse(const Json& document) {
         const auto raw = crow::json::load(document.dump());
         const auto fields = crow::json::load(fieldsOf(raw).dump());
@@ -114,33 +183,12 @@ namespace {
 
         }
         course.illustrative = fields.has("illustrative") && fields["illustrative"].b();
-        for (const auto& s : fields["subjects"]) {
-            bcc323::SubjectRecord subject;
-            subject.id = segment(s["id"].s()); subject.name = s["name"].s();
-
-            if (s["hours"].i() < 0 || s["hours"].i() > 10000 || s["period"].i() < 1 || s["period"].i() > 20){
-                throw std::invalid_argument("Carga horária ou período inválido");
-
-            }
-
-            subject.hours = static_cast<int>(s["hours"].i()); subject.period = static_cast<int>(s["period"].i());
-            subject.requirementsKnown = s.has("requirementsKnown") && s["requirementsKnown"].b();
-
-            if (s.has("prerequisites")){
-                for (const auto& p : s["prerequisites"]) {
-                    subject.prerequisites.push_back(segment(p.s()));
-                }
-            }
-            course.subjects.push_back(std::move(subject));
+        for (const auto& subject : fields["subjects"]) {
+            course.subjects.push_back(subjectOf(subject));
         }
         if (fields.has("offerings")) {
-            for (const auto& o : fields["offerings"]) {
-                bcc323::OfferingRecord offering;
-                offering.id = o["id"].s(); offering.subjectId = o["subjectId"].s(); offering.group = o["group"].s();
-                for (const auto& t : o["times"]) {
-                    offering.times.push_back({t["day"].s(), t["start"].s(), t["end"].s()});
-                }
-                course.offerings.push_back(std::move(offering));
+            for (const auto& offering : fields["offerings"]) {
+                course.offerings.push_back(offeringOf(offering));
             }
         }
         return course;
@@ -182,6 +230,7 @@ namespace bcc323 {
             throw AppError(503, "api_not_configured", "Configure FIREBASE_PROJECT_ID no backend.");
         }
         const auto host = env("FIRESTORE_EMULATOR_HOST");
+        emulator_ = !host.empty();
         if (!host.empty() && (project.rfind("demo-", 0) != 0 || !std::regex_match(host, std::regex("[A-Za-z0-9.\\-]+:[0-9]{1,5}")))){
             throw AppError(503, "invalid_emulator_config", "O emulador exige um projeto demo e host:porta.");
 
@@ -191,7 +240,8 @@ namespace bcc323 {
         documents_ = base_ + documentName_;
     }
 
-    Json FirestoreRepository::request(const RequestContext& context, const std::string& method, const std::string& url, const Json* input, bool allowMissing) {
+    Json FirestoreRepository::request(const RequestContext& context, const std::string& method,
+                                      const std::string& url, const Json* input, bool allowMissing, bool metadata) {
 
         static const auto init = curl_global_init(CURL_GLOBAL_DEFAULT);
         if (init != CURLE_OK) {
@@ -202,7 +252,8 @@ namespace bcc323 {
             throw AppError(503, "storage_unavailable", "Banco temporariamente indisponível.");
         }
         curl_slist* rawHeaders = nullptr;
-        rawHeaders = curl_slist_append(rawHeaders, ("Authorization: Bearer " + context.token).c_str());
+        rawHeaders = metadata ? curl_slist_append(rawHeaders, "Metadata-Flavor: Google")
+                              : curl_slist_append(rawHeaders, ("Authorization: Bearer " + context.token).c_str());
         rawHeaders = curl_slist_append(rawHeaders, "Content-Type: application/json");
         std::unique_ptr<curl_slist, decltype(&curl_slist_free_all)> headers(rawHeaders, &curl_slist_free_all);
         const auto configure = [&](CURLoption option, auto value) {
@@ -221,6 +272,7 @@ namespace bcc323 {
         configure(CURLOPT_CONNECTTIMEOUT, 3L);
         configure(CURLOPT_TIMEOUT, 10L); 
         configure(CURLOPT_NOSIGNAL, 1L);
+        if (metadata) configure(CURLOPT_NOPROXY, "*");
         configure(CURLOPT_SSL_VERIFYPEER, 1L); 
         configure(CURLOPT_SSL_VERIFYHOST, 2L);
         if (input) { 
@@ -299,7 +351,8 @@ namespace bcc323 {
         return documents;
     }
 
-    void FirestoreRepository::write(const RequestContext& context, const std::string& path, const Json& fields, const std::string& timestampField, bool createOnly) {
+    void FirestoreRepository::write(const RequestContext& context, const std::string& path, const Json& fields,
+                                    const std::string& timestampField, bool createOnly, const std::string& revision) {
         const auto plain = crow::json::load(fields.dump());
         Json commit, write;
         write["update"]["name"] = documentName_ + "/" + path;
@@ -314,6 +367,8 @@ namespace bcc323 {
         write["updateMask"]["fieldPaths"] = std::move(mask);
         if (createOnly) {
             write["currentDocument"]["exists"] = false;
+        } else if (!revision.empty()) {
+            write["currentDocument"]["updateTime"] = revision;
         }
         if (!timestampField.empty()) {
             Json transform; transform["fieldPath"] = timestampField; transform["setToServerValue"] = "REQUEST_TIME";
@@ -356,19 +411,118 @@ namespace bcc323 {
     }
     std::vector<std::string> FirestoreRepository::completed(const RequestContext& context) {
         std::vector<std::string> result;
+        for (const auto& item : completedNames(context)) result.push_back(item.first);
+        return result;
+    }
+
+    std::map<std::string, std::string> FirestoreRepository::completedNames(const RequestContext& context) {
+        std::map<std::string, std::string> result;
         for (const auto& d : list(context, "users/" + segment(context.uid) + "/completedCourses")) {
             const auto parsed = crow::json::load(d.dump()); const std::string name = parsed["name"].s();
-            result.push_back(name.substr(name.find_last_of('/') + 1));
+            const auto fields = crow::json::load(fieldsOf(parsed).dump());
+            result.emplace(name.substr(name.find_last_of('/') + 1),
+                           fields.has("subjectName") ? std::string(fields["subjectName"].s()) : "");
         }
         return result;
     }
-    void FirestoreRepository::setCompleted(const RequestContext& context, const std::string& id, bool done) {
+    void FirestoreRepository::setCompleted(const RequestContext& context, const std::string& id, bool done,
+                                           const std::string& subjectName) {
         const auto path = "users/" + segment(context.uid) + "/completedCourses/" + segment(id);
-        if (done) { 
-            Json fields(Json::object{}); 
-            write(context, path, fields, "completedAt"); 
+        if (done) {
+            Json fields;
+            fields["subjectName"] = subjectName;
+            try {
+                write(context, path, fields, "completedAt", true);
+            } catch (const AppError& error) {
+                if (error.code != "write_conflict"
+                    || request(context, "GET", documents_ + "/" + path, nullptr, true).dump() == "null") throw;
+            }
         } else {
             request(context, "DELETE", documents_ + "/" + path, nullptr, true);
         }
+    }
+
+    bool FirestoreRepository::coordinates(const RequestContext& context, const std::string& course) {
+        const auto path = "/courses/" + segment(course) + "/coordinators/" + segment(context.uid);
+        const auto document = request(context, "GET", documents_ + path, nullptr, true);
+        if (document.dump() == "null") return false;
+        const auto fields = crow::json::load(fieldsOf(crow::json::load(document.dump())).dump());
+        return fields.has("active") && fields["active"].t() == crow::json::type::True;
+    }
+
+    std::vector<AcademicTerm> FirestoreRepository::academicTerms(const RequestContext& context) {
+        const auto raw = request(context, "GET", documents_ + "/academicCalendar/terms", nullptr, true);
+        if (raw.dump() == "null") return {};
+        const auto fields = crow::json::load(fieldsOf(crow::json::load(raw.dump())).dump());
+        std::vector<AcademicTerm> terms;
+        try {
+            for (const auto& term : fields["terms"]) {
+                terms.push_back({term["id"].s(), term["start"].s(), term["end"].s()});
+            }
+        } catch (const std::exception&) {
+            throw AppError(503, "invalid_academic_calendar", "O calendário acadêmico precisa de revisão.");
+        }
+        return terms;
+    }
+
+    AcademicSchedule FirestoreRepository::schedule(const RequestContext& context, const std::string& course) {
+        const auto path = "/courses/" + segment(course) + "/schedules/catalog";
+        const auto raw = request({context.uid, serverToken()}, "GET", documents_ + path, nullptr, true);
+        if (raw.dump() == "null") return {};
+        const auto document = crow::json::load(raw.dump());
+        const auto fields = crow::json::load(fieldsOf(document).dump());
+        try {
+            AcademicSchedule schedule;
+            schedule.revision = document["updateTime"].s();
+            for (const auto& item : fields["changes"]) {
+                ScheduledChange change;
+                change.term = item["term"].s();
+                change.effectiveDate = item["effectiveDate"].s();
+                if (item.has("subject")) change.subject = subjectOf(item["subject"]);
+                else change.offering = offeringOf(item["offering"]);
+                schedule.changes.push_back(std::move(change));
+            }
+            return schedule;
+        } catch (const std::exception&) {
+            throw AppError(503, "invalid_schedule", "O agendamento acadêmico precisa de revisão.");
+        }
+    }
+
+    std::string FirestoreRepository::serverToken() {
+        if (emulator_) return "owner";
+        using Clock = std::chrono::steady_clock;
+        static std::mutex mutex;
+        static std::string token;
+        static Clock::time_point refreshAt{};
+        const std::lock_guard<std::mutex> lock(mutex);
+        const auto now = Clock::now();
+        if (now < refreshAt) return token;
+        const auto response = request({}, "GET",
+            "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+            nullptr, false, true);
+        const auto parsed = crow::json::load(response.dump());
+        if (!parsed.has("access_token") || parsed["access_token"].t() != crow::json::type::String
+            || std::string(parsed["access_token"].s()).empty()
+            || !parsed.has("expires_in") || parsed["expires_in"].t() != crow::json::type::Number
+            || parsed["expires_in"].i() <= 0) {
+            throw AppError(503, "storage_unavailable", "Identidade de gravação indisponível.");
+        }
+        token = parsed["access_token"].s();
+        const auto lifetime = std::clamp<std::int64_t>(parsed["expires_in"].i(), 60, 3600);
+        refreshAt = now + std::chrono::seconds(lifetime - 60);
+        return token;
+    }
+
+    void FirestoreRepository::saveSchedule(const RequestContext& context, const std::string& course,
+                                           const AcademicSchedule& schedule) {
+        std::vector<Json> changes;
+        for (const auto& change : schedule.changes) changes.push_back(serialize(change));
+        Json fields;
+        fields["changes"] = std::move(changes);
+        if (fields.dump().size() > 200000) {
+            throw AppError(409, "schedule_capacity", "O calendário de alterações atingiu o limite de armazenamento.");
+        }
+        write({context.uid, serverToken()}, "courses/" + segment(course) + "/schedules/catalog",
+              fields, "", schedule.revision.empty(), schedule.revision);
     }
 }

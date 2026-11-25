@@ -43,7 +43,7 @@ file(GLOB DOMAIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/doma
 add_library(academic-domain STATIC ${DOMAIN_SOURCES})
 target_include_directories(academic-domain PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-add_library(academic-application STATIC src/application/AcademicService.cpp)
+add_library(academic-application STATIC src/application/AcademicService.cpp src/application/AcademicSchedule.cpp)
 target_link_libraries(academic-application PUBLIC academic-domain)
 
 file(GLOB_RECURSE INFRASTRUCTURE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/infrastructure/*.cpp")
@@ -73,6 +73,11 @@ if(BUILD_TESTING)
     add_executable(application-tests test/application/academic_service_test.cpp)
     target_link_libraries(application-tests PRIVATE academic-application)
     add_test(NAME academic-service COMMAND application-tests)
+
+    add_executable(domain-tests test/domain/academic_domain_test.cpp)
+    target_link_libraries(domain-tests PRIVATE academic-application)
+    add_test(NAME academic-domain COMMAND domain-tests)
+
     add_executable(auth-tests
         test/auth/token_verifier_test.cpp
         src/infrastructure/auth/FirebaseTokenVerifier.cpp

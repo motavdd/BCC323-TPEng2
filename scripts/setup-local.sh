@@ -20,4 +20,6 @@ done
 build_local_backend
 node "$task_root/tools/node_modules/firebase-tools/lib/bin/firebase.js" \
   setup:emulators:firestore --config "$task_root/firebase.local.json" --project demo-bcc323
-printf 'Ambiente preparado. Use bash scripts/dev-local.sh firebase|backend|frontend.\n'
+node "$task_root/tools/node_modules/firebase-tools/lib/bin/firebase.js" \
+  setup:emulators:ui --config "$task_root/firebase.local.json" --project demo-bcc323
+printf 'Ambiente preparado. Inicie a aplicação com bash scripts/dev-local.sh.\n'

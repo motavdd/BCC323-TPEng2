@@ -6,6 +6,10 @@ foreach ($taskCommand in @('git', 'bun', 'cmake')) {
     }
 }
 if (!$taskCompiler) { throw 'Instale GCC/MinGW pelo MSYS2 UCRT64; consulte docs/AMBIENTE.md.' }
+$taskBunVersion = (Get-Content "$taskRoot/.bun-version" -Raw).Trim()
+if ((bun --version) -ne $taskBunVersion -or $LASTEXITCODE -ne 0) {
+    throw "Use Bun $taskBunVersion, conforme .bun-version."
+}
 New-Item -ItemType Directory -Force $taskTools | Out-Null
 
 function Install-PortableArchive {
@@ -48,4 +52,6 @@ foreach ($taskDirectory in @('tools', 'frontend')) {
 Build-LocalBackend
 Invoke-Checked node @("$taskRoot/tools/node_modules/firebase-tools/lib/bin/firebase.js",
     'setup:emulators:firestore', '--config', "$taskRoot/firebase.local.json", '--project', 'demo-bcc323')
-Write-Host 'Ambiente preparado. Inicie firebase, backend e frontend com scripts/dev-local.ps1.'
+Invoke-Checked node @("$taskRoot/tools/node_modules/firebase-tools/lib/bin/firebase.js",
+    'setup:emulators:ui', '--config', "$taskRoot/firebase.local.json", '--project', 'demo-bcc323')
+Write-Host 'Ambiente preparado. Inicie a aplicação com ./scripts/dev-local.ps1.'

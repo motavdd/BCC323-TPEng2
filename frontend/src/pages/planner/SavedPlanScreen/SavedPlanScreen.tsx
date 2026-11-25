@@ -13,7 +13,7 @@ export function SavedPlanScreen({ catalog, selected, planHours, go }: Props) {
     <>
       <Panel tone="success">
         <h2>✓ Plano salvo com sucesso</h2>
-        <p>Você pode voltar e ajustar suas escolhas quando precisar.</p>
+        <p>Seu rascunho pessoal foi salvo. A API acadêmica ainda não valida a proposta.</p>
         <p>
           Próximo semestre · {selected.length} disciplinas · {planHours} horas
         </p>

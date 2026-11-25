@@ -31,6 +31,9 @@ namespace bcc323 {
                 response = error_response(405, "method_not_allowed", "Method not allowed");
                 const auto allow = request.url == "/api/profile" ? "GET, HEAD, OPTIONS, PUT"
                     : request.url.rfind("/api/history/", 0) == 0 ? "PUT, DELETE, OPTIONS"
+                    : request.url.rfind("/api/courses/", 0) == 0
+                        && request.url.size() >= 9 && request.url.compare(request.url.size() - 9, 9, "/schedule") == 0
+                        ? "OPTIONS, POST"
                     : "GET, HEAD, OPTIONS";
                 response.set_header("Allow", allow);
             } else {

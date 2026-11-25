@@ -2,14 +2,14 @@
 
 Comece pelo [guia de contribuição da equipe](CONTRIBUICAO.md): primeira execução,
 escolha da Issue, organização do código, testes e envio do PR.
-O [desenvolvimento local](DESENVOLVIMENTO_LOCAL.md) detalha o setup no Windows.
+O [desenvolvimento local](DESENVOLVIMENTO_LOCAL.md) detalha a preparação e a
+inicialização no Windows e no Linux.
 Bun instala dependências e executa os scripts do frontend. Docker é opcional no computador e utilizado pelo CI.
 
 | Documento | Quando consultar |
 |---|---|
 | [Contribuição da equipe](CONTRIBUICAO.md) | Começar uma tarefa e entregar uma funcionalidade em PR |
 | [Backend C++](../backend/README.md) | Configuração, rotas, erros HTTP e testes do servidor |
-| [Contrato do MVP](../backend/CONTRATO_MVP.md) | Dividir implementação de telas, serviços e persistência |
 | [OpenAPI do MVP](../backend/openapi.json) | Consultar os contratos HTTP e os schemas JSON |
 | [Desenvolvimento local](DESENVOLVIMENTO_LOCAL.md) | Preparar o computador, iniciar serviços e validar antes de enviar |
 | [Bun](BUN.md) | Usar `bun run`, gerenciar dependências e atualizar lockfiles |

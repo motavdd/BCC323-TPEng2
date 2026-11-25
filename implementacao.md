@@ -9,8 +9,6 @@ estão no [índice de documentação](docs/README.md).
 
 ## 1. Objetivo e escopo
 
-Este documento descreve a implementação atual do protótipo de planejamento acadêmico, as funcionalidades disponíveis, as limitações e os resultados de validação.
-
 A versão atual inclui as jornadas do Figma: entrada, cadastro, recuperação de perfil
 incompleto, visão geral, matriz, detalhe, histórico, planejamento e plano salvo.
 A evolução v2 da matriz é a referência: conclusões são editadas no detalhe da matriz;
@@ -39,7 +37,9 @@ A arquitetura, a lista de tecnologias e a organização dos arquivos ficam no
 
 ### 2.1 Cadastro de usuário
 
-O formulário solicita e-mail, senha, curso e período. Os campos são obrigatórios; a interface exige senha com pelo menos seis caracteres e período entre 1 e 20.
+O formulário pede nome completo, e-mail, senha, confirmação da senha, curso e
+período atual. A senha precisa ter pelo menos seis caracteres e o período deve
+estar entre 1 e 20.
 
 Ao cadastrar, a aplicação cria a conta no Firebase Authentication e envia o perfil
 para `PUT /api/profile`. O backend grava `users/{uid}` no Firestore, usando o UID
@@ -48,7 +48,7 @@ A senha é tratada pelo Authentication e não é enviada à API.
 
 | Campo do perfil | Conteúdo |
 |---|---|
-| `displayName` | Texto inicialmente vazio |
+| `displayName` | Nome completo informado no cadastro |
 | `course` | Curso informado no formulário |
 | `period` | Período informado pelo usuário |
 | `courseId` | Identificador persistente do curso no catálogo |
@@ -83,7 +83,7 @@ O Vite encaminha `/api` para o backend durante desenvolvimento e preview.
 O build estático não inclui esse proxy. O serviço valida tokens Firebase, acessa
 Firestore REST e usa `AlunoImpl`, `CursoImpl` e `DisciplinaImpl` nos cálculos do MVP.
 O catálogo ilustrativo é um fixture carregado no emulador por seed, sem dados
-embutidos no executável. Veja [Contrato do MVP](backend/CONTRATO_MVP.md).
+embutidos no executável. Veja o [contrato OpenAPI](backend/openapi.json).
 
 ## 3. Regras de acesso ao banco
 

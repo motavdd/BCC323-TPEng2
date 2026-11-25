@@ -1,8 +1,35 @@
 # Desenvolvimento local sem Docker
 
-O desenvolvimento usa React, C++ e emuladores Firebase diretamente no computador,
-com verificações antes do envio e validação integrada no CI. Para escolher uma
-tarefa e localizar o código, siga o [guia da equipe](CONTRIBUICAO.md).
+Os passos abaixo iniciam a aplicação no seu computador. O React mostra as telas,
+a API C++ processa os dados acadêmicos e os emuladores Firebase cuidam do login
+e dos dados de teste.
+
+## Início rápido
+
+Na raiz do projeto, rode os dois comandos do seu sistema. O primeiro prepara o
+ambiente e pode ser repetido quando as dependências mudarem. No segundo, aguarde
+a mensagem **Aplicação pronta**.
+
+| Sistema | Preparar | Iniciar |
+|---|---|---|
+| Windows | `./scripts/setup-local.ps1` | `./scripts/dev-local.ps1` |
+| Linux | `bash scripts/setup-local.sh` | `bash scripts/dev-local.sh` |
+
+Abra a [aplicação local](http://127.0.0.1:5173/) e crie uma conta fictícia.
+Para escolher uma tarefa ou abrir um PR, siga o [guia da equipe](CONTRIBUICAO.md).
+
+## Onde ficam os requisitos
+
+- Frontend e Firebase CLI usam `frontend/package.json`, `tools/package.json`
+  e os respectivos `bun.lock`. A versão do Bun está em `.bun-version`.
+- As bibliotecas C++ são configuradas em `backend/CMakeLists.txt`.
+  OpenSSL e libcurl vêm do ambiente de compilação.
+- Git, Bun e as ferramentas nativas são pré-requisitos do sistema,
+  detalhados abaixo para cada plataforma.
+
+O teste HTTP do backend usa somente a biblioteca padrão do Python. Instale
+Python 3 se quiser rodá-lo localmente. O projeto não precisa de `requirements.txt`
+para instalar pacotes Python.
 
 ## Preparar no Windows x64
 
@@ -20,11 +47,13 @@ Na raiz do repositório:
 ./scripts/setup-local.ps1
 ```
 
-O script instala as dependências com os lockfiles, baixa Node.js 22.23.3,
-Ninja 1.13.1 e Java Temurin JRE 21.0.12.1 em `.tools/`, verifica o SHA-256 dos arquivos, compila o C++
-e baixa o emulador Firestore. As ferramentas portáteis não alteram as instalações
-globais. Os scripts usam o Node portátil em seus processos. O Firebase CLI 15.0.0 fica em `tools/node_modules`, com versões resolvidas
-em `tools/bun.lock`; o frontend mantém seu próprio `frontend/bun.lock`.
+O setup usa as versões registradas nos lockfiles e compila a API C++. Também
+baixa o emulador Firestore e o painel Firebase.
+
+No Windows, Node.js 22.23.3, Ninja 1.13.1 e Java Temurin JRE 21.0.12.1 ficam
+em `.tools/`. O setup confere o SHA-256 dos downloads e usa essas ferramentas
+só no projeto. O Firebase CLI 15.0.0 fica em `tools/node_modules`.
+Os lockfiles ficam em `tools/bun.lock` e `frontend/bun.lock`.
 
 Execute novamente o setup após mudanças nos manifestos ou lockfiles. A primeira
 execução exige internet para baixar ferramentas, pacotes e bibliotecas.
@@ -57,7 +86,7 @@ bash scripts/setup-local.sh
 ```
 
 O script verifica os pré-requisitos, instala os pacotes pelos lockfiles,
-compila o backend em `backend/build/linux/` e baixa o emulador Firestore.
+compila o backend em `backend/build/linux/` e baixa o emulador Firestore e o painel.
 O cache de compilação Windows permanece em `backend/build/native/`.
 Use instalações de dependências próprias de cada sistema: ao trocar o sistema
 de uma cópia compartilhada, execute o setup novamente. Prefira cópias separadas
@@ -65,11 +94,12 @@ para Windows e Linux/WSL para não compartilhar pacotes binários de `node_modul
 
 ## Comandos por sistema
 
-Execute a partir da raiz. Use um terminal para cada serviço:
+Execute a partir da raiz:
 
 | Objetivo | Windows (PowerShell) | Linux (Bash) |
 |---|---|---|
 | Preparar | `./scripts/setup-local.ps1` | `bash scripts/setup-local.sh` |
+| Aplicação completa | `./scripts/dev-local.ps1` | `bash scripts/dev-local.sh` |
 | Firebase | `./scripts/dev-local.ps1 firebase` | `bash scripts/dev-local.sh firebase` |
 | Backend | `./scripts/dev-local.ps1 backend` | `bash scripts/dev-local.sh backend` |
 | Frontend | `./scripts/dev-local.ps1 frontend` | `bash scripts/dev-local.sh frontend` |
@@ -99,12 +129,33 @@ as mesmas portas. Isso é necessário somente na troca de ambiente:
 docker compose -f compose.dev.yml down
 ```
 
-Abra três terminais na raiz do projeto:
+Depois do setup, execute na raiz do projeto:
+
+```powershell
+./scripts/dev-local.ps1
+```
+
+O comando também aceita `all` explicitamente. Ele verifica se as portas estão
+livres, compila a API, inicia o Firebase emulado, prepara o catálogo fictício e
+sobe o frontend. Aguarde a mensagem **Aplicação pronta** e abra o endereço exibido.
+Para encerrar, pressione Ctrl+C no mesmo terminal e aguarde a exportação do Firebase.
+
+Para investigar um serviço separadamente, abra três terminais:
 
 ```powershell
 # Terminal 1: Firebase Authentication, Firestore e painel local
 ./scripts/dev-local.ps1 firebase
 ```
+
+Com o Firebase ativo, execute na raiz para cadastrar o catálogo fictício, se ele
+ainda estiver ausente. No Windows, a primeira linha carrega o Node portátil.
+
+```powershell
+. ./scripts/local-env.ps1
+node scripts/seed-demo.mjs
+```
+
+No Linux, basta executar `node scripts/seed-demo.mjs`.
 
 ```powershell
 # Terminal 2: compilar e executar C++
@@ -116,10 +167,8 @@ Abra três terminais na raiz do projeto:
 ./scripts/dev-local.ps1 frontend
 ```
 
-O terceiro comando define as variáveis locais e executa `bun run dev` dentro de
-`frontend/`. Bun continua sendo utilizado normalmente. Para executar seus comandos
-diretamente, consulte [Bun](BUN.md#comandos-do-frontend). A raiz não possui
-um `package.json` ou um comando único para iniciar todos os serviços.
+O comando individual do frontend define as variáveis locais e executa
+`bun run dev` dentro de `frontend/`. Consulte [Comandos do Bun](BUN.md#comandos-do-frontend).
 
 | Endereço | Uso |
 |---|---|
@@ -130,8 +179,8 @@ um `package.json` ou um comando único para iniciar todos os serviços.
 | `127.0.0.1:9099` | Authentication local |
 | `127.0.0.1:8080` | Firestore local |
 
-O frontend recarrega ao editar os arquivos. Após alterar C++, encerre o terminal
-do backend com Ctrl+C e execute seu comando novamente para recompilar.
+O frontend recarrega ao editar os arquivos. Após alterar C++, reinicie o comando
+de inicialização para recompilar a API. No modo individual, reinicie o backend.
 Encerre os serviços com Ctrl+C. No terminal do Firebase, aguarde a exportação
 terminar; se aparecer uma confirmação para sobrescrever a exportação anterior,
 confirme para salvar a sessão. Evite fechar a janela ou forçar o encerramento.
@@ -175,13 +224,10 @@ Para verificar a conexão:
 Invoke-RestMethod http://127.0.0.1:5173/api/health
 ```
 
-## Validar no PR para Develop
+## PR e CI
 
-1. Trabalhar em uma branch criada da `Develop`.
-2. Executar a verificação local e conferir o comportamento implementado.
-3. Enviar a branch e abrir um PR para `Develop`, como rascunho se necessário.
-4. Aguardar os jobs `backend`, `quality`, `integration` e `e2e` do GitHub Actions.
-5. Solicitar revisão e integrar depois de aprovar os testes e a revisão.
+Siga o [guia de contribuição](CONTRIBUICAO.md#5-enviar-e-revisar) para abrir o PR,
+acompanhar os checks e solicitar revisão.
 
 O CI utiliza Docker para compilar e testar o serviço C++, testar as regras Firestore
 e executar os fluxos completos de navegador. Os workflows estão preparados para

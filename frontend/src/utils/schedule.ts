@@ -1,4 +1,4 @@
-export type ClassTime = { day: string; start: string; end: string };
+export type ClassTime = { day: string; start: string; end: string; room?: string };
 
 function toMinutes(hhmm: string): number {
   if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hhmm)) {
