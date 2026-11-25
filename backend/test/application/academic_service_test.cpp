@@ -1,3 +1,5 @@
+#include "domain/AlunoImpl.hpp"
+#include "domain/CursoImpl.hpp"
 #include "application/AcademicService.hpp"
 #include "domain/DisciplinaImpl.hpp"
 #include <cmath>
@@ -64,6 +66,69 @@ namespace {
             return; 
         }
         throw std::runtime_error("Era esperado erro de aplicação");
+    }
+
+    void testarRegistroDisciplinasConcluidas() {
+        DisciplinaImpl discA("BCC101", "Programacao I", 60, 1);
+        DisciplinaImpl discB("BCC102", "Programacao II", 60, 2);
+
+        CursoImpl curso("Computacao");
+        curso.add(&discA);
+        curso.add(&discB);
+
+        AlunoImpl aluno;
+        aluno.setCurso(&curso);
+
+        // 1. Historico inicialmente vazio
+        check(aluno.getConcluidas().empty(),
+            "O historico inicial deve estar vazio");
+
+        // 2. Transicao de em andamento para concluida
+        aluno.marcarEmAndamento(&discA);
+
+        check(aluno.getEstado(&discA) == EstadoDisciplina::EmAndamento,
+            "A disciplina deve estar em andamento");
+
+        aluno.marcarConcluida(&discA);
+
+        check(aluno.getConcluidas().size() == 1,
+            "O historico deve conter uma disciplina");
+
+        check(aluno.getConcluidas().front() == &discA,
+            "A disciplina registrada deve ser a disciplina A");
+
+        check(aluno.getEmAndamento().empty(),
+            "A disciplina concluida deve sair de em andamento");
+
+        check(aluno.getEstado(&discA) == EstadoDisciplina::Concluida,
+            "A disciplina deve estar concluida");
+
+        // 3. Impedir retorno de concluida para em andamento
+        aluno.marcarEmAndamento(&discA);
+
+        check(aluno.getEmAndamento().empty(),
+            "Uma disciplina concluida nao pode estar em andamento");
+
+        // 4. Ignorar registro de disciplina nula
+        aluno.marcarConcluida(nullptr);
+
+        check(aluno.getConcluidas().size() == 1,
+            "Uma disciplina nula nao deve alterar o historico");
+
+        // 5. Remocao de disciplina nao concluida
+        aluno.desmarcarConcluida(&discB);
+
+        check(aluno.getConcluidas().size() == 1,
+            "Remover disciplina ausente nao deve alterar o historico");
+
+        // 6. Remocao de disciplina concluida
+        aluno.desmarcarConcluida(&discA);
+
+        check(aluno.getConcluidas().empty(),
+            "O historico deve ficar vazio apos a remocao");
+
+        check(aluno.getEstado(&discA) == EstadoDisciplina::Disponivel,
+            "A disciplina deve voltar a ficar disponivel");
     }
 
     void testarConflitoHorariosETurmas(AcademicService& service) {
@@ -193,6 +258,9 @@ int main() {
         repository.catalog.subjects[0].prerequisites = {"B"};
         expectError(503, [&] { service.summary(first); });
         check(repository.history[first.uid].empty(), "falha não grava histórico");
+
+        // Execução da suíte de registro de disciplinas concluidas (Issue #70)
+        testarRegistroDisciplinasConcluidas();
 
         // Execução da suíte de turmas e conflitos
         testarConflitoHorariosETurmas(service);
