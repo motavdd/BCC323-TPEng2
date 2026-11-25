@@ -1,5 +1,10 @@
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import {
+  connectFirestoreEmulator, doc, getDoc, getFirestore, serverTimestamp, setDoc,
+} from "firebase/firestore/lite";
+import { app, emulatorHost } from "./firebase";
+
+const db = getFirestore(app);
+if (emulatorHost) connectFirestoreEmulator(db, emulatorHost, 8080);
 
 // O plano usa o armazenamento já existente; os dados acadêmicos usam academic.ts.
 export const planStorage = {
