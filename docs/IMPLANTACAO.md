@@ -1,8 +1,9 @@
 # Implantação, CI/CD e proteção de branches
 
-Este guia publica o frontend no Firebase Hosting. O serviço C++ preparado em
-[AMBIENTE.md](AMBIENTE.md) ainda precisa de hospedagem e encaminhamento remoto de
-`/api`; o proxy do Vite não é incluído no site estático.
+O Firebase Hosting publica o frontend. A API C++ ainda precisa de hospedagem e
+de uma regra para encaminhar `/api`. Durante o desenvolvimento, o Vite faz esse
+encaminhamento no computador. Para rodar o sistema localmente, siga o
+[guia do ambiente](AMBIENTE.md).
 
 ## 0. Pré-requisitos
 
@@ -20,17 +21,18 @@ Este guia publica o frontend no Firebase Hosting. O serviço C++ preparado em
 | Homologação | `spoa-eng2-staging` | `Staging` |
 | Produção | `spoa-eng2-prod` | `Master` |
 
-O registro da preparação de 14/10/2026 informa aplicativos Web, Authentication e
-Firestore configurados nos dois projetos, com cadastro e gravação de perfis validados.
-Isso não comprova publicação no Hosting nem a configuração atual de IAM, Environments
-ou Rulesets. As seções seguintes descrevem como preparar e conferir a publicação.
+Em 14/10/2026, a equipe registrou que os dois projetos tinham aplicativo Web,
+Authentication e Firestore configurados. Também foram testados o cadastro e a
+gravação de perfis. Para conferir a publicação, verifique o Hosting e as
+permissões do Google Cloud (IAM), os ambientes do GitHub (Environments) e as
+regras de proteção de branches (Rulesets).
 
 ## 1. Preparar os arquivos no repositório
 
 1. Vincule a alteração à Issue correspondente e trabalhe em uma branch a partir de `Develop`.
 2. Em `frontend/`, execute `bun install --frozen-lockfile`. Os procedimentos de dependências estão em [Bun](BUN.md).
 3. Versione manifestos e lockfiles alterados em `frontend/` e `tools/`, sem incluir arquivos `.env.*.local`, ferramentas portáteis ou dados emulados.
-4. Execute `./scripts/check-local.ps1` e valide a funcionalidade local. Use `-Integration` com os serviços ativos para incluir regras e navegador. Abra PR para `Develop`; a bateria Docker executa no CI e também pode ser reproduzida localmente.
+4. Faça as [verificações locais](DESENVOLVIMENTO_LOCAL.md#validar-antes-de-enviar) e abra um PR para `Develop`.
 5. Configure os GitHub Environments e a autenticação WIF antes de promover para `Staging` e `Master`, pois os pushes nessas branches disparam o deploy. O workflow reutilizável precisa existir na revisão que chama a publicação.
 6. Preserve o README específico da branch de destino na revisão de cada PR de promoção. Merges também incorporam alterações no `README.md` da origem.
 

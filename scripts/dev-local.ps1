@@ -1,15 +1,27 @@
-param([Parameter(Mandatory)][ValidateSet('firebase', 'backend', 'frontend')][string]$Service)
+param([ValidateSet('all', 'firebase', 'backend', 'frontend')][string]$Service = 'all')
 . "$PSScriptRoot/local-env.ps1"
 Push-Location $taskRoot
 try {
     switch ($Service) {
-        firebase {
+        { $_ -in 'all', 'firebase' } {
             $taskFirebase = "$taskRoot/tools/node_modules/firebase-tools/lib/bin/firebase.js"
             if (!(Test-Path $taskFirebase)) { throw 'Execute ./scripts/setup-local.ps1 primeiro.' }
             $taskData = "$taskRoot/.firebase-data"
-            $taskArguments = @($taskFirebase, 'emulators:start', '--config', "$taskRoot/firebase.local.json",
+            $taskCommand = 'emulators:start'
+            if ($Service -eq 'all') {
+                Invoke-Checked node @('scripts/run-local.mjs', '--check-ports')
+                if (!(Test-Path "$taskRoot/frontend/node_modules/vite/bin/vite.js")) {
+                    throw 'Execute ./scripts/setup-local.ps1 primeiro.'
+                }
+                Build-LocalBackend
+                Set-LocalFrontendEnvironment
+                $env:BCC323_LOCAL_API = "$taskBuild/bin/bcc323-api.exe"
+                $taskCommand = 'emulators:exec'
+            }
+            $taskArguments = @($taskFirebase, $taskCommand, '--config', "$taskRoot/firebase.local.json",
                 '--project', 'demo-bcc323', '--only', 'auth,firestore', "--export-on-exit=$taskData")
             if (Test-Path "$taskData/firebase-export-metadata.json") { $taskArguments += "--import=$taskData" }
+            if ($Service -eq 'all') { $taskArguments += @('--ui', 'node scripts/run-local.mjs') }
             Invoke-Checked node $taskArguments
         }
         backend {

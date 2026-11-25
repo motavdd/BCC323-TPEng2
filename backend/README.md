@@ -7,8 +7,7 @@ do MVP. Operações do aluno usam o token Firebase e respeitam as Security Rules
 O servidor usa sua identidade de serviço para ler agendamentos privados e
 gravar alterações autorizadas e validadas.
 
-Consulte [Contrato e divisão de trabalho](CONTRATO_MVP.md) e
-[OpenAPI](openapi.json). O cliente tipado das telas fica em
+Consulte o [contrato OpenAPI](openapi.json). O cliente tipado das telas fica em
 [academic.ts](../frontend/src/services/academic.ts).
 
 ## Estrutura
@@ -35,17 +34,13 @@ Não coloque consultas ao banco nas entidades nem cálculos acadêmicos nos hand
 
 ## Executar localmente
 
-Depois de `./scripts/setup-local.ps1`, abra terminais separados na raiz:
+Depois do setup, execute `./scripts/dev-local.ps1` no Windows ou
+`bash scripts/dev-local.sh` no Linux. O comando inicia o ambiente completo e
+prepara o catálogo ilustrativo no emulador. O seed preserva o catálogo existente
+e só aceita projetos fictícios `demo-*`.
 
-1. `./scripts/dev-local.ps1 firebase`
-2. `node scripts/seed-demo.mjs` (após os emuladores iniciarem)
-3. `./scripts/dev-local.ps1 backend`
-4. `./scripts/dev-local.ps1 frontend`
-
-No Linux, use `bash scripts/setup-local.sh` e
-`bash scripts/dev-local.sh firebase|backend|frontend`.
-O seed preserva catálogo existente e só aceita projeto `demo-*` no emulador.
-Não é executado automaticamente no início do servidor nem usado em produção.
+Para iniciar só a API ou depurar um serviço, siga
+[Desenvolvimento local](../docs/DESENVOLVIMENTO_LOCAL.md#iniciar-os-três-serviços).
 
 | Variável | Execução direta | Scripts locais / Compose |
 |---|---|---|
