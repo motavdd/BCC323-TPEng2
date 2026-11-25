@@ -157,13 +157,18 @@ export function usePlanner(user: User) {
       return;
     }
 
+    await saveCompletion(subject.id, !done);
+  }
+
+  async function saveCompletion(id: string, done: boolean) {
+    if (busy) return;
     await perform(async () => {
-      const summary = await academicApi.setCompleted(subject.id, !done);
+      const summary = await academicApi.setCompleted(id, done);
       setEvaluation(summary);
       setCompleted(summary.completed);
       setConfirmRemoval(false);
       setNotice(
-        done
+        !done
           ? "Conclusão removida. Revise os planos afetados."
           : "Conclusão registrada. Seu histórico foi atualizado.",
       );
@@ -174,6 +179,7 @@ export function usePlanner(user: User) {
 
   async function savePlan() {
     if (
+      busy ||
       conflicts.length ||
       invalidPlan.length ||
       missingOfferings.length ||
@@ -191,7 +197,7 @@ export function usePlanner(user: User) {
   function addOffering(id: string) {
     const offering = planCatalog?.offerings.find((item) => item.id === id);
 
-    if (!offering) return;
+    if (busy || !offering || evaluation?.subjects[offering.subjectId]?.state !== "available") return;
 
     setPlan((previous) => [
       ...previous.filter(
@@ -263,6 +269,7 @@ export function usePlanner(user: User) {
     planHours,
     title,
     toggleCompleted,
+    saveCompletion,
     savePlan,
     addOffering,
     setPlan,
