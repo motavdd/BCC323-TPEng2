@@ -3,8 +3,9 @@
 O C++ autentica as requisições, carrega dados do Firestore e utiliza as classes
 `AlunoImpl`, `CursoImpl` e `DisciplinaImpl` para histórico, progresso e elegibilidade.
 O React usa Firebase Authentication para cadastro e login, e a API para os dados
-do MVP. O banco não exige credenciais administrativas no backend: as requisições
-REST usam o token Firebase do aluno e respeitam as Security Rules.
+do MVP. Operações do aluno usam o token Firebase e respeitam as Security Rules.
+O servidor usa sua identidade de serviço para ler agendamentos privados e
+gravar alterações autorizadas e validadas.
 
 Consulte [Contrato e divisão de trabalho](CONTRATO_MVP.md) e
 [OpenAPI](openapi.json). O cliente tipado das telas fica em
@@ -69,6 +70,9 @@ Envie `Authorization: Bearer <Firebase ID token>`. Nunca envie senha ou UID no c
 | Cursos | `GET /api/courses` |
 | Perfil | `GET /api/profile`, `PUT /api/profile` |
 | Matriz do aluno | `GET /api/curriculum` |
+| Matriz e ofertas por semestre | `GET /api/courses/{courseId}/curriculum?term={termId}` |
+| Planejamento do próximo semestre | `GET /api/academic/planning` |
+| Agendar alteração | `POST /api/courses/{courseId}/schedule` |
 | Histórico | `GET /api/history` |
 | Progresso e elegibilidade | `GET /api/academic/summary` |
 | Concluir disciplina | `PUT /api/history/{codigo}` |
@@ -79,6 +83,42 @@ O servidor lê o histórico persistido para calcular o progresso. O antigo
 O catálogo fica em `courses/{courseId}` no Firestore. Perfis antigos que só guardam
 o nome do curso continuam legíveis; novos perfis persistem também `courseId`.
 Mudar de curso com histórico existente exige uma migração ainda fora do MVP.
+
+### Vigência e coordenação
+
+Cadastre o calendário no documento `academicCalendar/terms` com um campo
+`terms` contendo objetos com `id`, `start` e `end` em datas `AAAA-MM-DD`.
+Os intervalos são inclusivos e separados. A data efetiva segue o dia civil de
+Ouro Preto (UTC−03:00). O planejamento usa a matriz e as ofertas do primeiro
+dia do próximo semestre cadastrado. Sem um próximo semestre cadastrado, usa os
+dados disponíveis para a data atual.
+
+O vínculo de coordenação é um documento `courses/{courseId}/coordinators/{uid}`
+com `active: true`, provisionado pela administração do Firebase. A API rejeita
+gravações de usuários sem esse vínculo, mesmo que sejam coordenadores de outro
+curso. Em Cloud Run, configure uma conta de serviço com permissão de leitura,
+criação e atualização de documentos de agendamento via Firestore REST.
+No emulador, o backend usa a identidade administrativa do emulador para a agenda.
+As regras do Firestore precisam ser atualizadas junto com a API.
+
+Para trocar só o professor de uma turma existente no semestre vigente:
+
+```json
+{"type":"offering","id":"BCC202-A","term":"2026-2","professor":"Professora substituta"}
+```
+
+Opcionalmente envie `effectiveDate` e/ou `times` com os blocos completos
+(`day`, `start`, `end` e `room`). Dias aceitos: Seg, Ter, Qua, Qui, Sex e Sáb.
+Uma mudança de turma vale só para o semestre indicado, a partir da data
+agendada. Sem data, vale hoje no semestre vigente ou no início de um semestre
+futuro. Uma mudança na mesma turma e data substitui o agendamento para essa data.
+
+Para editar uma disciplina existente, envie `type: "subject"`, `id`, `term`,
+`name`, `hours`, `period` e `prerequisites`. A vigência é o primeiro dia de um
+semestre futuro e permanece nos semestres seguintes até nova alteração.
+`completedNames` guarda os nomes exibidos no histórico por ID estável.
+Registros legados sem nome consultam a matriz original, que os agendamentos
+preservam.
 
 Erros seguem `{"error":{"code":"...","message":"..."}}`; respostas usam
 `Cache-Control: no-store`. O contrato detalha os estados e o tratamento esperado.

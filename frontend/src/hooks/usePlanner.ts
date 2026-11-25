@@ -13,6 +13,9 @@ export function usePlanner(user: User) {
   const [catalog, setCatalog] = useState<Curriculum>();
   const [completed, setCompleted] = useState<string[]>();
   const [evaluation, setEvaluation] = useState<Evaluation>();
+  const [planning, setPlanning] = useState<{ curriculum: Curriculum; summary: Evaluation }>();
+  const planCatalog = planning?.curriculum;
+  const planEvaluation = planning?.summary;
   const [plan, setPlan] = useState<string[]>([]);
   const [savedPlan, setSavedPlan] = useState<string[]>([]);
   const [error, setError] = useState("");
@@ -49,9 +52,10 @@ export function usePlanner(user: User) {
         if (!value) {
           return;
         }
-        const [curriculum, summary, saved] = await Promise.all([
+        const [curriculum, summary, nextSemester, saved] = await Promise.all([
           academicApi.curriculum(),
           academicApi.summary(),
+          academicApi.planning(),
           planStorage.load(user.uid),
         ]);
 
@@ -62,6 +66,7 @@ export function usePlanner(user: User) {
         setCatalog(curriculum);
         setCompleted(summary.completed);
         setEvaluation(summary);
+        setPlanning(nextSemester);
         const ids = saved;
         setPlan(ids);
         setSavedPlan(ids);
@@ -101,10 +106,10 @@ export function usePlanner(user: User) {
   const state = subject && evaluation?.subjects[subject.id];
 
   const selected =
-    catalog?.offerings.filter((item) => plan.includes(item.id)) || [];
+    planCatalog?.offerings.filter((item) => plan.includes(item.id)) || [];
 
   const missingOfferings = plan.filter(
-    (id) => !catalog?.offerings.some((item) => item.id === id),
+    (id) => !planCatalog?.offerings.some((item) => item.id === id),
   );
 
   const conflicts: [Offering, Offering][] = [];
@@ -120,13 +125,13 @@ export function usePlanner(user: User) {
   );
 
   const invalidPlan = selected.filter(
-    (item) => evaluation?.subjects[item.subjectId]?.state !== "available",
+    (item) => planEvaluation?.subjects[item.subjectId]?.state !== "available",
   );
 
   const planHours = selected.reduce(
     (total, item) =>
       total +
-      (catalog?.subjects.find((s) => s.id === item.subjectId)?.hours || 0),
+      (planCatalog?.subjects.find((s) => s.id === item.subjectId)?.hours || 0),
     0,
   );
 
@@ -162,6 +167,8 @@ export function usePlanner(user: User) {
           ? "Conclusão removida. Revise os planos afetados."
           : "Conclusão registrada. Seu histórico foi atualizado.",
       );
+      setPlanning(undefined);
+      setPlanning(await academicApi.planning());
     });
   }
 
@@ -170,7 +177,7 @@ export function usePlanner(user: User) {
       conflicts.length ||
       invalidPlan.length ||
       missingOfferings.length ||
-      !evaluation
+      !planEvaluation
     )
       return;
 
@@ -182,14 +189,14 @@ export function usePlanner(user: User) {
   }
 
   function addOffering(id: string) {
-    const offering = catalog?.offerings.find((item) => item.id === id);
+    const offering = planCatalog?.offerings.find((item) => item.id === id);
 
     if (!offering) return;
 
     setPlan((previous) => [
       ...previous.filter(
         (old) =>
-          catalog?.offerings.find((item) => item.id === old)?.subjectId !==
+          planCatalog?.offerings.find((item) => item.id === old)?.subjectId !==
           offering.subjectId,
       ),
       id,
@@ -203,6 +210,7 @@ export function usePlanner(user: User) {
       setProfile(result.profile);
       setCatalog(undefined);
       setEvaluation(undefined);
+      setPlanning(undefined);
       setRetry((value) => value + 1);
       go("overview");
       setNotice("Perfil salvo com sucesso.");
@@ -231,6 +239,8 @@ export function usePlanner(user: User) {
     catalog,
     completed,
     evaluation,
+    planCatalog,
+    planEvaluation,
     plan,
     savedPlan,
     error,

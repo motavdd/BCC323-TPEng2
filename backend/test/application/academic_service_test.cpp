@@ -21,6 +21,70 @@ namespace {
         }
         throw std::runtime_error("Era esperado erro de aplicação");
     }
+
+    void checkScheduledChanges() {
+        test::MemoryRepository repository;
+        repository.terms = {
+            {"2026-1", "2026-03-01", "2026-07-15"},
+            {"2026-2", "2026-08-10", "2026-12-15"},
+        };
+        repository.catalog.offerings = {{"A-01", "A", "01", {{"Seg", "08:00", "10:00", "101"}}, "Docente atual"}};
+        const RequestContext coordinator{"coordinator", ""};
+        const RequestContext student{"student", ""};
+        AcademicService april(repository, "2026-04-01");
+        april.saveProfile(student, {"Aluno", "Computação", "", 1});
+        april.setCompleted(student, "A", true);
+        repository.history["legacy"] = {"A"};
+        const RequestContext legacy{"legacy", ""};
+        april.saveProfile(legacy, {"Aluno", "Computação", "", 1});
+
+        const ScheduledChange replacement{"2026-1", "2026-04-15", std::nullopt,
+            OfferingRecord{"A-01", "", "", {{"Qua", "09:30", "11:00", "202"}}, "Docente substituto"}};
+        expectError(403, [&] { april.scheduleChange(student, "course", replacement); });
+        expectError(403, [&] { april.scheduleChange(coordinator, "other-course", replacement); });
+        auto past = replacement;
+        past.effectiveDate = "2026-03-31";
+        expectError(400, [&] { april.scheduleChange(coordinator, "course", past); });
+        auto invalidDay = replacement;
+        invalidDay.effectiveDate = "2026-04-31";
+        expectError(400, [&] { april.scheduleChange(coordinator, "course", invalidDay); });
+        april.scheduleChange(coordinator, "course", replacement);
+
+        auto invalidMatrix = repository.catalog.subjects.front();
+        invalidMatrix.prerequisites = {"B"};
+        expectError(400, [&] { april.scheduleChange(coordinator, "course", {"2026-2", "", invalidMatrix, {}}); });
+        auto renamed = repository.catalog.subjects.front();
+        renamed.name = "Fundamentos";
+        expectError(400, [&] { april.scheduleChange(coordinator, "course", {"2026-1", "", renamed, {}}); });
+        check(april.scheduleChange(coordinator, "course", {"2026-2", "", renamed, {}}).effectiveDate == "2026-08-10",
+              "mudança da matriz vigora no início do semestre");
+
+        check(april.curriculum(student).offerings.front().professor == "Docente atual", "troca não antecipada");
+        AcademicService afterLeave(repository, "2026-04-15");
+        const auto offering = afterLeave.curriculum(student).offerings.front();
+        check(offering.professor == "Docente substituto" && offering.times.front().room == "202"
+              && offering.times.front().start == "09:30", "troca vigora na data agendada");
+        auto immediate = replacement;
+        immediate.effectiveDate.clear();
+        immediate.offering->professor = "Docente imediato";
+        immediate.offering->times.clear();
+        check(afterLeave.scheduleChange(coordinator, "course", immediate).effectiveDate == "2026-04-15",
+              "troca sem data vigora hoje");
+        check(afterLeave.curriculum(student).offerings.front().times.front().room == "202",
+              "troca apenas de docente preserva a sala agendada");
+        check(afterLeave.curriculum(student).subjects.front().name == "Introdução", "matriz vigente preservada");
+        check(afterLeave.planning(student).first.subjects.front().name == "Fundamentos",
+              "planejamento usa a matriz do próximo semestre");
+
+        AcademicService august(repository, "2026-08-10");
+        check(august.curriculum(student).subjects.front().name == "Fundamentos", "novo semestre usa a matriz programada");
+        check(august.summary(student).completedNames.at("A") == "Introdução", "nome do histórico preservado");
+        check(august.setCompleted(student, "A", true).completedNames.at("A") == "Introdução",
+              "repetir registro não troca o nome histórico");
+        check(august.summary(legacy).completedNames.at("A") == "Introdução", "histórico legado usa a matriz original");
+        check(august.summary(student).subjects.at("B").state == "available",
+              "ID estável preserva validação de pré-requisito");
+    }
 }
 
 int main() {
@@ -70,6 +134,7 @@ int main() {
         expectError(404, [&] { service.setCompleted(first, "missing", true); });
         repository.catalog.subjects[0].prerequisites = {"B"};
         expectError(503, [&] { service.summary(first); });
+        checkScheduledChanges();
         check(repository.history[first.uid].empty(), "falha não grava histórico");
 
         std::cout << "PASS: perfil, progresso, elegibilidade, isolamento e persistência\n";

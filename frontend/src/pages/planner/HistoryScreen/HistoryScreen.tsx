@@ -1,36 +1,24 @@
-import type { Curriculum, Evaluation } from "../../../services/api";
+import type { Evaluation } from "../../../services/api";
 import { Panel } from "../../../components/Panel/Panel";
 
 type Props = {
-  catalog: Curriculum;
-  completed: string[];
   evaluation: Evaluation;
   go: (route: string) => void;
 };
 
-export function HistoryScreen({ catalog, completed, evaluation, go }: Props) {
+export function HistoryScreen({ evaluation, go }: Props) {
+  const entries = Object.entries(evaluation.completedNames);
   return (
     <>
       <Panel>
-        <h2>{evaluation.completedHours} horas concluídas</h2>
-        <p>
-          {evaluation.completedCount} disciplinas · Atualizado a partir da
-          matriz curricular
-        </p>
+        <h2>Disciplinas concluídas</h2>
       </Panel>
-      {catalog.subjects
-        .filter((item) => completed.includes(item.id))
-        .map((item) => (
-          <Panel key={item.id}>
-            <h3 className="green">
-              ✓ {item.id} · {item.name}
-            </h3>
-            <p>
-              {item.period}º período · {item.hours} horas · Concluída
-            </p>
+      {entries.map(([id, name]) => (
+          <Panel key={id}>
+            <h3 className="green">{name}</h3>
           </Panel>
         ))}
-      {!completed.length && (
+      {!entries.length && (
         <Panel>
           <h2>Seu histórico começa na matriz</h2>
           <p>Você ainda não registrou disciplinas concluídas.</p>

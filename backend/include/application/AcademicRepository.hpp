@@ -26,9 +26,13 @@ namespace bcc323 {
         bool requirementsKnown = false;
     };
 
-    struct ClassTimeRecord { std::string day, start, end; };
+    struct ClassTimeRecord { std::string day, start, end; std::string room{}; };
 
-    struct OfferingRecord { std::string id, subjectId, group; std::vector<ClassTimeRecord> times; };
+    struct OfferingRecord {
+        std::string id, subjectId, group;
+        std::vector<ClassTimeRecord> times;
+        std::string professor{};
+    };
 
     struct CourseRecord {
         std::string id, name;
@@ -37,6 +41,16 @@ namespace bcc323 {
         std::vector<OfferingRecord> offerings;
     };
 
+    struct AcademicTerm { std::string id, start, end; };
+    struct ScheduledChange {
+        std::string term, effectiveDate;
+        std::optional<SubjectRecord> subject;
+        std::optional<OfferingRecord> offering;
+    };
+    struct AcademicSchedule {
+        std::string revision;
+        std::vector<ScheduledChange> changes;
+    };
     struct SubjectEvaluation { std::string state; std::vector<std::string> missing; };
     
     struct AcademicSummary {
@@ -45,6 +59,7 @@ namespace bcc323 {
         int completedHours = 0, completedCount = 0, availableCount = 0, totalHours = 0;
         double progress = 0;
         std::vector<std::string> completed, unmappedCompleted;
+        std::map<std::string, std::string> completedNames;
         std::map<std::string, SubjectEvaluation> subjects;
     };
 
@@ -56,6 +71,11 @@ namespace bcc323 {
         virtual std::vector<CourseRecord> courses(const RequestContext&) = 0;
         virtual CourseRecord course(const RequestContext&, const std::string& courseId) = 0;
         virtual std::vector<std::string> completed(const RequestContext&) = 0;
-        virtual void setCompleted(const RequestContext&, const std::string& subjectId, bool completed) = 0;
+        virtual std::map<std::string, std::string> completedNames(const RequestContext&) = 0;
+        virtual void setCompleted(const RequestContext&, const std::string&, bool, const std::string&) = 0;
+        virtual bool coordinates(const RequestContext&, const std::string&) = 0;
+        virtual std::vector<AcademicTerm> academicTerms(const RequestContext&) = 0;
+        virtual AcademicSchedule schedule(const RequestContext&, const std::string&) = 0;
+        virtual void saveSchedule(const RequestContext&, const std::string&, const AcademicSchedule&) = 0;
     };
 }

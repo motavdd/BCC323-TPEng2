@@ -43,7 +43,7 @@ file(GLOB DOMAIN_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/doma
 add_library(academic-domain STATIC ${DOMAIN_SOURCES})
 target_include_directories(academic-domain PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-add_library(academic-application STATIC src/application/AcademicService.cpp)
+add_library(academic-application STATIC src/application/AcademicService.cpp src/application/AcademicSchedule.cpp)
 target_link_libraries(academic-application PUBLIC academic-domain)
 
 file(GLOB_RECURSE INFRASTRUCTURE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/infrastructure/*.cpp")

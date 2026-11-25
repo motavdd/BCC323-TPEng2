@@ -7,13 +7,18 @@ export function Week({
   offerings: Offering[];
   catalog: Curriculum;
 }) {
+  const days = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const hours = [...new Set([
+    "08:00", "10:00", "12:00", "14:00", "16:00", "18:00",
+    ...offerings.flatMap((item) => item.times.map((time) => time.start)),
+  ])].sort();
   return (
     <div className="week-scroll">
       <table className="week">
         <thead>
           <tr>
             <th scope="col">Hora</th>
-            {["Seg", "Ter", "Qua", "Qui", "Sex"].map((day) => (
+            {days.map((day) => (
               <th scope="col" key={day}>
                 {day}
               </th>
@@ -21,11 +26,11 @@ export function Week({
           </tr>
         </thead>
         <tbody>
-          {["08:00", "10:00", "12:00", "14:00", "16:00", "18:00"].map(
+          {hours.map(
             (hour) => (
               <tr key={hour}>
                 <th scope="row">{hour}</th>
-                {["Seg", "Ter", "Qua", "Qui", "Sex"].map((day) => (
+                {days.map((day) => (
                   <td key={day}>
                     {offerings.flatMap((item) =>
                       item.times
@@ -33,7 +38,7 @@ export function Week({
                           (time) => time.day === day && time.start === hour,
                         )
                         .map((time) => (
-                          <div className="class-slot" key={item.id}>
+                          <div className="class-slot" key={item.id + time.end + time.room}>
                             <b>
                               {
                                 catalog.subjects.find(
@@ -43,6 +48,8 @@ export function Week({
                             </b>
                             <br />
                             {time.start}–{time.end}
+                            {time.room && <div>Sala {time.room}</div>}
+                            {item.professor && <div>{item.professor}</div>}
                           </div>
                         )),
                     )}

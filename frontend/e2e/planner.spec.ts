@@ -14,7 +14,7 @@ test('conclusão atualiza histórico, libera planejamento e persiste após recar
   await page.getByRole('button', { name: 'Marcar como concluída' }).click();
   await expect(page.getByRole('heading', { name: '✓ Concluída' })).toBeVisible();
   await page.getByRole('link', { name: 'Histórico', exact: true }).click();
-  await expect(page.getByRole('heading', { name: '90 horas concluídas' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Introdução à Programação', exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Planejar semestre', exact: true }).click();
   await page.getByRole('button', { name: 'Adicionar disciplina' }).click();
   await page.getByRole('button', { name: 'Usar turma A' }).click();

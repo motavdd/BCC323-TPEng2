@@ -9,7 +9,10 @@ namespace bcc323::test {
         std::map<std::string, AcademicProfile> profiles;
 
         std::map<std::string, std::vector<std::string>> history;
+        std::map<std::string, std::map<std::string, std::string>> names;
         bool failHistoryWrite = false;
+        std::vector<AcademicTerm> terms;
+        AcademicSchedule changes;
 
         CourseRecord catalog{"course", "Computação", false, {
             {"A", "Introdução", 60, 1, {}, true},
@@ -41,11 +44,33 @@ namespace bcc323::test {
             return history[c.uid];
         }
 
-        void setCompleted(const RequestContext& c, const std::string& id, bool done) override {
+        std::map<std::string, std::string> completedNames(const RequestContext& c) override {
+            std::map<std::string, std::string> result;
+            for (const auto& id : history[c.uid]) result.emplace(id, names[c.uid][id]);
+            return result;
+        }
+
+        void setCompleted(const RequestContext& c, const std::string& id, bool done,
+                          const std::string& name) override {
             if (failHistoryWrite) throw AppError(503, "storage_unavailable", "Banco indisponível");
             auto& ids = history[c.uid];
             ids.erase(std::remove(ids.begin(), ids.end(), id), ids.end());
-            if (done) ids.push_back(id);
+            if (done) {
+                ids.push_back(id);
+                names[c.uid].try_emplace(id, name);
+            } else {
+                names[c.uid].erase(id);
+            }
+        }
+
+        bool coordinates(const RequestContext& c, const std::string& course) override {
+            return c.uid == "coordinator" && course == catalog.id;
+        }
+
+        std::vector<AcademicTerm> academicTerms(const RequestContext&) override { return terms; }
+        AcademicSchedule schedule(const RequestContext&, const std::string&) override { return changes; }
+        void saveSchedule(const RequestContext&, const std::string&, const AcademicSchedule& value) override {
+            changes = value;
         }
     };
 }

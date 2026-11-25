@@ -22,9 +22,11 @@ namespace bcc323 {
             try {
                 const auto decoded = jwt::decode(context.token);
                 if (!decoded.has_subject() || !decoded.has_expires_at() || !decoded.has_issued_at() || decoded.get_subject().empty() || decoded.get_subject().size() > 128){
-                    throw InvalidToken{}; jwt::verify().allow_algorithm(jwt::algorithm::none{}).with_issuer(std::string("https://securetoken.google.com/") + project).with_audience(project).verify(decoded);
+                    throw InvalidToken{};
                 } 
-
+                jwt::verify().allow_algorithm(jwt::algorithm::none{})
+                    .with_issuer(std::string("https://securetoken.google.com/") + project)
+                    .with_audience(project).verify(decoded);
                 context.uid = decoded.get_subject();
                 return context;
             } catch (const std::exception&) { throw InvalidToken{}; }
