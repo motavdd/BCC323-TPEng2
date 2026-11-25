@@ -90,8 +90,8 @@ export function MatrixScreen({
       <Panel tone="highlight">
         <h2>Atualize seu progresso em um só lugar</h2>
         <p>
-          Use “Marcar como concluída” no detalhe da disciplina. O histórico
-          acompanha a matriz.
+          Consulte o detalhe de uma disciplina ou atualize várias conclusões
+          pela tela de histórico.
         </p>
         <div className="actions">
           <button onClick={() => go("subject/BCC201")}>
