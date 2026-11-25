@@ -131,6 +131,74 @@ namespace {
             "A disciplina deve voltar a ficar disponivel");
     }
 
+    void testarMultiplosPreRequisitos() {
+        DisciplinaImpl discA("BCC101", "Programacao I", 60, 1);
+        DisciplinaImpl discB("BCC102", "Programacao II", 60, 2);
+        DisciplinaImpl discC("BCC103", "Estruturas de Dados", 60, 3);
+
+        discC.addPreRequisito(&discA);
+        discC.addPreRequisito(&discB);
+
+        CursoImpl curso("Computacao");
+        curso.add(&discA);
+        curso.add(&discB);
+        curso.add(&discC);
+
+        AlunoImpl aluno;
+        aluno.setCurso(&curso);
+
+        // 1. Disciplina sem pre-requisitos
+        check(aluno.getEstado(&discA) == EstadoDisciplina::Disponivel,
+            "Disciplina sem pre-requisitos deve estar disponivel");
+
+        // 2. Nenhum pre-requisito concluido
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Bloqueada,
+            "Disciplina deve estar bloqueada sem pre-requisitos cumpridos");
+
+        // 3. Apenas o primeiro pre-requisito concluido
+        aluno.marcarConcluida(&discA);
+
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Bloqueada,
+            "Concluir apenas o primeiro pre-requisito nao deve liberar a disciplina");
+
+        // 4. Apenas o segundo pre-requisito concluido
+        aluno.desmarcarConcluida(&discA);
+        aluno.marcarConcluida(&discB);
+
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Bloqueada,
+            "Concluir apenas o segundo pre-requisito nao deve liberar a disciplina");
+
+        // 5. Pre-requisito em andamento
+        aluno.marcarEmAndamento(&discA);
+
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Bloqueada,
+            "Pre-requisito em andamento nao deve liberar a disciplina");
+
+        // 6. Todos os pre-requisitos concluidos
+        aluno.marcarConcluida(&discA);
+
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Disponivel,
+            "Todos os pre-requisitos concluidos devem liberar a disciplina");
+
+        const auto disponiveis = aluno.getDisponiveis();
+
+        check(std::find(disponiveis.begin(), disponiveis.end(), &discC)
+                != disponiveis.end(),
+            "Disciplina liberada deve aparecer na lista de disponiveis");
+
+        // 7. Remocao de um pre-requisito do historico
+        aluno.desmarcarConcluida(&discB);
+
+        check(aluno.getEstado(&discC) == EstadoDisciplina::Bloqueada,
+            "Remover um pre-requisito concluido deve bloquear a disciplina");
+
+        const auto atualizadas = aluno.getDisponiveis();
+
+        check(std::find(atualizadas.begin(), atualizadas.end(), &discC)
+                == atualizadas.end(),
+            "Disciplina bloqueada nao deve aparecer na lista de disponiveis");
+    }
+
     void testarConflitoHorariosETurmas(AcademicService& service) {
         // 1. Dias distintos -> Sem conflito
         HorarioAula seg8_10{DiaSemana::SEGUNDA, 8, 0, 10, 0, "Sala 101"};
@@ -261,6 +329,9 @@ int main() {
 
         // Execução da suíte de registro de disciplinas concluidas (Issue #70)
         testarRegistroDisciplinasConcluidas();
+
+        // Testes de validacao de multiplos pre-requisitos (Issue #70)
+        testarMultiplosPreRequisitos();
 
         // Execução da suíte de turmas e conflitos
         testarConflitoHorariosETurmas(service);
