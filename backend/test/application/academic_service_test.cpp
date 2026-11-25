@@ -22,6 +22,66 @@ namespace {
         throw std::runtime_error("Era esperado erro de aplicação");
     }
 
+    void testarHistoricoAcademico() {
+        test::MemoryRepository repository;
+        AcademicService service(repository);
+
+        RequestContext aluno{"historico", ""};
+
+        service.saveProfile(aluno, {"Aluno", "Computação", "", 1});
+
+        // 1. Registro com pre-requisito pendente
+        auto result = service.setCompleted(aluno, "B", true);
+
+        check(result.completedCount == 1,
+            "Historico deve conter uma disciplina concluida");
+
+        check(result.subjects.at("B").state == "completed",
+            "Registro deve permitir conclusao por equivalencia");
+
+        check(result.subjects.at("A").state == "available",
+            "Pre-requisito nao deve ser concluido automaticamente");
+
+        check(result.completedHours == 90,
+            "Carga horaria deve considerar apenas a disciplina concluida");
+
+        // 2. Consultar novamente o historico
+        result = service.summary(aluno);
+
+        check(result.completedCount == 1 &&
+            result.subjects.at("B").state == "completed",
+            "Conclusao deve ser preservada em nova consulta");
+
+        // 3. Remocao de disciplina ausente do historico
+        result = service.setCompleted(aluno, "A", false);
+
+        check(result.completedCount == 1 &&
+            result.subjects.at("B").state == "completed",
+            "Remover disciplina ausente deve preservar o historico");
+
+        // 4. Registro de disciplina inexistente
+        const auto historicoAnterior = repository.completed(aluno);
+
+        expectError(404, [&] {
+            service.setCompleted(aluno, "inexistente", true);
+        });
+
+        check(repository.completed(aluno) == historicoAnterior,
+            "Registro invalido nao deve modificar o historico");
+
+        // 5. Remocao da disciplina concluida
+        result = service.setCompleted(aluno, "B", false);
+
+        check(result.completedCount == 0,
+            "Historico deve ficar vazio apos a remocao");
+
+        check(result.completedHours == 0,
+            "Carga horaria concluida deve voltar a zero");
+
+        check(result.subjects.at("B").state == "blocked",
+            "Disciplina deve voltar a ficar bloqueada");
+    }
+
     void checkScheduledChanges() {
         test::MemoryRepository repository;
         repository.terms = {
@@ -135,6 +195,7 @@ int main() {
         repository.catalog.subjects[0].prerequisites = {"B"};
         expectError(503, [&] { service.summary(first); });
         checkScheduledChanges();
+        testarHistoricoAcademico();
         check(repository.history[first.uid].empty(), "falha não grava histórico");
 
         std::cout << "PASS: perfil, progresso, elegibilidade, isolamento e persistência\n";
