@@ -96,6 +96,7 @@ export function Planner({
           <>
             {route === "overview" && (
               <OverviewScreen
+                catalog={catalog}
                 evaluation={evaluation}
                 savedPlan={savedPlan}
                 go={go}

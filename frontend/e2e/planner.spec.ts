@@ -23,6 +23,12 @@ test('conclusão atualiza histórico, libera planejamento e persiste após recar
   await expect(conclusion).not.toBeChecked();
   await conclusion.click();
   await expect(conclusion).toBeChecked();
+  await page.getByRole('link', { name: 'Visão geral', exact: true }).click();
+  await expect(page.getByRole('progressbar', { name: 'Progresso no curso' }))
+    .toHaveAttribute('aria-valuetext', /, 90 de \d+ horas$/);
+  await page.getByRole('button', { name: /^Concluídas/ }).click();
+  await expect(page.getByRole('list', { name: 'Disciplinas: Concluídas' })
+    .getByText('Introdução à Programação')).toBeVisible();
   await page.getByRole('link', { name: 'Planejar semestre', exact: true }).click();
   await page.getByRole('button', { name: 'Adicionar disciplina' }).click();
   await page.getByRole('button', { name: 'Usar turma A' }).click();
