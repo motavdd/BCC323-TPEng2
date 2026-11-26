@@ -1,14 +1,17 @@
 import "./OverviewScreen.css";
-import type { Evaluation } from "../../../services/api";
+import type { Curriculum, Evaluation } from "../../../services/api";
 import { Panel } from "../../../components/Panel/Panel";
+import { ProgressBar } from "../../../components/ProgressBar/ProgressBar";
+import { SubjectCategories } from "../../../components/SubjectCategories/SubjectCategories";
 
 type Props = {
+  catalog: Curriculum;
   evaluation: Evaluation;
   savedPlan: string[];
   go: (route: string) => void;
 };
 
-export function OverviewScreen({ evaluation, savedPlan, go }: Props) {
+export function OverviewScreen({ catalog, evaluation, savedPlan, go }: Props) {
   return (
     <>
       <Panel tone="highlight">
@@ -18,6 +21,21 @@ export function OverviewScreen({ evaluation, savedPlan, go }: Props) {
           passo.
         </p>
         <button onClick={() => go("matrix")}>Abrir matriz interativa</button>
+      </Panel>
+      <Panel>
+        <ProgressBar
+          percent={evaluation.progress}
+          completedHours={evaluation.completedHours}
+          totalHours={evaluation.totalHours}
+        />
+      </Panel>
+      <Panel>
+        <h2>Suas disciplinas por situação</h2>
+        <SubjectCategories
+          subjects={catalog.subjects}
+          states={evaluation.subjects}
+          onOpen={(id) => go(`subject/${id}`)}
+        />
       </Panel>
       <div className="stats">
         <Panel>
